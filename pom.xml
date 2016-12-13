@@ -1,0 +1,202 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jspare.vertx</groupId>
+	<artifactId>vertx-jspare-parent</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>JSpare Vert.x Parent</name>
+	<url>http://vertx.jspare.org</url>
+	<description>Improve your Vert.x experience with JSpare Framework</description>
+	<organization>
+		<name>JSpare.org</name>
+		<url>http://jspare.org</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<url>https://github.com/jspare-projects/vertx-jspare</url>
+		<connection>scm:git:git://github.com/jspare-projects/vertx-jspare.git</connection>
+		<developerConnection>scm:git:git@github.com:jspare-projects/vertx-jspare.git</developerConnection>
+	</scm>
+
+	<issueManagement>
+		<url>https://github.com/jspare-projects/vertx-jspare/issues</url>
+	</issueManagement>
+
+	<developers>
+		<developer>
+			<id>pflima92</id>
+			<name>Paulo Lima</name>
+			<email>pflima92@gmail.com</email>
+			<organization>JSpare Org.</organization>
+			<organizationUrl>http://jspare.org</organizationUrl>
+			<roles>
+				<role>Project lead</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<maven.source.version>2.0.4</maven.source.version>
+		<cobertura.version>2.7</cobertura.version>
+		<lombok.version>1.16.8</lombok.version>
+		<logback.version>1.1.6</logback.version>
+		<junit.version>4.12</junit.version>
+		<jspare.core.version>2.0.0</jspare.core.version>
+		<maven.javadoc.version>2.10.4</maven.javadoc.version>
+		<vertx.version>3.3.3</vertx.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven.source.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven.javadoc.version}</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>${cobertura.version}</version>
+				<configuration>
+					<configuration>
+						<formats>
+							<format>xml</format>
+						</formats>
+						<maxmem>256m</maxmem>
+						<aggregate>true</aggregate>
+					</configuration>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>cobertura</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.5</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.7</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>cobertura</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+				<configuration>
+					<formats>
+						<format>xml</format>
+					</formats>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<dependencies>
+
+		<!-- Code Productivity -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Logger Impl -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jspare</groupId>
+			<artifactId>jspare-core</artifactId>
+			<version>${jspare.core.version}</version>
+		</dependency>
+
+		<!-- Tests Core -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Vert.x Core -->
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-core</artifactId>
+			<version>${vertx.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<modules>
+		<module>vertx-jspare</module>
+	</modules>
+
+	<distributionManagement>
+		<repository>
+			<id>bintray-jspare-maven</id>
+			<name>jspare-maven</name>
+			<url>https://api.bintray.com/maven/jspare/maven/vertx-jspare/;publish=1</url>
+		</repository>
+	</distributionManagement>
+</project>
