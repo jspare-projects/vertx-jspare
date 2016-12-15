@@ -1,4 +1,4 @@
-package org.jspare.vertx.bootsrap;
+package org.jspare.vertx.bootstrap;
 
 import org.jspare.core.bootstrap.Application;
 import org.jspare.core.bootstrap.EnvironmentBuilder;

@@ -8,7 +8,7 @@ import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 public class ClasspathScannerUtils {
 	
 	/** The Constant ALL_SCAN_QUOTE. */
-	protected static String ALL_SCAN_QUOTE = ".*";
+	public static String ALL_SCAN_QUOTE = ".*";
 
 
 	/**
@@ -19,7 +19,7 @@ public class ClasspathScannerUtils {
 	 * @param perform
 	 *            the perform
 	 */
-	protected static List<String> listClassesByPackage(String cPackage) {
+	public static List<String> listClassesByPackage(String cPackage) {
 		String packageForScan = cPackage;
 		if (packageForScan.endsWith(".*")) {
 			packageForScan = packageForScan.substring(0, packageForScan.length() - 2);

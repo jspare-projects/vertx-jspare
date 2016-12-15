@@ -33,7 +33,7 @@ public class EventBusCollector implements Collector<Collection<MessageData>> {
 	}
 	
 	@Override
-	public Collection<MessageData> collect(Class<?> clazz) {
+	public Collection<MessageData> collect(Class<?> clazz, Object... args) {
 		
 		// Ignore all classes without EventBusController	
 		if(!clazz.isAnnotationPresent(EventBusController.class)){

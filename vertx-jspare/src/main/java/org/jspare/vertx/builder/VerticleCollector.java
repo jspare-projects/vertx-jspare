@@ -17,7 +17,7 @@ public class VerticleCollector implements Collector<Optional<VerticleData>> {
 
 	@Override
 	@SneakyThrows
-	public Optional<VerticleData> collect(Class<?> clazz) {
+	public Optional<VerticleData> collect(Class<?> clazz, Object... args) {
 		
 		// Ignore all classes without EventBusController	
 		if(!clazz.isAnnotationPresent(org.jspare.vertx.annotation.Verticle.class)){
