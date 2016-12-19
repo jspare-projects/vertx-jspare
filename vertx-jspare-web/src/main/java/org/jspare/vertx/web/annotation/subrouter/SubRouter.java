@@ -20,6 +20,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.jspare.vertx.web.handling.Handling;
+
 import io.vertx.ext.web.Router;
 
 /**
@@ -33,7 +35,7 @@ import io.vertx.ext.web.Router;
  * are empty the convetion that follow will be used:
  *
  * <br>
- * [Prefix]Controller: [prefix]/[your mapping] <b>e.g: UsersController: 
+ * [Prefix]Controller: [prefix]/[your mapping] <b>e.g: UsersController:
  * users/</b>
  * </p>
  *

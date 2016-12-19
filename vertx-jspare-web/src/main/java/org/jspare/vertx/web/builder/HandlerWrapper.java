@@ -25,28 +25,28 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 
 /** The Constant log. */
-@Slf4j
 public class HandlerWrapper {
 
 	/**
 	 * Prepare handler.
 	 *
-	 * @param router the router
-	 * @param handlerData the data
+	 * @param router
+	 *            the router
+	 * @param handlerData
+	 *            the data
 	 */
 	public static void prepareHandler(Router router, HandlerData handlerData) {
-
-		log.debug("Mapping handler: {}", handlerData.toStringLine());
 
 		setHandler(router, handlerData);
 	}
 
 	protected static Route createRoute(Router router, HandlerData data) {
-		Route route = router.route().order(data.order());
+		Route route = router.route();
 
+		setOrder(data, route);
+		
 		if (StringUtils.isNotEmpty(data.httpMethod())) {
 
 			setMethod(data, route);
@@ -66,11 +66,21 @@ public class HandlerWrapper {
 		return route;
 	}
 
+	private static void setOrder(HandlerData data, Route route) {
+
+		if(Integer.MIN_VALUE != data.order()){
+			
+			route.order(data.order());
+		}
+	}
+
 	/**
 	 * Sets the consumes.
 	 *
-	 * @param data the data
-	 * @param route the route
+	 * @param data
+	 *            the data
+	 * @param route
+	 *            the route
 	 */
 	protected static void setConsumes(HandlerData data, Route route) {
 		route.consumes(data.consumes());
@@ -79,18 +89,20 @@ public class HandlerWrapper {
 	/**
 	 * Sets the handler.
 	 *
-	 * @param data the data
-	 * @param route the route
+	 * @param data
+	 *            the data
+	 * @param route
+	 *            the route
 	 */
 	protected static void setHandler(Router router, HandlerData data) {
 
 		// Create auth handler if is setted
-		if(data.authHandler() != null){
-			
+		if (data.authHandler() != null) {
+
 			Route authRoute = createRoute(router, data);
 			authRoute.handler(data.authHandler());
 		}
-		
+
 		// Create route handler
 		Route route = createRoute(router, data);
 		if (HandlerType.HANDLER.equals(data.handlerType())) {
@@ -106,23 +118,12 @@ public class HandlerWrapper {
 	}
 
 	/**
-	 * Prepare handler.
-	 *
-	 * @param handlerData the handler data
-	 * @return the handler
-	 */
-	@SneakyThrows({ InstantiationException.class, IllegalAccessException.class, IllegalArgumentException.class,
-			InvocationTargetException.class, NoSuchMethodException.class })
-	private static Handler<RoutingContext> prepareHandler(HandlerData handlerData) {
-
-		return handlerData.routeHandlerClass().getConstructor(HandlerData.class).newInstance(handlerData);
-	}
-
-	/**
 	 * Sets the method.
 	 *
-	 * @param data the data
-	 * @param route the route
+	 * @param data
+	 *            the data
+	 * @param route
+	 *            the route
 	 */
 	protected static void setMethod(HandlerData data, Route route) {
 		route.method(HttpMethod.valueOf(data.httpMethod()));
@@ -131,8 +132,10 @@ public class HandlerWrapper {
 	/**
 	 * Sets the patch.
 	 *
-	 * @param data the data
-	 * @param route the route
+	 * @param data
+	 *            the data
+	 * @param route
+	 *            the route
 	 */
 	protected static void setPatch(HandlerData data, Route route) {
 		if (data.pathRegex()) {
@@ -147,10 +150,25 @@ public class HandlerWrapper {
 	/**
 	 * Sets the produces.
 	 *
-	 * @param data the data
-	 * @param route the route
+	 * @param data
+	 *            the data
+	 * @param route
+	 *            the route
 	 */
 	protected static void setProduces(HandlerData data, Route route) {
 		route.produces(data.produces());
+	}
+
+	/**
+	 * Prepare handler.
+	 *
+	 * @param handlerData
+	 *            the handler data
+	 * @return the handler
+	 */
+	@SneakyThrows({ InstantiationException.class, IllegalAccessException.class, IllegalArgumentException.class,
+			InvocationTargetException.class, NoSuchMethodException.class })
+	private static Handler<RoutingContext> prepareHandler(HandlerData handlerData) {
+		return handlerData.routeHandlerClass().getConstructor(HandlerData.class).newInstance(handlerData);
 	}
 }

@@ -15,7 +15,6 @@
  */
 package org.jspare.vertx.web.builder.route;
 
-
 import org.jspare.vertx.web.annotation.handler.Handler;
 import org.jspare.vertx.web.annotation.method.Get;
 import org.jspare.vertx.web.annotation.subrouter.IgnoreSubRouter;

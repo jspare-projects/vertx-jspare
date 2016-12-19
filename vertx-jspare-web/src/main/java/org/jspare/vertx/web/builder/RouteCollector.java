@@ -55,20 +55,21 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<HandlerData> collect(Class<?> clazz, Object... args) {
-		
-		if(args.length < 3){
-			
-			throw new IllegalArgumentException(String.format("Cannot collect route class [%s] without routeHandlerClass or authHandler", clazz.getName()));
+
+		if (args.length < 3) {
+
+			throw new IllegalArgumentException(
+					String.format("Cannot collect route class [%s] without routeHandlerClass or authHandler", clazz.getName()));
 		}
 
 		// Retrieve required parameters to collect handlers
-		
+
 		Class<? extends Handler<RoutingContext>> routeHandlerClass = (Class<? extends Handler<RoutingContext>>) args[0];
 		AuthProvider authProvider = (AuthProvider) args[1];
 		Class<? extends AuthHandler> authHandlerClass = (Class<AuthHandler>) args[2];
-		
+
 		// Initialize collected handlers
-		
+
 		List<HandlerData> collectedHandlers = new ArrayList<>();
 		List<Annotation> httpMethodsAnnotations = new ArrayList<>(getHttpMethodsPresents(clazz));
 
@@ -85,35 +86,47 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 			String consumes = method.isAnnotationPresent(Consumes.class) ? method.getAnnotation(Consumes.class).value() : StringUtils.EMPTY;
 			String produces = method.isAnnotationPresent(Produces.class) ? method.getAnnotation(Produces.class).value() : StringUtils.EMPTY;
 			List<BodyEndHandler> bodyEndHandler = collectBodyEndHandlers(method);
-			
+
 			HandlerDocumentation hDocumentation = null;
-			
+
 			// Documentation block
-			
-			if(method.isAnnotationPresent(Documentation.class)){
+			if (method.isAnnotationPresent(Documentation.class)) {
 				Documentation documentation = method.getAnnotation(Documentation.class);
 				hDocumentation = new HandlerDocumentation();
 				hDocumentation.description(documentation.description());
-				hDocumentation.status(Arrays.asList(documentation.responseStatus()).stream().map(s -> new HandlerDocumentation.ResponseStatus(s)).collect(Collectors.toList()));
-				hDocumentation.queryParameters(Arrays.asList(documentation.queryParameters()).stream().map(q -> new HandlerDocumentation.QueryParameter(q)).collect(Collectors.toList()));
+				hDocumentation.status(Arrays.asList(documentation.responseStatus()).stream()
+						.map(s -> new HandlerDocumentation.ResponseStatus(s)).collect(Collectors.toList()));
+				hDocumentation.queryParameters(Arrays.asList(documentation.queryParameters()).stream()
+						.map(q -> new HandlerDocumentation.QueryParameter(q)).collect(Collectors.toList()));
 				hDocumentation.requestSchema(documentation.requestClass());
 				hDocumentation.responseSchema(documentation.responseClass());
 			}
 			
 			// Authentication block
-			Optional<AuthHandler> oAuthHandler = createAuthHandler(authProvider, authHandlerClass);
-			if (oAuthHandler.isPresent() && !method.isAnnotationPresent(IgnoreAuth.class)) {
+			AuthHandler authHandler = null;
+			
+			if(hasAuth(clazz, method) && !method.isAnnotationPresent(IgnoreAuth.class)){
 				
-				if (method.isAnnotationPresent(Auth.class)) {
-					
-					Auth auth = method.getAnnotation(Auth.class);
-					oAuthHandler.get().addAuthorities(Arrays.asList(auth.value()).stream().filter(a -> StringUtils.isNotEmpty(a)).collect(Collectors.toSet()));
-					
-				} else if (clazz.isAnnotationPresent(Auth.class)) {
-						
-					Auth authClass = clazz.getAnnotation(Auth.class);
-					oAuthHandler.get().addAuthorities(Arrays.asList(authClass.value()).stream().filter(a -> StringUtils.isNotEmpty(a)).collect(Collectors.toSet()));
+				Optional<AuthHandler> oAuthHandler = createAuthHandler(authProvider, authHandlerClass);
+				
+				if (oAuthHandler.isPresent()) {
+
+					if (method.isAnnotationPresent(Auth.class)) {
+
+						Auth auth = method.getAnnotation(Auth.class);
+						oAuthHandler.get().addAuthorities(
+								Arrays.asList(auth.value()).stream().filter(a -> StringUtils.isNotEmpty(a)).collect(Collectors.toSet()
+						));
+					} else if (clazz.isAnnotationPresent(Auth.class)) {
+
+						Auth authClass = clazz.getAnnotation(Auth.class);
+						oAuthHandler.get().addAuthorities(
+								Arrays.asList(authClass.value()).stream().filter(a -> StringUtils.isNotEmpty(a)).collect(Collectors.toSet()
+						));
+					}
 				}
+				
+				authHandler = oAuthHandler.orElse(null);
 			}
 
 			HandlerData defaultHandlerData = new HandlerData()
@@ -122,7 +135,7 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 					.consumes(consumes)
 					.produces(produces)
 					.bodyEndHandler(bodyEndHandler)
-					.authHandler(oAuthHandler.orElse(null))
+					.authHandler(authHandler)
 					.routeHandlerClass(routeHandlerClass)
 					.documentation(hDocumentation);
 
@@ -171,13 +184,12 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 		return collectedHandlers;
 	}
 
-	@SneakyThrows
-	private Optional<AuthHandler> createAuthHandler(AuthProvider authProvider, Class<? extends AuthHandler> authHandlerClass) {
-		
-		if(authProvider == null || authHandlerClass == null) return Optional.empty();
-		
-		AuthHandler authHandler = (AuthHandler) authHandlerClass.getDeclaredMethod("create", AuthProvider.class).invoke(authProvider, authProvider);
-		return Optional.of(authHandler);
+	protected boolean hasAuth(Class<?> clazz, Method method) {
+		return (clazz.isAnnotationPresent(Auth.class) || method.isAnnotationPresent(Auth.class)) && !method.isAnnotationPresent(IgnoreAuth.class);
+	}
+
+	protected boolean isHandlerAnnotation(Annotation handlerType, Class<?> element) {
+		return handlerType.annotationType().equals(element);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -240,6 +252,18 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 		}).collect(Collectors.toList());
 	}
 
+	@SneakyThrows
+	private Optional<AuthHandler> createAuthHandler(AuthProvider authProvider, Class<? extends AuthHandler> authHandlerClass) {
+
+		if (authProvider == null || authHandlerClass == null) {
+			return Optional.empty();
+		}
+
+		AuthHandler authHandler = (AuthHandler) authHandlerClass.getDeclaredMethod("create", AuthProvider.class).invoke(authProvider,
+				authProvider);
+		return Optional.of(authHandler);
+	}
+
 	@SuppressWarnings("unchecked")
 	private List<Annotation> getHandlersPresents(Method method) {
 
@@ -270,9 +294,5 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 
 		return getHandlersPresents(method).stream()
 				.filter(handlerAnnotation -> method.isAnnotationPresent(handlerAnnotation.annotationType())).count() >= 1;
-	}
-
-	protected boolean isHandlerAnnotation(Annotation handlerType, Class<?> element) {
-		return handlerType.annotationType().equals(element);
 	}
 }

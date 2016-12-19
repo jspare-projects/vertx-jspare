@@ -25,9 +25,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum HandlerType {
 
-	HANDLER(Handler.class), 
-	BLOCKING_HANDLER(BlockingHandler.class), 
-	FAILURE_HANDLER(FailureHandler.class);
+	HANDLER(Handler.class), BLOCKING_HANDLER(BlockingHandler.class), FAILURE_HANDLER(FailureHandler.class);
 
 	@Getter
 	private Class<?> handlerClass;

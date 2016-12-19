@@ -36,6 +36,33 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public class HandlerDocumentation {
 
+	@Data
+	public static class QueryParameter {
+
+		private String key;
+
+		private String description;
+
+		public QueryParameter(org.jspare.vertx.web.annotation.documentation.QueryParameter aQueryParameter) {
+			key = aQueryParameter.key();
+			description = aQueryParameter.description();
+		}
+	}
+
+	@Data
+	@AllArgsConstructor
+	public static class ResponseStatus {
+
+		private int code;
+
+		private String description;
+
+		public ResponseStatus(Status status) {
+			code = status.code();
+			description = status.description();
+		}
+	}
+
 	/** The description. */
 	private String description;
 
@@ -58,7 +85,7 @@ public class HandlerDocumentation {
 	 *            the clazz
 	 */
 	public void requestSchema(Class<?> clazz) {
-		this.requestSchema = buildSchema(clazz);
+		requestSchema = buildSchema(clazz);
 	}
 
 	/**
@@ -68,7 +95,16 @@ public class HandlerDocumentation {
 	 *            the clazz
 	 */
 	public void responseSchema(Class<?> clazz) {
-		this.responseSchema = buildSchema(clazz);
+		responseSchema = buildSchema(clazz);
+	}
+
+	protected void extractFields(Class<?> clazz, Map<String, String> schema) {
+		for (Field f : clazz.getDeclaredFields()) {
+			if (!Modifier.isTransient(f.getModifiers())) {
+
+				schema.put(f.getName(), f.getType().getSimpleName());
+			}
+		}
 	}
 
 	/**
@@ -86,39 +122,5 @@ public class HandlerDocumentation {
 			extractFields(clazz.getSuperclass(), schema);
 		}
 		return schema;
-	}
-
-	protected void extractFields(Class<?> clazz, Map<String, String> schema) {
-		for (Field f : clazz.getDeclaredFields()) {
-			if (!Modifier.isTransient(f.getModifiers())) {
-
-				schema.put(f.getName(), f.getType().getSimpleName());
-			}
-		}
-	}
-
-	@Data
-	public static class QueryParameter {
-
-		public QueryParameter(org.jspare.vertx.web.annotation.documentation.QueryParameter aQueryParameter) {
-			this.key = aQueryParameter.key();
-			this.description = aQueryParameter.description();
-		}
-
-		private String key;
-		private String description;
-	}
-
-	@Data
-	@AllArgsConstructor
-	public static class ResponseStatus {
-
-		public ResponseStatus(Status status) {
-			this.code = status.code();
-			this.description = status.description();
-		}
-
-		private int code;
-		private String description;
 	}
 }

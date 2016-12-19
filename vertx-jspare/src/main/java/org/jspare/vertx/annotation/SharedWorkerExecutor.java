@@ -26,9 +26,9 @@ import org.apache.commons.lang.StringUtils;
 @Target({ ElementType.FIELD })
 public @interface SharedWorkerExecutor {
 
-	String name() default StringUtils.EMPTY;
-	
-	int poolSize() default 20;
-	
 	long maxExecuteTime() default 60000l;
+
+	String name() default StringUtils.EMPTY;
+
+	int poolSize() default 20;
 }

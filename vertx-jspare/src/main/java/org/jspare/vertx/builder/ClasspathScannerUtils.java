@@ -1,33 +1,34 @@
+/*
+ * Copyright 2016 JSpare.org.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package org.jspare.vertx.builder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 
 public class ClasspathScannerUtils {
-	
+
 	/** The Constant ALL_SCAN_QUOTE. */
 	public static String ALL_SCAN_QUOTE = ".*";
 
+	public static String resolvePackageName(String cPackage) {
 
-	/**
-	 * Scan and execute.
-	 *
-	 * @param cPackage
-	 *            the package convetion
-	 * @param perform
-	 *            the perform
-	 */
-	public static List<String> listClassesByPackage(String cPackage) {
-		String packageForScan = cPackage;
-		if (packageForScan.endsWith(".*")) {
-			packageForScan = packageForScan.substring(0, packageForScan.length() - 2);
-		}
-
-		List<String> matchingClasses = new ArrayList<>();
-		new FastClasspathScanner(packageForScan).scan().getNamesOfAllClasses().forEach(matchingClasses::add);
-		return matchingClasses;
+		return cPackage.endsWith(ALL_SCAN_QUOTE) ? cPackage.substring(0, cPackage.length() - 2) : cPackage;
 	}
 
+	public static FastClasspathScanner scanner(String scanSpec) {
+
+		return new FastClasspathScanner(ClasspathScannerUtils.resolvePackageName(scanSpec));
+	}
 }

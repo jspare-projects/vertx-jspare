@@ -1,3 +1,18 @@
+/*
+ * Copyright 2016 JSpare.org.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package org.jspare.vertx.injector;
 
 import static org.jspare.core.container.Environment.my;
@@ -27,7 +42,7 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 
 	private static final String DEFAULT_WORKER_EXECUTOR_NAME = "defaultWorkerExecutor";
 
-	private String VERTX_PATTERN = "vertx:%s";
+	private static final String VERTX_PATTERN = "vertx:%s";
 
 	@Inject
 	private Context context;
@@ -46,19 +61,19 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 
 				vertx = oVertx.get();
 			} else {
-				
+
 				VertxOptions options = null;
-				if(StringUtils.isNotEmpty(inject.vertxOptions())){
-					
+				if (StringUtils.isNotEmpty(inject.vertxOptions())) {
+
 					options = my(JsonObjectLoader.class).loadOptions(inject.vertxOptions(), VertxOptions.class);
-				}else{
-					
+				} else {
+
 					options = new VertxOptions();
 				}
-				
+
 				vertx = Vertx.vertx(options);
 			}
-			
+
 			setField(result, field, vertx);
 
 		} catch (IllegalArgumentException | IllegalAccessException e) {
@@ -67,40 +82,36 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 		}
 	}
 
-	protected void setField(Object result,  Field field, Vertx vertx) throws IllegalArgumentException, IllegalAccessException {
+	protected void setField(Object result, Field field, Vertx vertx) throws IllegalArgumentException, IllegalAccessException {
 
 		field.setAccessible(true);
 
-		if(result instanceof Vertx){
-			
+		if (Vertx.class.equals(field.getType())) {
+
 			field.set(result, vertx);
-		}
-		else if(result instanceof EventBus){
-			
+		} else if (EventBus.class.equals(field.getType())) {
+
 			field.set(result, vertx.eventBus());
-		}
-		else if(result instanceof WorkerExecutor){
-			
-			if(field.isAnnotationPresent(SharedWorkerExecutor.class)){
-				
+		} else if (WorkerExecutor.class.equals(field.getType())) {
+
+			if (field.isAnnotationPresent(SharedWorkerExecutor.class)) {
+
 				SharedWorkerExecutor annWe = field.getAnnotation(SharedWorkerExecutor.class);
 				field.set(result, vertx.createSharedWorkerExecutor(annWe.name(), annWe.poolSize(), annWe.maxExecuteTime()));
-			}else{
-				
+			} else {
+
 				field.set(result, vertx.createSharedWorkerExecutor(DEFAULT_WORKER_EXECUTOR_NAME));
 			}
-		}
-		else if(result instanceof FileSystem){
+		}  else if (FileSystem.class.equals(field.getType())) {
 
 			field.set(result, vertx.fileSystem());
-		}
-		else if(result instanceof SharedData){
-			
+		}  else if (SharedData.class.equals(field.getType())) {
+
 			field.set(result, vertx.sharedData());
 		}
 	}
 
-	private String formatInstanceKey(String instanceRef) {
+	public static String formatInstanceKey(String instanceRef) {
 
 		return String.format(VERTX_PATTERN, instanceRef);
 	}

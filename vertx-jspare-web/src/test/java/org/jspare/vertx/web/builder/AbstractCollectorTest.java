@@ -30,7 +30,7 @@ public class AbstractCollectorTest {
 	protected RouterBuilder builder = RouterBuilder.create(Vertx.vertx());
 
 	protected List<HandlerData> collect(Class<?> clazz) {
-		
+
 		List<HandlerData> handlers = new ArrayList<>(my(RouteCollector.class).collect(clazz, DefaultHandler.class, null, null));
 		Collections.sort(handlers, (o1, o2) -> o1.patch().compareTo(o2.patch()));
 		return handlers;

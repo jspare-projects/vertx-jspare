@@ -56,7 +56,7 @@ public class DefaultHandler implements Handler<RoutingContext> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see io.vertx.core.Handler#handle(java.lang.Object)
 	 */
 	@Override
@@ -86,44 +86,6 @@ public class DefaultHandler implements Handler<RoutingContext> {
 	}
 
 	/**
-	 * Collect parameters. This method is responsible to collect all parameters
-	 * to send on handler method, resolving parameters and dependencies.
-	 * 
-	 * @param routingContext
-	 *            the routing context
-	 * @return the object[]
-	 */
-	protected Object[] collectParameters(RoutingContext routingContext) {
-		// Prepare parameters to call method of route
-		Object[] parameters = new Object[handlerData.method().getParameterCount()];
-		int i = 0;
-		for (Parameter parameter : handlerData.method().getParameters()) {
-
-			parameters[i] = resolveParameter(parameter, routingContext);
-			i++;
-		}
-		return parameters;
-	}
-
-	protected void setHandlingParameters(RoutingContext routingContext, Object newInstance) {
-		// If Route is handling by abstract Handling inject some resources
-		if (newInstance instanceof Handling) {
-
-			((Handling) newInstance).setReq(routingContext.request());
-			((Handling) newInstance).setRes(routingContext.response());
-			((Handling) newInstance).setCtx(routingContext);
-		}
-	}
-
-	@SneakyThrows
-	protected Object instantiateHandler() {
-		// Inject Request and Response if is Available
-		Object newInstance = handlerData.clazz().newInstance();
-		ContainerUtils.processInjection(handlerData.clazz(), newInstance);
-		return newInstance;
-	}
-
-	/**
 	 * Catch invoke.
 	 *
 	 * @param routingContext
@@ -140,6 +102,34 @@ public class DefaultHandler implements Handler<RoutingContext> {
 		log.info("Error: {}", handlerData.toStringLine());
 		log.error(t.getMessage(), t);
 		routingContext.response().setStatusCode(500).end(t.toString());
+	}
+
+	/**
+	 * Collect parameters. This method is responsible to collect all parameters
+	 * to send on handler method, resolving parameters and dependencies.
+	 *
+	 * @param routingContext
+	 *            the routing context
+	 * @return the object[]
+	 */
+	protected Object[] collectParameters(RoutingContext routingContext) {
+		// Prepare parameters to call method of route
+		Object[] parameters = new Object[handlerData.method().getParameterCount()];
+		int i = 0;
+		for (Parameter parameter : handlerData.method().getParameters()) {
+
+			parameters[i] = resolveParameter(parameter, routingContext);
+			i++;
+		}
+		return parameters;
+	}
+
+	@SneakyThrows
+	protected Object instantiateHandler() {
+		// Inject Request and Response if is Available
+		Object newInstance = handlerData.clazz().newInstance();
+		ContainerUtils.processInjection(handlerData.clazz(), newInstance);
+		return newInstance;
 	}
 
 	/**
@@ -193,7 +183,7 @@ public class DefaultHandler implements Handler<RoutingContext> {
 
 					return null;
 				}
-				
+
 				return Json.decodeValue(routingContext.getBody().toString(), parameter.getType());
 			} catch (SerializationException e) {
 
@@ -236,5 +226,15 @@ public class DefaultHandler implements Handler<RoutingContext> {
 	 */
 	protected void sendStatus(RoutingContext routingContext, HttpResponseStatus status) {
 		routingContext.response().setStatusCode(status.code()).setStatusMessage(status.reasonPhrase()).end(status.reasonPhrase());
+	}
+
+	protected void setHandlingParameters(RoutingContext routingContext, Object newInstance) {
+		// If Route is handling by abstract Handling inject some resources
+		if (newInstance instanceof Handling) {
+
+			((Handling) newInstance).setReq(routingContext.request());
+			((Handling) newInstance).setRes(routingContext.response());
+			((Handling) newInstance).setCtx(routingContext);
+		}
 	}
 }

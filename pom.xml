@@ -54,7 +54,7 @@
 		<lombok.version>1.16.8</lombok.version>
 		<logback.version>1.1.6</logback.version>
 		<junit.version>4.12</junit.version>
-		<jspare.core.version>2.0.0</jspare.core.version>
+		<jspare.core.version>2.0.1-SNAPSHOT</jspare.core.version>
 		<maven.javadoc.version>2.10.4</maven.javadoc.version>
 		<vertx.version>3.3.3</vertx.version>
 	</properties>

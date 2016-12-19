@@ -1,8 +1,17 @@
-/**
- * Copyright 2016 Senior Sistemas.
+/*
+ * Copyright 2016 JSpare.org.
  *
- * Software sob Medida
- * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.jspare.vertx.builder;
 
@@ -10,11 +19,18 @@ import static org.jspare.core.container.Environment.my;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
+import org.jspare.core.container.Context;
+import org.jspare.vertx.annotation.VertxInject;
+import org.jspare.vertx.injector.VertxInjectStrategy;
+
+import io.github.lukehutch.fastclasspathscanner.matchprocessor.ClassAnnotationMatchProcessor;
+import io.github.lukehutch.fastclasspathscanner.matchprocessor.MethodAnnotationMatchProcessor;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
 import io.vertx.core.Verticle;
@@ -25,16 +41,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Accessors(fluent = true)
 @EqualsAndHashCode(callSuper = false)
 public class VertxBuilder extends AbstractBuilder<Vertx> {
 
-	private static final String DEFAULT_EVENTBUS_PACKAGE_2_SCAN = ".eventbus";
-
-	private static final String DEFAULT_VERTICLE_PACKAGE_2_SCAN = ".verticle";
+	private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
 
 	public static VertxBuilder create() {
 
@@ -45,10 +57,10 @@ public class VertxBuilder extends AbstractBuilder<Vertx> {
 
 		return new VertxBuilder().options(vertxOptions);
 	}
-
+	
 	@Getter
 	@Setter
-	private Object source;
+	private String name;
 
 	@Getter
 	@Setter
@@ -60,27 +72,15 @@ public class VertxBuilder extends AbstractBuilder<Vertx> {
 
 	@Getter
 	@Setter
-	private boolean scanDefaultVerticles;
+	private boolean scanClasspath;
 
 	@Getter
 	@Setter
-	private boolean scanDefaultConsumers;
+	private Set<Class<?>> verticlesClasses;
 
 	@Getter
 	@Setter
-	private String defaultPackageToScanVerticles;
-
-	@Getter
-	@Setter
-	private String defaultPackageToScanConsumers;
-
-	@Getter
-	@Setter
-	private List<Class<?>> verticlesClasses;
-
-	@Getter
-	@Setter
-	private List<String> verticlesPackages;
+	private Set<String> verticlesPackages;
 
 	private Map<String, DeploymentOptions> sVerticle2deploy;
 
@@ -96,12 +96,10 @@ public class VertxBuilder extends AbstractBuilder<Vertx> {
 
 	private VertxBuilder() {
 
-		scanDefaultVerticles = true;
-		scanDefaultConsumers = true;
-		defaultPackageToScanVerticles = DEFAULT_VERTICLE_PACKAGE_2_SCAN;
-		defaultPackageToScanConsumers = DEFAULT_EVENTBUS_PACKAGE_2_SCAN;
-		verticlesClasses = new ArrayList<>();
-		verticlesPackages = new ArrayList<>();
+		name = VertxInject.DEFAULT;
+		scanClasspath = true;
+		verticlesClasses = new HashSet<>();
+		verticlesPackages = new HashSet<>();
 		eventBusClasses = new ArrayList<>();
 		eventBusPackages = new ArrayList<>();
 		sVerticle2deploy = new HashMap<>();
@@ -115,7 +113,7 @@ public class VertxBuilder extends AbstractBuilder<Vertx> {
 
 		// Load vertx instance
 		Consumer<Vertx> runner = vertx -> {
-			
+
 			// Registry vertx
 			this.vertx = vertx;
 
@@ -135,8 +133,24 @@ public class VertxBuilder extends AbstractBuilder<Vertx> {
 
 			createVertx(runner);
 		}
+		
+		vertx = future.result();
 
-		return future.result();
+		my(Context.class).put(VertxInjectStrategy.formatInstanceKey(name), vertx);
+		
+		return vertx;
+	}
+
+	public VertxBuilder deployVerticle(String deploymentId, DeploymentOptions deploymentOptions) {
+
+		sVerticle2deploy.put(deploymentId, deploymentOptions);
+		return this;
+	}
+
+	public VertxBuilder deployVerticle(Verticle verticle, DeploymentOptions deploymentOptions) {
+
+		iVerticle2deploy.put(verticle, deploymentOptions);
+		return this;
 	}
 
 	protected void createVertx(Consumer<Vertx> runner) {
@@ -162,42 +176,59 @@ public class VertxBuilder extends AbstractBuilder<Vertx> {
 		}
 	}
 
-	public VertxBuilder deployVerticle(String deploymentId, DeploymentOptions deploymentOptions) {
+	/**
+	 * Collect and registry event bus controllers on {@link Vertx} instance.
+	 *
+	 * @param vertx
+	 *            the vertx
+	 */
+	private void collectAndRegistryEventBusControllers() {
 
-		sVerticle2deploy.put(deploymentId, deploymentOptions);
-		return this;
-	}
+		if (scanClasspath) {
+			eventBusPackages.clear();
+			eventBusPackages.add(".*");
+		}
 
-	public VertxBuilder deployVerticle(Verticle verticle, DeploymentOptions deploymentOptions) {
+		// Iterate eventBusPackages scannig and adding classes to
+		// eventBusClasses
+		
+		MethodAnnotationMatchProcessor processor = (c, m) -> eventBusClasses.add(c);
+		
+		eventBusPackages.forEach(scanSpec -> {
+			
+			ClasspathScannerUtils.scanner(scanSpec)
+					.matchClassesWithMethodAnnotation(org.jspare.vertx.annotation.Consumer.class, processor)
+					.scan(NUMBER_CLASSPATH_SCANNER_THREADS);
+		});
 
-		iVerticle2deploy.put(verticle, deploymentOptions);
-		return this;
+		List<MessageData> consumers = new ArrayList<>();
+
+		// Iterate eventBusClasses and add consumers to will process
+		eventBusClasses.forEach(c -> consumers.addAll(my(EventBusCollector.class).collect(c)));
+
+		// Process consumers
+		EventBus eventBus = vertx.eventBus();
+		consumers.forEach(md -> eventBus.consumer(md.name(), md.wrap()));
 	}
 
 	private void collectAndRegistryVerticles() {
 
 		// Check if default package are available to scan and add to
 		// eventBusPackages
-		if (scanDefaultVerticles && source != null) {
-
-			String cPackage = source.getClass().getPackage().getName().concat(defaultPackageToScanVerticles)
-					.concat(ClasspathScannerUtils.ALL_SCAN_QUOTE);
-
-			verticlesPackages.add(cPackage);
+		if (scanClasspath) {
+			verticlesPackages.clear();
+			verticlesPackages.add(".*");
 		}
+		
+		ClassAnnotationMatchProcessor processor = (c) -> verticlesClasses.add(c);
 
 		// Iterate eventBusPackages scannig and adding classes to
 		// eventBusClasses
-		verticlesPackages.forEach(p -> {
+		verticlesPackages.forEach(scanSpec -> {
 
-			verticlesClasses.addAll(ClasspathScannerUtils.listClassesByPackage(p).stream().map(t -> {
-				try {
-					return Class.forName(t);
-				} catch (ClassNotFoundException e) {
-					log.error("Class [%s] not founded on classpath.", e);
-				}
-				return null;
-			}).collect(Collectors.toList()));
+			ClasspathScannerUtils.scanner(scanSpec)
+				.matchClassesWithAnnotation(org.jspare.vertx.annotation.Verticle.class, processor)
+				.scan(NUMBER_CLASSPATH_SCANNER_THREADS);
 		});
 
 		List<VerticleData> verticles = new ArrayList<>();
@@ -213,47 +244,5 @@ public class VertxBuilder extends AbstractBuilder<Vertx> {
 		sVerticle2deploy.forEach((k, v) -> vertx.deployVerticle(k, v));
 
 		iVerticle2deploy.forEach((k, v) -> vertx.deployVerticle(k, v));
-	}
-
-	/**
-	 * Collect and registry event bus controllers on {@link Vertx} instance.
-	 *
-	 * @param vertx
-	 *            the vertx
-	 */
-	private void collectAndRegistryEventBusControllers() {
-
-		// Check if default package are available to scan and add to
-		// eventBusPackages
-		if (scanDefaultConsumers && source != null) {
-
-			String cPackage = source.getClass().getPackage().getName().concat(defaultPackageToScanConsumers)
-					.concat(ClasspathScannerUtils.ALL_SCAN_QUOTE);
-
-			eventBusPackages.add(cPackage);
-		}
-
-		// Iterate eventBusPackages scannig and adding classes to
-		// eventBusClasses
-		eventBusPackages.forEach(p -> {
-
-			eventBusClasses.addAll(ClasspathScannerUtils.listClassesByPackage(p).stream().map(t -> {
-				try {
-					return Class.forName(t);
-				} catch (ClassNotFoundException e) {
-					log.error("Class [%s] not founded on classpath.", e);
-				}
-				return null;
-			}).collect(Collectors.toList()));
-		});
-
-		List<MessageData> consumers = new ArrayList<>();
-
-		// Iterate eventBusClasses and add consumers to will process
-		eventBusClasses.forEach(c -> consumers.addAll(my(EventBusCollector.class).collect(c)));
-
-		// Process consumers
-		EventBus eventBus = vertx.eventBus();
-		consumers.forEach(md -> eventBus.consumer(md.name(), md.wrap()));
 	}
 }

@@ -32,5 +32,5 @@ public @interface Handler {
 	 *
 	 * @return the int
 	 */
-	int order() default 0;
+	int order() default Integer.MIN_VALUE;
 }

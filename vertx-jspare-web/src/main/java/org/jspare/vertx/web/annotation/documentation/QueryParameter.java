@@ -28,16 +28,16 @@ import java.lang.annotation.Target;
 public @interface QueryParameter {
 
 	/**
-	 * Key.
-	 *
-	 * @return the string
-	 */
-	String key();
-
-	/**
 	 * Description.
 	 *
 	 * @return the string
 	 */
 	String description();
+
+	/**
+	 * Key.
+	 *
+	 * @return the string
+	 */
+	String key();
 }

@@ -446,15 +446,6 @@ public abstract class Handling {
 		end();
 	}
 
-	protected boolean isValidJson(String content) {
-		try {
-			Json.decodeValue(content, Object.class);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
 	/**
 	 * Unauthorized.
 	 */
@@ -511,5 +502,14 @@ public abstract class Handling {
 	protected String body() {
 
 		return ctx.getBodyAsString();
+	}
+
+	protected boolean isValidJson(String content) {
+		try {
+			Json.decodeValue(content, Object.class);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }

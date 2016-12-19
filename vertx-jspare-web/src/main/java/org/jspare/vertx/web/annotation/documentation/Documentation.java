@@ -36,8 +36,22 @@ public @interface Documentation {
 	 * @return the string
 	 */
 	String description() default StringUtils.EMPTY;
-	
+
 	QueryParameter[] queryParameters() default {};
+
+	/**
+	 * Request class.
+	 *
+	 * @return the class
+	 */
+	Class<?> requestClass() default Object.class;
+
+	/**
+	 * Response class.
+	 *
+	 * @return the class
+	 */
+	Class<?> responseClass() default Object.class;
 
 	/**
 	 * Response status.
@@ -45,18 +59,4 @@ public @interface Documentation {
 	 * @return the status[]
 	 */
 	Status[] responseStatus() default { @Status(code = 200, description = "Success") };
-	
-	/**
-	 * Request class.
-	 *
-	 * @return the class
-	 */
-	Class<?> requestClass() default Object.class;
-	
-	/**
-	 * Response class.
-	 *
-	 * @return the class
-	 */
-	Class<?> responseClass() default Object.class;
 }

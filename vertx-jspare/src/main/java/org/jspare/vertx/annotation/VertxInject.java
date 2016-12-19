@@ -22,14 +22,13 @@ import java.lang.annotation.Target;
 
 import org.apache.commons.lang.StringUtils;
 
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 public @interface VertxInject {
-	
+
 	String DEFAULT = "main";
-	
-	String vertxOptions() default StringUtils.EMPTY;
-	
+
 	String value() default DEFAULT;
+
+	String vertxOptions() default StringUtils.EMPTY;
 }
