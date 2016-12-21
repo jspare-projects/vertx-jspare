@@ -15,22 +15,10 @@
  */
 package org.jspare.vertx.web.builder;
 
-import static org.jspare.core.container.Environment.my;
+import io.vertx.ext.web.Route;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+@FunctionalInterface
+public interface RouteBuilder {
 
-import io.vertx.core.Vertx;
-
-public class AbstractCollectorTest {
-
-	protected RouterBuilder builder = RouterBuilder.create(Vertx.vertx());
-
-	protected List<HandlerData> collect(Class<?> clazz) {
-
-		List<HandlerData> handlers = new ArrayList<>(my(RouteCollector.class).collect(clazz, RouterBuilder.create(Vertx.vertx())));
-		Collections.sort(handlers, (o1, o2) -> o1.path().compareTo(o2.path()));
-		return handlers;
-	}
+	void create(Route route);
 }

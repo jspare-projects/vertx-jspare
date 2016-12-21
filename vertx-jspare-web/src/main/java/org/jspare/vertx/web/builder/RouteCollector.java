@@ -36,6 +36,7 @@ import org.jspare.vertx.web.annotation.content.Produces;
 import org.jspare.vertx.web.annotation.documentation.Documentation;
 import org.jspare.vertx.web.annotation.handler.BlockingHandler;
 import org.jspare.vertx.web.annotation.handler.FailureHandler;
+import org.jspare.vertx.web.annotation.handler.SockJsHandler;
 import org.jspare.vertx.web.annotation.method.All;
 import org.jspare.vertx.web.annotation.subrouter.IgnoreSubRouter;
 import org.jspare.vertx.web.annotation.subrouter.SubRouter;
@@ -45,6 +46,8 @@ import io.vertx.core.Handler;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.AuthHandler;
+import io.vertx.ext.web.handler.sockjs.SockJSHandler;
+import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,20 +56,22 @@ import lombok.extern.slf4j.Slf4j;
 public class RouteCollector implements Collector<Collection<HandlerData>> {
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Collection<HandlerData> collect(Class<?> clazz, Object... args) {
 
-		if (args.length < 3) {
+		if (args.length < 1) {
 
 			throw new IllegalArgumentException(
 					String.format("Cannot collect route class [%s] without routeHandlerClass or authHandler", clazz.getName()));
 		}
 
+		final RouterBuilder builder = (RouterBuilder) args[0];
+
 		// Retrieve required parameters to collect handlers
 
-		Class<? extends Handler<RoutingContext>> routeHandlerClass = (Class<? extends Handler<RoutingContext>>) args[0];
-		AuthProvider authProvider = (AuthProvider) args[1];
-		Class<? extends AuthHandler> authHandlerClass = (Class<AuthHandler>) args[2];
+		final Class<? extends Handler<RoutingContext>> routeHandlerClass = builder.handlerClass();
+		final AuthProvider authProvider = builder.authProvider();
+		final Class<? extends AuthHandler> authHandlerClass = builder.authHandlerClass();
+		final SockJSHandlerOptions sockJSHandlerOptions = builder.sockJSHandlerOptions();
 
 		// Initialize collected handlers
 
@@ -101,42 +106,34 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 				hDocumentation.requestSchema(documentation.requestClass());
 				hDocumentation.responseSchema(documentation.responseClass());
 			}
-			
+
 			// Authentication block
 			AuthHandler authHandler = null;
-			
-			if(hasAuth(clazz, method) && !method.isAnnotationPresent(IgnoreAuth.class)){
-				
+
+			if (hasAuth(clazz, method) && !method.isAnnotationPresent(IgnoreAuth.class)) {
+
 				Optional<AuthHandler> oAuthHandler = createAuthHandler(authProvider, authHandlerClass);
-				
+
 				if (oAuthHandler.isPresent()) {
 
 					if (method.isAnnotationPresent(Auth.class)) {
 
 						Auth auth = method.getAnnotation(Auth.class);
 						oAuthHandler.get().addAuthorities(
-								Arrays.asList(auth.value()).stream().filter(a -> StringUtils.isNotEmpty(a)).collect(Collectors.toSet()
-						));
+								Arrays.asList(auth.value()).stream().filter(a -> StringUtils.isNotEmpty(a)).collect(Collectors.toSet()));
 					} else if (clazz.isAnnotationPresent(Auth.class)) {
 
 						Auth authClass = clazz.getAnnotation(Auth.class);
-						oAuthHandler.get().addAuthorities(
-								Arrays.asList(authClass.value()).stream().filter(a -> StringUtils.isNotEmpty(a)).collect(Collectors.toSet()
-						));
+						oAuthHandler.get().addAuthorities(Arrays.asList(authClass.value()).stream().filter(a -> StringUtils.isNotEmpty(a))
+								.collect(Collectors.toSet()));
 					}
 				}
-				
+
 				authHandler = oAuthHandler.orElse(null);
 			}
 
-			HandlerData defaultHandlerData = new HandlerData()
-					.clazz(clazz)
-					.method(method)
-					.consumes(consumes)
-					.produces(produces)
-					.bodyEndHandler(bodyEndHandler)
-					.authHandler(authHandler)
-					.routeHandlerClass(routeHandlerClass)
+			HandlerData defaultHandlerData = new HandlerData().clazz(clazz).method(method).consumes(consumes).produces(produces)
+					.bodyEndHandler(bodyEndHandler).authHandler(authHandler).routeHandlerClass(routeHandlerClass)
 					.documentation(hDocumentation);
 
 			if (hasHttpMethodsPresents(method)) {
@@ -145,18 +142,26 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 				handlerHttpMethodsAnnotations.addAll(getHttpMethodsPresents(method));
 			}
 
+			// Iterate all handlers catched on class
 			getHandlersPresents(method).forEach(handlerType -> {
 
 				try {
 
-					// Extract order from Handler, all Hanlder having order()
-					// method
-					int order = annotationMethod(handlerType, "order");
-
 					HandlerData handlerData = (HandlerData) defaultHandlerData.clone();
-					handlerData.order(order);
 
-					if (isHandlerAnnotation(handlerType, org.jspare.vertx.web.annotation.handler.Handler.class)) {
+					// Set handler type on HandlerData
+					if (isHandlerAnnotation(handlerType, SockJsHandler.class)) {
+
+						// If SockJs type set other attributes and add to
+						// collection
+						handlerData.handlerType(HandlerType.SOCKETJS_HANDLER);
+						handlerData.sockJSHandler(SockJSHandler.create(builder.vertx(),
+								sockJSHandlerOptions != null ? sockJSHandlerOptions : new SockJSHandlerOptions()));
+						handlerData.path(method.getAnnotation(SockJsHandler.class).value());
+						collectedHandlers.add(handlerData);
+						return;
+
+					} else if (isHandlerAnnotation(handlerType, org.jspare.vertx.web.annotation.handler.Handler.class)) {
 
 						handlerData.handlerType(HandlerType.HANDLER);
 					} else if (isHandlerAnnotation(handlerType, FailureHandler.class)) {
@@ -167,6 +172,12 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 						handlerData.handlerType(HandlerType.BLOCKING_HANDLER);
 					}
 
+					// Extract order from Handler, all Hanlder having order()
+					int order = annotationMethod(handlerType, "order");
+
+					handlerData.order(order);
+
+					// Iterate methods of handler and registry on collection
 					if (handlerHttpMethodsAnnotations.isEmpty()) {
 
 						collectedHandlers.add(handlerData);
@@ -174,10 +185,9 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 
 						collectedHandlers.addAll(collectByMethods(handlerData, handlerHttpMethodsAnnotations));
 					}
-
 				} catch (Exception e) {
 
-					log.warn("Ignoring handler class {} method {} - {}", clazz.getName(), method.getName(), e.getMessage());
+					log.warn("Ignoring handler class {} method {} - {}", clazz.getName(), method.getName(), e.getCause().toString());
 				}
 			});
 		}
@@ -185,7 +195,8 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 	}
 
 	protected boolean hasAuth(Class<?> clazz, Method method) {
-		return (clazz.isAnnotationPresent(Auth.class) || method.isAnnotationPresent(Auth.class)) && !method.isAnnotationPresent(IgnoreAuth.class);
+		return (clazz.isAnnotationPresent(Auth.class) || method.isAnnotationPresent(Auth.class))
+				&& !method.isAnnotationPresent(IgnoreAuth.class);
 	}
 
 	protected boolean isHandlerAnnotation(Annotation handlerType, Class<?> element) {
@@ -233,7 +244,7 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 
 					prefix = handlerData.clazz().getAnnotation(SubRouter.class).value();
 				}
-				handlerData.patch(String.format("%s%s", prefix, path));
+				handlerData.path(String.format("%s%s", prefix, path));
 				handlerData.pathRegex(isRegexPath);
 
 				// For All, ignore set httpMethod

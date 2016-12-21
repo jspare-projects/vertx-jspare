@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.jspare.vertx.builder.AbstractBuilder;
 import org.jspare.vertx.builder.ClasspathScannerUtils;
@@ -33,6 +34,7 @@ import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.AuthHandler;
+import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,13 +48,17 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 
 	private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
 
-	private static final String DEFAULT_ROUTE_PACKAGE_2_SCAN = ".route";
-
 	public static RouterBuilder create(Vertx vertx) {
 
-		return new RouterBuilder(vertx);
+		return new RouterBuilder(vertx, Router.router(vertx));
 	}
 
+	public static RouterBuilder create(Vertx vertx, Router router) {
+
+		return new RouterBuilder(vertx, router);
+	}
+
+	@Getter
 	private final Vertx vertx;
 
 	@Getter
@@ -61,15 +67,24 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 
 	@Getter
 	@Setter
-	private Set<Handler<RoutingContext>> handlers;
-
-	@Getter
-	@Setter
 	private boolean scanClasspath;
 
 	@Getter
 	@Setter
+	private Set<Handler<RoutingContext>> handlers;
+
+	@Getter
+	@Setter
 	private Class<? extends Handler<RoutingContext>> handlerClass;
+
+	/**
+	 * The sock JS handler options. </br>
+	 * Used for all SockJsHandlers mapped by this RouterBuilder
+	 * 
+	 */
+	@Getter
+	@Setter
+	private SockJSHandlerOptions sockJSHandlerOptions;
 
 	@Getter
 	@Setter
@@ -82,24 +97,26 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 	@Getter
 	@Setter
 	private Set<Class<?>> routes;
-
+	
 	@Getter
 	@Setter
-	private String defaultPackageToScanRoutes;
+	private Set<Class<?>> skipRoutes;
 
 	@Getter
 	@Setter
 	private Set<String> routePackages;
 
-	private RouterBuilder(Vertx vertx) {
+	private RouterBuilder(Vertx vertx, Router router) {
 
 		this.vertx = vertx;
+		this.router = router;
 		handlers = new HashSet<>();
 		scanClasspath = true;
-		defaultPackageToScanRoutes = DEFAULT_ROUTE_PACKAGE_2_SCAN;
 		routePackages = new HashSet<>();
 		routes = new HashSet<>();
+		skipRoutes = new HashSet<>();
 		handlerClass = DefaultHandler.class;
+		sockJSHandlerOptions = new SockJSHandlerOptions();
 		authProvider = null;
 		authHandlerClass = null;
 	}
@@ -114,6 +131,12 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 		routes.add(routeClass);
 		return this;
 	}
+	
+	public RouterBuilder skipRoute(Class<?> routeClass) {
+
+		skipRoutes.add(routeClass);
+		return this;
+	}
 
 	public RouterBuilder addRoutePackage(String routePackage) {
 
@@ -123,12 +146,8 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 
 	@Override
 	public Router build() {
-		
-		log.debug("Building Router");
 
-		// Load router instance
-		log.debug("Creating Router with Vert.x Instance {}", vertx.toString());
-		createRouter();
+		log.debug("Building Router");
 
 		handlers.forEach(h -> {
 			log.debug("Routing handler [{}]", h.toString());
@@ -138,7 +157,10 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 		collectRoutes();
 
 		List<HandlerData> handlerDataList = new ArrayList<>();
-		routes.forEach(c -> handlerDataList.addAll(my(RouteCollector.class).collect(c, handlerClass, authProvider, authHandlerClass)));
+		routes.stream()
+			.filter(c -> !skipRoutes.contains(c))
+			.collect(Collectors.toSet())
+			.forEach(c -> handlerDataList.addAll(my(RouteCollector.class).collect(c, this)));
 
 		handlerDataList.forEach(hd -> {
 			log.debug("Routing handler {}", hd.toStringLine());
@@ -147,11 +169,10 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 		return router;
 	}
 
-	protected void createRouter() {
-		if (router == null) {
-
-			router = Router.router(vertx);
-		}
+	public RouterBuilder route(RouteBuilder builder) {
+		log.debug("Routing custom route [{}]", builder.getClass());
+		builder.create(router.route());
+		return this;
 	}
 
 	private void collectRoutes() {
@@ -170,6 +191,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 					.matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.Handler.class, processor)
 					.matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.FailureHandler.class, processor)
 					.matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.BlockingHandler.class, processor)
+					.matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.SockJsHandler.class, processor)
 					.scan(NUMBER_CLASSPATH_SCANNER_THREADS);
 		});
 	}

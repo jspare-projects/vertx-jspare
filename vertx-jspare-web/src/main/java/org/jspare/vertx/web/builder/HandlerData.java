@@ -24,6 +24,7 @@ import org.jspare.vertx.web.handler.BodyEndHandler;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.AuthHandler;
+import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,14 +40,15 @@ public class HandlerData implements Cloneable {
 
 	private Class<?> clazz;
 	private Method method;
+	private HandlerType handlerType;
 	private Class<? extends Handler<RoutingContext>> routeHandlerClass;
-	private String patch = StringUtils.EMPTY;
+	private SockJSHandler sockJSHandler;
+	private String path = StringUtils.EMPTY;
 	private int order;
 	private boolean pathRegex;
 	private String httpMethod;
 	private String consumes;
 	private String produces;
-	private HandlerType handlerType;
 	private List<BodyEndHandler> bodyEndHandler;
 	private AuthHandler authHandler;
 	private HandlerDocumentation documentation;
@@ -58,8 +60,8 @@ public class HandlerData implements Cloneable {
 		if (StringUtils.isNotEmpty(httpMethod())) {
 			line.append(String.format("[%s] ", httpMethod()));
 		}
-		if (StringUtils.isNotEmpty(patch())) {
-			line.append(String.format("[%s] ", patch()));
+		if (StringUtils.isNotEmpty(path())) {
+			line.append(String.format("[%s] ", path()));
 		} else {
 			line.append(String.format("[%s] ", clazz().getSimpleName())).append(String.format("[%s] ", method().getName()));
 		}

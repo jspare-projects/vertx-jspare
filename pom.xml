@@ -190,6 +190,7 @@
 
 	<modules>
 		<module>vertx-jspare</module>
+		<module>vertx-jspare-web</module>
 	</modules>
 
 	<distributionManagement>

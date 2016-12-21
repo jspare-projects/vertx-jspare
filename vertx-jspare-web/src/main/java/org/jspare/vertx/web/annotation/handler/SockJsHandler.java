@@ -13,22 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.web.builder;
+package org.jspare.vertx.web.annotation.handler;
 
-import org.jspare.vertx.web.annotation.handler.BlockingHandler;
-import org.jspare.vertx.web.annotation.handler.FailureHandler;
-import org.jspare.vertx.web.annotation.handler.Handler;
-import org.jspare.vertx.web.annotation.handler.SockJsHandler;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE, ElementType.METHOD })
+public @interface SockJsHandler {
 
-@AllArgsConstructor
-public enum HandlerType {
-
-	HANDLER(Handler.class), BLOCKING_HANDLER(BlockingHandler.class), FAILURE_HANDLER(FailureHandler.class), SOCKETJS_HANDLER(
-			SockJsHandler.class);
-
-	@Getter
-	private Class<?> handlerClass;
+	/**
+	 * Value.
+	 *
+	 * @return the string
+	 */
+	String value() default "/sockJs/*";
 }

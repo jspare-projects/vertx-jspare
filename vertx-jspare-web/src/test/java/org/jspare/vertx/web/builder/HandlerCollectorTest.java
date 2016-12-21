@@ -37,12 +37,12 @@ public class HandlerCollectorTest extends AbstractCollectorTest {
 
 		Assert.assertEquals(MultiRoutes.class, handler1.clazz());
 		Assert.assertEquals("handler1", handler1.method().getName());
-		Assert.assertEquals("/multiRoutes/1", handler1.patch());
+		Assert.assertEquals("/multiRoutes/1", handler1.path());
 		Assert.assertEquals("GET", handler1.httpMethod());
 		Assert.assertEquals(HandlerType.HANDLER, handler1.handlerType());
-		Assert.assertEquals(0, handler1.order());
+		Assert.assertEquals(Integer.MIN_VALUE, handler1.order());
 
-		Assert.assertEquals("/multiRoutes/2", handler2.patch());
+		Assert.assertEquals("/multiRoutes/2", handler2.path());
 		Assert.assertEquals(HandlerType.BLOCKING_HANDLER, handler2.handlerType());
 		Assert.assertEquals("handler2", handler2.method().getName());
 		Assert.assertEquals(1, handler2.order());
