@@ -44,7 +44,7 @@ import lombok.experimental.Accessors;
 
 @Accessors(fluent = true)
 @EqualsAndHashCode(callSuper = false)
-public class VertxBuilder extends AbstractBuilder<Vertx> {
+public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 
 	private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
 
@@ -107,7 +107,7 @@ public class VertxBuilder extends AbstractBuilder<Vertx> {
 	}
 
 	@Override
-	public Vertx build() {
+	public Future<Vertx> build() {
 
 		Future<Vertx> future = Future.future();
 
@@ -133,12 +133,10 @@ public class VertxBuilder extends AbstractBuilder<Vertx> {
 
 			createVertx(runner);
 		}
-		
-		vertx = future.result();
 
 		my(Context.class).put(VertxInjectStrategy.formatInstanceKey(name), vertx);
 		
-		return vertx;
+		return future;
 	}
 
 	public VertxBuilder deployVerticle(String deploymentId, DeploymentOptions deploymentOptions) {

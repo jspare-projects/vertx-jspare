@@ -20,6 +20,7 @@ import java.lang.reflect.Type;
 
 import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jspare.core.container.ContainerUtils;
 import org.jspare.vertx.web.annotation.handling.ArrayModel;
 import org.jspare.vertx.web.annotation.handling.ArrayModelParser;
@@ -63,6 +64,13 @@ public class DefaultHandler implements Handler<RoutingContext> {
 	public void handle(RoutingContext ctx) {
 
 		try {
+			
+			
+			// Handle unhandled excetion
+			ctx.vertx().exceptionHandler(t -> {
+				
+				ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()).end(ExceptionUtils.getStackTrace(t));
+			});
 
 			Object newInstance = instantiateHandler();
 
@@ -128,7 +136,7 @@ public class DefaultHandler implements Handler<RoutingContext> {
 	protected Object instantiateHandler() {
 		// Inject Request and Response if is Available
 		Object newInstance = handlerData.clazz().newInstance();
-		ContainerUtils.processInjection(handlerData.clazz(), newInstance);
+		ContainerUtils.processInjection(newInstance);
 		return newInstance;
 	}
 

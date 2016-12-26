@@ -85,7 +85,7 @@ public class EventBusCollector implements Collector<Collection<MessageData>> {
 		}
 
 		instance = controllerClass.newInstance();
-		ContainerUtils.processInjection(controllerClass, instance);
+		ContainerUtils.processInjection(instance);
 
 		if (anEventBusController.retention()) {
 

@@ -43,7 +43,7 @@ public class VerticleCollector implements Collector<Optional<VerticleData>> {
 		Verticle verticle = (Verticle) clazz.newInstance();
 		DeploymentOptions deploymentOptions = getDeploymentOptions(clazz, verticle);
 
-		ContainerUtils.processInjection(clazz, verticle);
+		ContainerUtils.processInjection(verticle);
 
 		VerticleData data = new VerticleData(verticle, deploymentOptions);
 
