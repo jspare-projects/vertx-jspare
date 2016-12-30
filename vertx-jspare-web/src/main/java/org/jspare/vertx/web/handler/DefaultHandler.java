@@ -29,7 +29,6 @@ import org.jspare.vertx.web.annotation.handling.MapModel;
 import org.jspare.vertx.web.annotation.handling.MapModelParser;
 import org.jspare.vertx.web.annotation.handling.Model;
 import org.jspare.vertx.web.builder.HandlerData;
-import org.jspare.vertx.web.handling.Handling;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Handler;
@@ -64,11 +63,10 @@ public class DefaultHandler implements Handler<RoutingContext> {
 	public void handle(RoutingContext ctx) {
 
 		try {
-			
-			
+
 			// Handle unhandled excetion
 			ctx.vertx().exceptionHandler(t -> {
-				
+
 				ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()).end(ExceptionUtils.getStackTrace(t));
 			});
 
@@ -238,11 +236,11 @@ public class DefaultHandler implements Handler<RoutingContext> {
 
 	protected void setHandlingParameters(RoutingContext routingContext, Object newInstance) {
 		// If Route is handling by abstract Handling inject some resources
-		if (newInstance instanceof Handling) {
+		if (newInstance instanceof APIHandler) {
 
-			((Handling) newInstance).setReq(routingContext.request());
-			((Handling) newInstance).setRes(routingContext.response());
-			((Handling) newInstance).setCtx(routingContext);
+			((APIHandler) newInstance).setReq(routingContext.request());
+			((APIHandler) newInstance).setRes(routingContext.response());
+			((APIHandler) newInstance).setCtx(routingContext);
 		}
 	}
 }

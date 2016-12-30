@@ -15,15 +15,15 @@
  */
 package org.jspare.vertx;
 
-import org.jspare.vertx.bootstrap.VertxApplication;
+import org.jspare.vertx.bootstrap.ApplicationVerticle;
 import org.junit.Before;
 
-public class AbstractVertxApplicationTest extends VertxApplication {
+public class AbstractVertxApplicationTest extends ApplicationVerticle {
 
 	@Before
 	public void load() {
 
-		this.run();
+		run();
 	}
 
 	@Override

@@ -44,6 +44,11 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 
 	private static final String VERTX_PATTERN = "vertx:%s";
 
+	public static String formatInstanceKey(String instanceRef) {
+
+		return String.format(VERTX_PATTERN, instanceRef);
+	}
+
 	@Inject
 	private Context context;
 
@@ -102,17 +107,12 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 
 				field.set(result, vertx.createSharedWorkerExecutor(DEFAULT_WORKER_EXECUTOR_NAME));
 			}
-		}  else if (FileSystem.class.equals(field.getType())) {
+		} else if (FileSystem.class.equals(field.getType())) {
 
 			field.set(result, vertx.fileSystem());
-		}  else if (SharedData.class.equals(field.getType())) {
+		} else if (SharedData.class.equals(field.getType())) {
 
 			field.set(result, vertx.sharedData());
 		}
-	}
-
-	public static String formatInstanceKey(String instanceRef) {
-
-		return String.format(VERTX_PATTERN, instanceRef);
 	}
 }

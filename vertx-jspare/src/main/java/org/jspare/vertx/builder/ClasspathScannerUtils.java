@@ -16,18 +16,20 @@
 package org.jspare.vertx.builder;
 
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class ClasspathScannerUtils {
 
 	/** The Constant ALL_SCAN_QUOTE. */
-	public static String ALL_SCAN_QUOTE = ".*";
+	public String ALL_SCAN_QUOTE = ".*";
 
-	public static String resolvePackageName(String cPackage) {
+	public String resolvePackageName(String cPackage) {
 
 		return cPackage.endsWith(ALL_SCAN_QUOTE) ? cPackage.substring(0, cPackage.length() - 2) : cPackage;
 	}
 
-	public static FastClasspathScanner scanner(String scanSpec) {
+	public FastClasspathScanner scanner(String scanSpec) {
 
 		return new FastClasspathScanner(ClasspathScannerUtils.resolvePackageName(scanSpec));
 	}

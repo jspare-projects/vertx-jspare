@@ -18,9 +18,9 @@ package org.jspare.vertx.web.builder.route;
 import org.jspare.vertx.web.annotation.handler.BlockingHandler;
 import org.jspare.vertx.web.annotation.handler.FailureHandler;
 import org.jspare.vertx.web.annotation.handler.Handler;
-import org.jspare.vertx.web.handling.Handling;
+import org.jspare.vertx.web.handler.APIHandler;
 
-public class MultiHandlers extends Handling {
+public class MultiHandlers extends APIHandler {
 
 	@Handler
 	@BlockingHandler

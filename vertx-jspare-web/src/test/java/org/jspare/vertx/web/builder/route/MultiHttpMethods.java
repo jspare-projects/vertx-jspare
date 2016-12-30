@@ -27,9 +27,9 @@ import org.jspare.vertx.web.annotation.method.Path;
 import org.jspare.vertx.web.annotation.method.Post;
 import org.jspare.vertx.web.annotation.method.Put;
 import org.jspare.vertx.web.annotation.method.Trace;
-import org.jspare.vertx.web.handling.Handling;
+import org.jspare.vertx.web.handler.APIHandler;
 
-public class MultiHttpMethods extends Handling {
+public class MultiHttpMethods extends APIHandler {
 	@All
 	@Connect
 	@Delete

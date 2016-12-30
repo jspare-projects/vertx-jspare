@@ -17,10 +17,10 @@ package org.jspare.vertx.web.builder.route;
 
 import org.jspare.vertx.web.annotation.handler.Handler;
 import org.jspare.vertx.web.annotation.method.Get;
-import org.jspare.vertx.web.handling.Handling;
+import org.jspare.vertx.web.handler.APIHandler;
 
 @Get("/start")
-public class StartRoute extends Handling {
+public class StartRoute extends APIHandler {
 
 	@Handler
 	public void route1() {

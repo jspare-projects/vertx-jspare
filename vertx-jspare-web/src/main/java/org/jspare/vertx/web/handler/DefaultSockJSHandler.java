@@ -19,7 +19,6 @@ import java.lang.reflect.Parameter;
 
 import org.jspare.vertx.web.annotation.handling.Header;
 import org.jspare.vertx.web.builder.HandlerData;
-import org.jspare.vertx.web.handling.Handling;
 
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.auth.User;
@@ -90,9 +89,9 @@ public class DefaultSockJSHandler {
 
 	protected void setHandlingParameters(SockJSSocket event, Object newInstance) {
 		// If Route is handling by abstract Handling inject some resources
-		if (newInstance instanceof Handling) {
+		if (newInstance instanceof APIHandler) {
 
-			((Handling) newInstance).setSockJSEvent(event);
+			((APIHandler) newInstance).setSockJSEvent(event);
 		}
 	}
 }

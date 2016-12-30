@@ -20,7 +20,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.jspare.vertx.web.handling.Handling;
+import org.jspare.vertx.web.handler.APIHandler;
 
 import io.vertx.ext.web.Router;
 
@@ -29,7 +29,7 @@ import io.vertx.ext.web.Router;
  *
  * <p>
  * The namespace annotation is used for mapping one namespace of one
- * {@link Handling}. When one type are annotatedwith this annotation and
+ * {@link APIHandler}. When one type are annotatedwith this annotation and
  * registered on {@link Router} when your HttpServer will be started your
  * mappings will be registered with prefix defined on value field, if your field
  * are empty the convetion that follow will be used:

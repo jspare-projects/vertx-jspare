@@ -20,9 +20,9 @@ import org.jspare.vertx.web.annotation.content.Produces;
 import org.jspare.vertx.web.annotation.handler.BlockingHandler;
 import org.jspare.vertx.web.annotation.handler.Handler;
 import org.jspare.vertx.web.annotation.method.Get;
-import org.jspare.vertx.web.handling.Handling;
+import org.jspare.vertx.web.handler.APIHandler;
 
-public class MultiRoutes extends Handling {
+public class MultiRoutes extends APIHandler {
 
 	@Handler
 	@Get("/multiRoutes/1")
