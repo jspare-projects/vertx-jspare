@@ -15,10 +15,10 @@
  */
 package org.jspare.vertx;
 
-import org.jspare.vertx.bootstrap.ApplicationVerticle;
+import org.jspare.vertx.bootstrap.VertxRunner;
 import org.junit.Before;
 
-public class AbstractVertxApplicationTest extends ApplicationVerticle {
+public class AbstractVertxApplicationTest extends VertxRunner {
 
 	@Before
 	public void load() {

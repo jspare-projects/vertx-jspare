@@ -34,7 +34,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
 
-public abstract class ApplicationVerticle extends AbstractVerticle implements Runner {
+public abstract class VertxRunner extends AbstractVerticle implements Runner {
 
 	@Override
 	public void run() {
@@ -58,9 +58,12 @@ public abstract class ApplicationVerticle extends AbstractVerticle implements Ru
 		EnvironmentBuilder.create().addInjector(ProxyHandler.class, new ProxyHandlerStrategy()).build();
 
 		// Set default Json Mapper options
-		Json.mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector()).setVisibility(PropertyAccessor.ALL, Visibility.ANY)
-				.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).findAndRegisterModules();
+		Json.mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector())
+				.setVisibility(PropertyAccessor.ALL, Visibility.ANY)
+				.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+				.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+				.findAndRegisterModules();
 	}
 
 	protected Future<Vertx> vertx() {
