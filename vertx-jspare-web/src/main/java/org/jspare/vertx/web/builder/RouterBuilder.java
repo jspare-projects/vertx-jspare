@@ -80,7 +80,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 	/**
 	 * The sock JS handler options. </br>
 	 * Used for all SockJsHandlers mapped by this RouterBuilder
-	 * 
+	 *
 	 */
 	@Getter
 	@Setter
@@ -97,7 +97,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 	@Getter
 	@Setter
 	private Set<Class<?>> routes;
-	
+
 	@Getter
 	@Setter
 	private Set<Class<?>> skipRoutes;
@@ -111,7 +111,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 		this.vertx = vertx;
 		this.router = router;
 		handlers = new HashSet<>();
-		scanClasspath = true;
+		scanClasspath = false;
 		routePackages = new HashSet<>();
 		routes = new HashSet<>();
 		skipRoutes = new HashSet<>();
@@ -129,12 +129,6 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 	public RouterBuilder addRoute(Class<?> routeClass) {
 
 		routes.add(routeClass);
-		return this;
-	}
-	
-	public RouterBuilder skipRoute(Class<?> routeClass) {
-
-		skipRoutes.add(routeClass);
 		return this;
 	}
 
@@ -157,10 +151,8 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 		collectRoutes();
 
 		List<HandlerData> handlerDataList = new ArrayList<>();
-		routes.stream()
-			.filter(c -> !skipRoutes.contains(c))
-			.collect(Collectors.toSet())
-			.forEach(c -> handlerDataList.addAll(my(RouteCollector.class).collect(c, this)));
+		routes.stream().filter(c -> !skipRoutes.contains(c)).collect(Collectors.toSet())
+				.forEach(c -> handlerDataList.addAll(my(RouteCollector.class).collect(c, this)));
 
 		handlerDataList.forEach(hd -> {
 			log.debug("Routing handler {}", hd.toStringLine());
@@ -172,6 +164,12 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 	public RouterBuilder route(RouteBuilder builder) {
 		log.debug("Routing custom route [{}]", builder.getClass());
 		builder.create(router.route());
+		return this;
+	}
+
+	public RouterBuilder skipRoute(Class<?> routeClass) {
+
+		skipRoutes.add(routeClass);
 		return this;
 	}
 
