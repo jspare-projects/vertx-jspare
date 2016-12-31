@@ -36,6 +36,7 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.WorkerExecutor;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.file.FileSystem;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.shareddata.SharedData;
 
 public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
@@ -94,6 +95,12 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 		if (Vertx.class.equals(field.getType())) {
 
 			field.set(result, vertx);
+		} else if (io.vertx.core.Context.class.equals(field.getType())) {
+
+			field.set(result, vertx.getOrCreateContext());
+		} else if (JsonObject.class.equals(field.getType())) {
+
+			field.set(result, vertx.getOrCreateContext().config());
 		} else if (EventBus.class.equals(field.getType())) {
 
 			field.set(result, vertx.eventBus());

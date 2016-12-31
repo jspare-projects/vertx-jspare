@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import org.jspare.core.annotation.Resource;
-import org.jspare.core.container.ContainerUtils;
 import org.jspare.vertx.annotation.DeploymentOptionsBuilder;
+import org.jspare.vertx.utils.VerticleInitializer;
 
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Verticle;
@@ -40,10 +40,9 @@ public class VerticleCollector implements Collector<Optional<VerticleData>> {
 			return Optional.empty();
 		}
 
-		Verticle verticle = (Verticle) clazz.newInstance();
+		@SuppressWarnings("unchecked")
+		Verticle verticle = VerticleInitializer.initialize((Class<? extends Verticle>) clazz);
 		DeploymentOptions deploymentOptions = getDeploymentOptions(clazz, verticle);
-
-		ContainerUtils.processInjection(verticle);
 
 		VerticleData data = new VerticleData(verticle, deploymentOptions);
 

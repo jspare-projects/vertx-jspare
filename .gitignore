@@ -16,3 +16,5 @@ hs_err_pid*
 .idea/
 *.iml
 *.factorypath
+target/
+vertx-jspare/dependency-reduced-pom.xml

@@ -27,7 +27,6 @@ import java.util.function.Consumer;
 
 import org.jspare.core.container.Context;
 import org.jspare.vertx.annotation.EventBusController;
-import org.jspare.vertx.annotation.ProxyHandler;
 import org.jspare.vertx.annotation.VertxInject;
 import org.jspare.vertx.injector.VertxInjectStrategy;
 
@@ -39,7 +38,6 @@ import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.eventbus.EventBus;
-import io.vertx.serviceproxy.ProxyHelper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -83,10 +81,6 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 
 	@Getter
 	@Setter
-	private boolean scanClasspath4proxyServices;
-
-	@Getter
-	@Setter
 	private Set<Class<?>> verticlesClasses;
 
 	@Getter
@@ -105,37 +99,21 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 	@Setter
 	private List<String> eventBusPackages;
 
-	@Getter
-	@Setter
-	private Set<Class<?>> proxyServiceClasses;
-
-	@Getter
-	@Setter
-	private Set<String> proxyServicePackages;
-
 	private VertxBuilder() {
 
 		name = VertxInject.DEFAULT;
 		scanClasspath4verticles = false;
 		scanClasspath4eventbus = false;
-		scanClasspath4proxyServices = false;
 		verticlesClasses = new HashSet<>();
 		verticlesPackages = new HashSet<>();
 		eventBusClasses = new ArrayList<>();
 		eventBusPackages = new ArrayList<>();
-		proxyServiceClasses = new HashSet<>();
-		proxyServicePackages = new HashSet<>();
 		sVerticle2deploy = new HashMap<>();
 		iVerticle2deploy = new HashMap<>();
 	}
 
 	public VertxBuilder addEventBusController(Class<? extends EventBusController> controllerClass) {
 		eventBusClasses.add(controllerClass);
-		return this;
-	}
-
-	public VertxBuilder addProxyService(Class<?> service) {
-		proxyServiceClasses.add(service);
 		return this;
 	}
 
@@ -155,9 +133,6 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 
 			// Collect, create and registry one verticle
 			collectAndRegistryVerticles();
-
-			// Collect, create and registry proxy services
-			collectAndRegistryProxyServices();
 
 			future.complete(vertx);
 		};
@@ -256,27 +231,6 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 		consumers.forEach(md -> eventBus.consumer(md.name(), md.wrap()));
 	}
 
-	private void collectAndRegistryProxyServices() {
-
-		// Check if default package are available to scan and add to
-		// eventBusPackages
-		if (scanClasspath4proxyServices) {
-			proxyServicePackages.clear();
-			proxyServicePackages.add(".*");
-		}
-
-		ClassAnnotationMatchProcessor processor = (c) -> proxyServiceClasses.add(c);
-
-		proxyServicePackages.forEach(scanSpec -> {
-
-			ClasspathScannerUtils.scanner(scanSpec).matchClassesWithAnnotation(ProxyHandler.class, processor)
-					.scan(NUMBER_CLASSPATH_SCANNER_THREADS);
-		});
-
-		// Iterate proxyServiceClasses and register service
-		proxyServiceClasses.forEach(this::registerProxyService);
-	}
-
 	private void collectAndRegistryVerticles() {
 
 		// Check if default package are available to scan and add to
@@ -309,13 +263,5 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 		sVerticle2deploy.forEach((k, v) -> vertx.deployVerticle(k, v));
 
 		iVerticle2deploy.forEach((k, v) -> vertx.deployVerticle(k, v));
-	}
-
-	private <T> void registerProxyService(Class<T> clazz) {
-
-		ProxyHandler proxyHandler = clazz.getAnnotation(ProxyHandler.class);
-		String address = ProxyHandlerUtils.getAddress(proxyHandler, clazz);
-		T service = my(clazz);
-		ProxyHelper.registerService(clazz, vertx, service, address);
 	}
 }
