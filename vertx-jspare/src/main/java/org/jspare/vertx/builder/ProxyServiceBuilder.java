@@ -29,7 +29,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Accessors(fluent = true)
 @EqualsAndHashCode(callSuper = false)
 public class ProxyServiceBuilder extends AbstractBuilder<Void> {
@@ -99,6 +101,12 @@ public class ProxyServiceBuilder extends AbstractBuilder<Void> {
 	}
 
 	private <T> void registerProxyService(Class<T> clazz) {
+		
+		if(!clazz.isAnnotationPresent(ProxyHandler.class)){
+			
+			log.warn("Cannot register service {} with ProxyHelper. One possible cause, the class is not annotated bt ProxyHandler annotation.");
+			return;
+		}
 
 		ProxyHandler proxyHandler = clazz.getAnnotation(ProxyHandler.class);
 		String address = ProxyHandlerUtils.getAddress(proxyHandler, clazz);
