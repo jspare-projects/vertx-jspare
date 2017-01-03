@@ -27,6 +27,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.sockjs.SockJSSocket;
 import lombok.Getter;
@@ -59,7 +60,7 @@ public abstract class APIHandler {
 	}
 
 	public void accepted(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		accepted(object, StandardCharsets.UTF_8);
 	}
 
 	public void accepted(Object object, Charset charset) {
@@ -70,7 +71,7 @@ public abstract class APIHandler {
 	}
 
 	public void accepted(String content) {
-		success(content, StandardCharsets.UTF_8);
+		accepted(content, StandardCharsets.UTF_8);
 	}
 
 	public void accepted(String content, Charset charset) {
@@ -92,7 +93,7 @@ public abstract class APIHandler {
 	}
 
 	public void badGateway(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		badGateway(object, StandardCharsets.UTF_8);
 	}
 
 	public void badGateway(Object object, Charset charset) {
@@ -103,7 +104,7 @@ public abstract class APIHandler {
 	}
 
 	public void badGateway(String content) {
-		success(content, StandardCharsets.UTF_8);
+		badGateway(content, StandardCharsets.UTF_8);
 	}
 
 	public void badGateway(String content, Charset charset) {
@@ -125,7 +126,7 @@ public abstract class APIHandler {
 	}
 
 	public void badRequest(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		badRequest(object, StandardCharsets.UTF_8);
 	}
 
 	public void badRequest(Object object, Charset charset) {
@@ -136,7 +137,7 @@ public abstract class APIHandler {
 	}
 
 	public void badRequest(String content) {
-		success(content, StandardCharsets.UTF_8);
+		badRequest(content, StandardCharsets.UTF_8);
 	}
 
 	public void badRequest(String content, Charset charset) {
@@ -158,7 +159,7 @@ public abstract class APIHandler {
 	}
 
 	public void conflict(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		conflict(object, StandardCharsets.UTF_8);
 	}
 
 	public void conflict(Object object, Charset charset) {
@@ -169,11 +170,11 @@ public abstract class APIHandler {
 	}
 
 	public void conflict(String content) {
-		success(content, StandardCharsets.UTF_8);
+		conflict(content, StandardCharsets.UTF_8);
 	}
 
 	public void conflict(String content, Charset charset) {
-		status(HttpResponseStatus.CONFLICT);
+		conflict(HttpResponseStatus.CONFLICT);
 		if (isValidJson(content)) {
 			contentType("application/json");
 		}
@@ -196,7 +197,7 @@ public abstract class APIHandler {
 	}
 
 	public void continueIt(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		continueIt(object, StandardCharsets.UTF_8);
 	}
 
 	public void continueIt(Object object, Charset charset) {
@@ -207,7 +208,7 @@ public abstract class APIHandler {
 	}
 
 	public void continueIt(String content) {
-		success(content, StandardCharsets.UTF_8);
+		continueIt(content, StandardCharsets.UTF_8);
 	}
 
 	public void continueIt(String content, Charset charset) {
@@ -229,7 +230,7 @@ public abstract class APIHandler {
 	}
 
 	public void created(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		created(object, StandardCharsets.UTF_8);
 	}
 
 	public void created(Object object, Charset charset) {
@@ -240,11 +241,11 @@ public abstract class APIHandler {
 	}
 
 	public void created(String content) {
-		success(content, StandardCharsets.UTF_8);
+		created(content, StandardCharsets.UTF_8);
 	}
 
 	public void created(String content, Charset charset) {
-		status(HttpResponseStatus.CREATED);
+		created(HttpResponseStatus.CREATED);
 		if (isValidJson(content)) {
 			contentType("application/json");
 		}
@@ -258,6 +259,14 @@ public abstract class APIHandler {
 		if (!res.ended()) {
 
 			res.end();
+		}
+	}
+	
+	public void end(JsonObject jsonObject) {
+
+		if (!res.ended()) {
+
+			res.end(jsonObject.encode());
 		}
 	}
 
@@ -302,7 +311,7 @@ public abstract class APIHandler {
 	}
 
 	public void expectationFailed(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		expectationFailed(object, StandardCharsets.UTF_8);
 	}
 
 	public void expectationFailed(Object object, Charset charset) {
@@ -313,7 +322,7 @@ public abstract class APIHandler {
 	}
 
 	public void expectationFailed(String content) {
-		success(content, StandardCharsets.UTF_8);
+		expectationFailed(content, StandardCharsets.UTF_8);
 	}
 
 	public void expectationFailed(String content, Charset charset) {
@@ -335,7 +344,7 @@ public abstract class APIHandler {
 	}
 
 	public void failedDependency(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		failedDependency(object, StandardCharsets.UTF_8);
 	}
 
 	public void failedDependency(Object object, Charset charset) {
@@ -346,7 +355,7 @@ public abstract class APIHandler {
 	}
 
 	public void failedDependency(String content) {
-		success(content, StandardCharsets.UTF_8);
+		failedDependency(content, StandardCharsets.UTF_8);
 	}
 
 	public void failedDependency(String content, Charset charset) {
@@ -368,7 +377,7 @@ public abstract class APIHandler {
 	}
 
 	public void forbidden(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		forbidden(object, StandardCharsets.UTF_8);
 	}
 
 	public void forbidden(Object object, Charset charset) {
@@ -379,7 +388,7 @@ public abstract class APIHandler {
 	}
 
 	public void forbidden(String content) {
-		success(content, StandardCharsets.UTF_8);
+		forbidden(content, StandardCharsets.UTF_8);
 	}
 
 	public void forbidden(String content, Charset charset) {
@@ -401,7 +410,7 @@ public abstract class APIHandler {
 	}
 
 	public void found(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		found(object, StandardCharsets.UTF_8);
 	}
 
 	public void found(Object object, Charset charset) {
@@ -412,7 +421,7 @@ public abstract class APIHandler {
 	}
 
 	public void found(String content) {
-		success(content, StandardCharsets.UTF_8);
+		found(content, StandardCharsets.UTF_8);
 	}
 
 	public void found(String content, Charset charset) {
@@ -434,7 +443,7 @@ public abstract class APIHandler {
 	}
 
 	public void gatewayTimeout(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		gatewayTimeout(object, StandardCharsets.UTF_8);
 	}
 
 	public void gatewayTimeout(Object object, Charset charset) {
@@ -445,7 +454,7 @@ public abstract class APIHandler {
 	}
 
 	public void gatewayTimeout(String content) {
-		success(content, StandardCharsets.UTF_8);
+		gatewayTimeout(content, StandardCharsets.UTF_8);
 	}
 
 	public void gatewayTimeout(String content, Charset charset) {
@@ -477,7 +486,7 @@ public abstract class APIHandler {
 	}
 
 	public void gone(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		gone(object, StandardCharsets.UTF_8);
 	}
 
 	public void gone(Object object, Charset charset) {
@@ -488,7 +497,7 @@ public abstract class APIHandler {
 	}
 
 	public void gone(String content) {
-		success(content, StandardCharsets.UTF_8);
+		gone(content, StandardCharsets.UTF_8);
 	}
 
 	public void gone(String content, Charset charset) {
@@ -510,7 +519,7 @@ public abstract class APIHandler {
 	}
 
 	public void httpVersionNotSupported(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		httpVersionNotSupported(object, StandardCharsets.UTF_8);
 	}
 
 	public void httpVersionNotSupported(Object object, Charset charset) {
@@ -521,7 +530,7 @@ public abstract class APIHandler {
 	}
 
 	public void httpVersionNotSupported(String content) {
-		success(content, StandardCharsets.UTF_8);
+		httpVersionNotSupported(content, StandardCharsets.UTF_8);
 	}
 
 	public void httpVersionNotSupported(String content, Charset charset) {
@@ -543,7 +552,7 @@ public abstract class APIHandler {
 	}
 
 	public void insufficientStorage(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		insufficientStorage(object, StandardCharsets.UTF_8);
 	}
 
 	public void insufficientStorage(Object object, Charset charset) {
@@ -554,7 +563,7 @@ public abstract class APIHandler {
 	}
 
 	public void insufficientStorage(String content) {
-		success(content, StandardCharsets.UTF_8);
+		insufficientStorage(content, StandardCharsets.UTF_8);
 	}
 
 	public void insufficientStorage(String content, Charset charset) {
@@ -576,7 +585,7 @@ public abstract class APIHandler {
 	}
 
 	public void internalServerError(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		internalServerError(object, StandardCharsets.UTF_8);
 	}
 
 	public void internalServerError(Object object, Charset charset) {
@@ -587,7 +596,7 @@ public abstract class APIHandler {
 	}
 
 	public void internalServerError(String content) {
-		success(content, StandardCharsets.UTF_8);
+		internalServerError(content, StandardCharsets.UTF_8);
 	}
 
 	public void internalServerError(String content, Charset charset) {
@@ -609,7 +618,7 @@ public abstract class APIHandler {
 	}
 
 	public void lengthRequired(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		lengthRequired(object, StandardCharsets.UTF_8);
 	}
 
 	public void lengthRequired(Object object, Charset charset) {
@@ -620,7 +629,7 @@ public abstract class APIHandler {
 	}
 
 	public void lengthRequired(String content) {
-		success(content, StandardCharsets.UTF_8);
+		lengthRequired(content, StandardCharsets.UTF_8);
 	}
 
 	public void lengthRequired(String content, Charset charset) {
@@ -642,7 +651,7 @@ public abstract class APIHandler {
 	}
 
 	public void locked(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		locked(object, StandardCharsets.UTF_8);
 	}
 
 	public void locked(Object object, Charset charset) {
@@ -653,7 +662,7 @@ public abstract class APIHandler {
 	}
 
 	public void locked(String content) {
-		success(content, StandardCharsets.UTF_8);
+		locked(content, StandardCharsets.UTF_8);
 	}
 
 	public void locked(String content, Charset charset) {
@@ -675,7 +684,7 @@ public abstract class APIHandler {
 	}
 
 	public void methodNotAllowed(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		methodNotAllowed(object, StandardCharsets.UTF_8);
 	}
 
 	public void methodNotAllowed(Object object, Charset charset) {
@@ -686,7 +695,7 @@ public abstract class APIHandler {
 	}
 
 	public void methodNotAllowed(String content) {
-		success(content, StandardCharsets.UTF_8);
+		methodNotAllowed(content, StandardCharsets.UTF_8);
 	}
 
 	public void methodNotAllowed(String content, Charset charset) {
@@ -708,7 +717,7 @@ public abstract class APIHandler {
 	}
 
 	public void misdirectedRequest(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		misdirectedRequest(object, StandardCharsets.UTF_8);
 	}
 
 	public void misdirectedRequest(Object object, Charset charset) {
@@ -719,7 +728,7 @@ public abstract class APIHandler {
 	}
 
 	public void misdirectedRequest(String content) {
-		success(content, StandardCharsets.UTF_8);
+		misdirectedRequest(content, StandardCharsets.UTF_8);
 	}
 
 	public void misdirectedRequest(String content, Charset charset) {
@@ -741,7 +750,7 @@ public abstract class APIHandler {
 	}
 
 	public void movedPermanently(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		movedPermanently(object, StandardCharsets.UTF_8);
 	}
 
 	public void movedPermanently(Object object, Charset charset) {
@@ -752,7 +761,7 @@ public abstract class APIHandler {
 	}
 
 	public void movedPermanently(String content) {
-		success(content, StandardCharsets.UTF_8);
+		movedPermanently(content, StandardCharsets.UTF_8);
 	}
 
 	public void movedPermanently(String content, Charset charset) {
@@ -774,7 +783,7 @@ public abstract class APIHandler {
 	}
 
 	public void multipleChoices(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		multipleChoices(object, StandardCharsets.UTF_8);
 	}
 
 	public void multipleChoices(Object object, Charset charset) {
@@ -785,7 +794,7 @@ public abstract class APIHandler {
 	}
 
 	public void multipleChoices(String content) {
-		success(content, StandardCharsets.UTF_8);
+		multipleChoices(content, StandardCharsets.UTF_8);
 	}
 
 	public void multipleChoices(String content, Charset charset) {
@@ -807,7 +816,7 @@ public abstract class APIHandler {
 	}
 
 	public void multiStatus(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		multiStatus(object, StandardCharsets.UTF_8);
 	}
 
 	public void multiStatus(Object object, Charset charset) {
@@ -818,7 +827,7 @@ public abstract class APIHandler {
 	}
 
 	public void multiStatus(String content) {
-		success(content, StandardCharsets.UTF_8);
+		multiStatus(content, StandardCharsets.UTF_8);
 	}
 
 	public void multiStatus(String content, Charset charset) {
@@ -840,7 +849,7 @@ public abstract class APIHandler {
 	}
 
 	public void networkAuthenticationRequired(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		networkAuthenticationRequired(object, StandardCharsets.UTF_8);
 	}
 
 	public void networkAuthenticationRequired(Object object, Charset charset) {
@@ -851,7 +860,7 @@ public abstract class APIHandler {
 	}
 
 	public void networkAuthenticationRequired(String content) {
-		success(content, StandardCharsets.UTF_8);
+		networkAuthenticationRequired(content, StandardCharsets.UTF_8);
 	}
 
 	public void networkAuthenticationRequired(String content, Charset charset) {
@@ -873,7 +882,7 @@ public abstract class APIHandler {
 	}
 
 	public void noContent(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		noContent(object, StandardCharsets.UTF_8);
 	}
 
 	public void noContent(Object object, Charset charset) {
@@ -884,7 +893,7 @@ public abstract class APIHandler {
 	}
 
 	public void noContent(String content) {
-		success(content, StandardCharsets.UTF_8);
+		noContent(content, StandardCharsets.UTF_8);
 	}
 
 	public void noContent(String content, Charset charset) {
@@ -906,7 +915,7 @@ public abstract class APIHandler {
 	}
 
 	public void nonAuthoratitativeInformation(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		nonAuthoratitativeInformation(object, StandardCharsets.UTF_8);
 	}
 
 	public void nonAuthoratitativeInformation(Object object, Charset charset) {
@@ -917,7 +926,7 @@ public abstract class APIHandler {
 	}
 
 	public void nonAuthoratitativeInformation(String content) {
-		success(content, StandardCharsets.UTF_8);
+		nonAuthoratitativeInformation(content, StandardCharsets.UTF_8);
 	}
 
 	public void nonAuthoratitativeInformation(String content, Charset charset) {
@@ -939,7 +948,7 @@ public abstract class APIHandler {
 	}
 
 	public void notAcceptable(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		notAcceptable(object, StandardCharsets.UTF_8);
 	}
 
 	public void notAcceptable(Object object, Charset charset) {
@@ -950,7 +959,7 @@ public abstract class APIHandler {
 	}
 
 	public void notAcceptable(String content) {
-		success(content, StandardCharsets.UTF_8);
+		notAcceptable(content, StandardCharsets.UTF_8);
 	}
 
 	public void notAcceptable(String content, Charset charset) {
@@ -972,7 +981,7 @@ public abstract class APIHandler {
 	}
 
 	public void notExtended(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		notExtended(object, StandardCharsets.UTF_8);
 	}
 
 	public void notExtended(Object object, Charset charset) {
@@ -983,7 +992,7 @@ public abstract class APIHandler {
 	}
 
 	public void notExtended(String content) {
-		success(content, StandardCharsets.UTF_8);
+		notExtended(content, StandardCharsets.UTF_8);
 	}
 
 	public void notExtended(String content, Charset charset) {
@@ -1005,7 +1014,7 @@ public abstract class APIHandler {
 	}
 
 	public void notFound(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		notFound(object, StandardCharsets.UTF_8);
 	}
 
 	public void notFound(Object object, Charset charset) {
@@ -1016,7 +1025,7 @@ public abstract class APIHandler {
 	}
 
 	public void notFound(String content) {
-		success(content, StandardCharsets.UTF_8);
+		notFound(content, StandardCharsets.UTF_8);
 	}
 
 	public void notFound(String content, Charset charset) {
@@ -1038,7 +1047,7 @@ public abstract class APIHandler {
 	}
 
 	public void notImplemented(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		notImplemented(object, StandardCharsets.UTF_8);
 	}
 
 	public void notImplemented(Object object, Charset charset) {
@@ -1049,7 +1058,7 @@ public abstract class APIHandler {
 	}
 
 	public void notImplemented(String content) {
-		success(content, StandardCharsets.UTF_8);
+		notImplemented(content, StandardCharsets.UTF_8);
 	}
 
 	public void notImplemented(String content, Charset charset) {
@@ -1071,7 +1080,7 @@ public abstract class APIHandler {
 	}
 
 	public void notModified(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		notModified(object, StandardCharsets.UTF_8);
 	}
 
 	public void notModified(Object object, Charset charset) {
@@ -1082,7 +1091,7 @@ public abstract class APIHandler {
 	}
 
 	public void notModified(String content) {
-		success(content, StandardCharsets.UTF_8);
+		notModified(content, StandardCharsets.UTF_8);
 	}
 
 	public void notModified(String content, Charset charset) {
@@ -1128,7 +1137,7 @@ public abstract class APIHandler {
 	}
 
 	public void partialContent(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		partialContent(object, StandardCharsets.UTF_8);
 	}
 
 	public void partialContent(Object object, Charset charset) {
@@ -1139,7 +1148,7 @@ public abstract class APIHandler {
 	}
 
 	public void partialContent(String content) {
-		success(content, StandardCharsets.UTF_8);
+		partialContent(content, StandardCharsets.UTF_8);
 	}
 
 	public void partialContent(String content, Charset charset) {
@@ -1161,7 +1170,7 @@ public abstract class APIHandler {
 	}
 
 	public void paymentRequired(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		paymentRequired(object, StandardCharsets.UTF_8);
 	}
 
 	public void paymentRequired(Object object, Charset charset) {
@@ -1172,7 +1181,7 @@ public abstract class APIHandler {
 	}
 
 	public void paymentRequired(String content) {
-		success(content, StandardCharsets.UTF_8);
+		paymentRequired(content, StandardCharsets.UTF_8);
 	}
 
 	public void paymentRequired(String content, Charset charset) {
@@ -1194,7 +1203,7 @@ public abstract class APIHandler {
 	}
 
 	public void preConditionFailed(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		preConditionFailed(object, StandardCharsets.UTF_8);
 	}
 
 	public void preConditionFailed(Object object, Charset charset) {
@@ -1205,7 +1214,7 @@ public abstract class APIHandler {
 	}
 
 	public void preConditionFailed(String content) {
-		success(content, StandardCharsets.UTF_8);
+		preConditionFailed(content, StandardCharsets.UTF_8);
 	}
 
 	public void preConditionFailed(String content, Charset charset) {
@@ -1227,7 +1236,7 @@ public abstract class APIHandler {
 	}
 
 	public void preconditionRequired(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		preconditionRequired(object, StandardCharsets.UTF_8);
 	}
 
 	public void preconditionRequired(Object object, Charset charset) {
@@ -1238,7 +1247,7 @@ public abstract class APIHandler {
 	}
 
 	public void preconditionRequired(String content) {
-		success(content, StandardCharsets.UTF_8);
+		preconditionRequired(content, StandardCharsets.UTF_8);
 	}
 
 	public void preconditionRequired(String content, Charset charset) {
@@ -1260,7 +1269,7 @@ public abstract class APIHandler {
 	}
 
 	public void processing(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		processing(object, StandardCharsets.UTF_8);
 	}
 
 	public void processing(Object object, Charset charset) {
@@ -1271,7 +1280,7 @@ public abstract class APIHandler {
 	}
 
 	public void processing(String content) {
-		success(content, StandardCharsets.UTF_8);
+		processing(content, StandardCharsets.UTF_8);
 	}
 
 	public void processing(String content, Charset charset) {
@@ -1293,7 +1302,7 @@ public abstract class APIHandler {
 	}
 
 	public void proxyAuthenticationRequired(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		proxyAuthenticationRequired(object, StandardCharsets.UTF_8);
 	}
 
 	public void proxyAuthenticationRequired(Object object, Charset charset) {
@@ -1304,7 +1313,7 @@ public abstract class APIHandler {
 	}
 
 	public void proxyAuthenticationRequired(String content) {
-		success(content, StandardCharsets.UTF_8);
+		proxyAuthenticationRequired(content, StandardCharsets.UTF_8);
 	}
 
 	public void proxyAuthenticationRequired(String content, Charset charset) {
@@ -1326,7 +1335,7 @@ public abstract class APIHandler {
 	}
 
 	public void requestEntityTooLarge(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		requestEntityTooLarge(object, StandardCharsets.UTF_8);
 	}
 
 	public void requestEntityTooLarge(Object object, Charset charset) {
@@ -1337,7 +1346,7 @@ public abstract class APIHandler {
 	}
 
 	public void requestEntityTooLarge(String content) {
-		success(content, StandardCharsets.UTF_8);
+		requestEntityTooLarge(content, StandardCharsets.UTF_8);
 	}
 
 	public void requestEntityTooLarge(String content, Charset charset) {
@@ -1359,7 +1368,7 @@ public abstract class APIHandler {
 	}
 
 	public void requestHeaderFieldsTooLarge(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		requestEntityTooLarge(object, StandardCharsets.UTF_8);
 	}
 
 	public void requestHeaderFieldsTooLarge(Object object, Charset charset) {
@@ -1370,7 +1379,7 @@ public abstract class APIHandler {
 	}
 
 	public void requestHeaderFieldsTooLarge(String content) {
-		success(content, StandardCharsets.UTF_8);
+		requestEntityTooLarge(content, StandardCharsets.UTF_8);
 	}
 
 	public void requestHeaderFieldsTooLarge(String content, Charset charset) {
@@ -1392,7 +1401,7 @@ public abstract class APIHandler {
 	}
 
 	public void requestRangeNotSatisfiable(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		requestRangeNotSatisfiable(object, StandardCharsets.UTF_8);
 	}
 
 	public void requestRangeNotSatisfiable(Object object, Charset charset) {
@@ -1403,7 +1412,7 @@ public abstract class APIHandler {
 	}
 
 	public void requestRangeNotSatisfiable(String content) {
-		success(content, StandardCharsets.UTF_8);
+		requestRangeNotSatisfiable(content, StandardCharsets.UTF_8);
 	}
 
 	public void requestRangeNotSatisfiable(String content, Charset charset) {
@@ -1425,7 +1434,7 @@ public abstract class APIHandler {
 	}
 
 	public void requestTimeout(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		requestTimeout(object, StandardCharsets.UTF_8);
 	}
 
 	public void requestTimeout(Object object, Charset charset) {
@@ -1436,7 +1445,7 @@ public abstract class APIHandler {
 	}
 
 	public void requestTimeout(String content) {
-		success(content, StandardCharsets.UTF_8);
+		requestTimeout(content, StandardCharsets.UTF_8);
 	}
 
 	public void requestTimeout(String content, Charset charset) {
@@ -1458,7 +1467,7 @@ public abstract class APIHandler {
 	}
 
 	public void requestUtiTooLong(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		requestUtiTooLong(object, StandardCharsets.UTF_8);
 	}
 
 	public void requestUtiTooLong(Object object, Charset charset) {
@@ -1469,7 +1478,7 @@ public abstract class APIHandler {
 	}
 
 	public void requestUtiTooLong(String content) {
-		success(content, StandardCharsets.UTF_8);
+		requestUtiTooLong(content, StandardCharsets.UTF_8);
 	}
 
 	public void requestUtiTooLong(String content, Charset charset) {
@@ -1491,7 +1500,7 @@ public abstract class APIHandler {
 	}
 
 	public void resetContent(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		resetContent(object, StandardCharsets.UTF_8);
 	}
 
 	public void resetContent(Object object, Charset charset) {
@@ -1502,7 +1511,7 @@ public abstract class APIHandler {
 	}
 
 	public void resetContent(String content) {
-		success(content, StandardCharsets.UTF_8);
+		resetContent(content, StandardCharsets.UTF_8);
 	}
 
 	public void resetContent(String content, Charset charset) {
@@ -1524,7 +1533,7 @@ public abstract class APIHandler {
 	}
 
 	public void seeOther(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		seeOther(object, StandardCharsets.UTF_8);
 	}
 
 	public void seeOther(Object object, Charset charset) {
@@ -1535,7 +1544,7 @@ public abstract class APIHandler {
 	}
 
 	public void seeOther(String content) {
-		success(content, StandardCharsets.UTF_8);
+		seeOther(content, StandardCharsets.UTF_8);
 	}
 
 	public void seeOther(String content, Charset charset) {
@@ -1557,7 +1566,7 @@ public abstract class APIHandler {
 	}
 
 	public void serviceUnavailable(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		serviceUnavailable(object, StandardCharsets.UTF_8);
 	}
 
 	public void serviceUnavailable(Object object, Charset charset) {
@@ -1568,7 +1577,7 @@ public abstract class APIHandler {
 	}
 
 	public void serviceUnavailable(String content) {
-		success(content, StandardCharsets.UTF_8);
+		serviceUnavailable(content, StandardCharsets.UTF_8);
 	}
 
 	public void serviceUnavailable(String content, Charset charset) {
@@ -1629,7 +1638,7 @@ public abstract class APIHandler {
 	}
 
 	public void switchingProtocols(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		switchingProtocols(object, StandardCharsets.UTF_8);
 	}
 
 	public void switchingProtocols(Object object, Charset charset) {
@@ -1640,7 +1649,7 @@ public abstract class APIHandler {
 	}
 
 	public void switchingProtocols(String content) {
-		success(content, StandardCharsets.UTF_8);
+		switchingProtocols(content, StandardCharsets.UTF_8);
 	}
 
 	public void switchingProtocols(String content, Charset charset) {
@@ -1662,7 +1671,7 @@ public abstract class APIHandler {
 	}
 
 	public void temporaryRedirect(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		temporaryRedirect(object, StandardCharsets.UTF_8);
 	}
 
 	public void temporaryRedirect(Object object, Charset charset) {
@@ -1673,7 +1682,7 @@ public abstract class APIHandler {
 	}
 
 	public void temporaryRedirect(String content) {
-		success(content, StandardCharsets.UTF_8);
+		temporaryRedirect(content, StandardCharsets.UTF_8);
 	}
 
 	public void temporaryRedirect(String content, Charset charset) {
@@ -1695,7 +1704,7 @@ public abstract class APIHandler {
 	}
 
 	public void tooManyRequest(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		tooManyRequest(object, StandardCharsets.UTF_8);
 	}
 
 	public void tooManyRequest(Object object, Charset charset) {
@@ -1706,7 +1715,7 @@ public abstract class APIHandler {
 	}
 
 	public void tooManyRequest(String content) {
-		success(content, StandardCharsets.UTF_8);
+		tooManyRequest(content, StandardCharsets.UTF_8);
 	}
 
 	public void tooManyRequest(String content, Charset charset) {
@@ -1728,7 +1737,7 @@ public abstract class APIHandler {
 	}
 
 	public void unauthorized(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		unauthorized(object, StandardCharsets.UTF_8);
 	}
 
 	public void unauthorized(Object object, Charset charset) {
@@ -1739,7 +1748,7 @@ public abstract class APIHandler {
 	}
 
 	public void unauthorized(String content) {
-		success(content, StandardCharsets.UTF_8);
+		unauthorized(content, StandardCharsets.UTF_8);
 	}
 
 	public void unauthorized(String content, Charset charset) {
@@ -1761,7 +1770,7 @@ public abstract class APIHandler {
 	}
 
 	public void unorderedCollection(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		unorderedCollection(object, StandardCharsets.UTF_8);
 	}
 
 	public void unorderedCollection(Object object, Charset charset) {
@@ -1772,7 +1781,7 @@ public abstract class APIHandler {
 	}
 
 	public void unorderedCollection(String content) {
-		success(content, StandardCharsets.UTF_8);
+		unorderedCollection(content, StandardCharsets.UTF_8);
 	}
 
 	public void unorderedCollection(String content, Charset charset) {
@@ -1794,7 +1803,7 @@ public abstract class APIHandler {
 	}
 
 	public void unprocessableEntity(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		unprocessableEntity(object, StandardCharsets.UTF_8);
 	}
 
 	public void unprocessableEntity(Object object, Charset charset) {
@@ -1805,7 +1814,7 @@ public abstract class APIHandler {
 	}
 
 	public void unprocessableEntity(String content) {
-		success(content, StandardCharsets.UTF_8);
+		unprocessableEntity(content, StandardCharsets.UTF_8);
 	}
 
 	public void unprocessableEntity(String content, Charset charset) {
@@ -1827,7 +1836,7 @@ public abstract class APIHandler {
 	}
 
 	public void unsupportedMediaType(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		unsupportedMediaType(object, StandardCharsets.UTF_8);
 	}
 
 	public void unsupportedMediaType(Object object, Charset charset) {
@@ -1838,7 +1847,7 @@ public abstract class APIHandler {
 	}
 
 	public void unsupportedMediaType(String content) {
-		success(content, StandardCharsets.UTF_8);
+		unsupportedMediaType(content, StandardCharsets.UTF_8);
 	}
 
 	public void unsupportedMediaType(String content, Charset charset) {
@@ -1860,7 +1869,7 @@ public abstract class APIHandler {
 	}
 
 	public void upgradeRequired(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		upgradeRequired(object, StandardCharsets.UTF_8);
 	}
 
 	public void upgradeRequired(Object object, Charset charset) {
@@ -1871,7 +1880,7 @@ public abstract class APIHandler {
 	}
 
 	public void upgradeRequired(String content) {
-		success(content, StandardCharsets.UTF_8);
+		upgradeRequired(content, StandardCharsets.UTF_8);
 	}
 
 	public void upgradeRequired(String content, Charset charset) {
@@ -1893,7 +1902,7 @@ public abstract class APIHandler {
 	}
 
 	public void useProxy(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		useProxy(object, StandardCharsets.UTF_8);
 	}
 
 	public void useProxy(Object object, Charset charset) {
@@ -1904,7 +1913,7 @@ public abstract class APIHandler {
 	}
 
 	public void useProxy(String content) {
-		success(content, StandardCharsets.UTF_8);
+		useProxy(content, StandardCharsets.UTF_8);
 	}
 
 	public void useProxy(String content, Charset charset) {
@@ -1926,7 +1935,7 @@ public abstract class APIHandler {
 	}
 
 	public void variantAlsoNegotiates(Object object) {
-		success(object, StandardCharsets.UTF_8);
+		variantAlsoNegotiates(object, StandardCharsets.UTF_8);
 	}
 
 	public void variantAlsoNegotiates(Object object, Charset charset) {
@@ -1937,7 +1946,7 @@ public abstract class APIHandler {
 	}
 
 	public void variantAlsoNegotiates(String content) {
-		success(content, StandardCharsets.UTF_8);
+		variantAlsoNegotiates(content, StandardCharsets.UTF_8);
 	}
 
 	public void variantAlsoNegotiates(String content, Charset charset) {

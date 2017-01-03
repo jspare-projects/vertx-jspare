@@ -19,16 +19,16 @@ import java.lang.reflect.Field;
 
 import org.jspare.core.container.InjectorStrategy;
 import org.jspare.core.container.MySupport;
-import org.jspare.vertx.annotation.ProxyHandler;
 import org.jspare.vertx.annotation.VertxInject;
-import org.jspare.vertx.builder.ProxyHandlerUtils;
+import org.jspare.vertx.annotation.VertxProxyInject;
+import org.jspare.vertx.builder.ProxyServiceUtils;
 
 import io.vertx.core.Vertx;
 import io.vertx.serviceproxy.ProxyHelper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ProxyHandlerStrategy extends MySupport implements InjectorStrategy {
+public class VertxProxyInjectStrategy extends MySupport implements InjectorStrategy {
 
 	@VertxInject
 	private Vertx vertx;
@@ -38,9 +38,10 @@ public class ProxyHandlerStrategy extends MySupport implements InjectorStrategy 
 
 		try {
 
-			ProxyHandler proxyHandler = field.getAnnotation(ProxyHandler.class);
-			String address = ProxyHandlerUtils.getAddress(proxyHandler, field.getType());
+			VertxProxyInject proxyHandler = field.getAnnotation(VertxProxyInject.class);
+			String address = ProxyServiceUtils.getAddress(proxyHandler, field.getType());
 			Object value = ProxyHelper.createProxy(field.getType(), vertx, address);
+			field.setAccessible(true);
 			field.set(obj, value);
 		} catch (IllegalArgumentException | IllegalAccessException | IllegalStateException e) {
 

@@ -22,13 +22,13 @@ import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.jspare.core.annotation.Inject;
-import org.jspare.core.container.Context;
 import org.jspare.core.container.InjectorStrategy;
 import org.jspare.core.container.MySupport;
 import org.jspare.core.exception.EnvironmentException;
 import org.jspare.core.exception.Errors;
 import org.jspare.vertx.annotation.SharedWorkerExecutor;
 import org.jspare.vertx.annotation.VertxInject;
+import org.jspare.vertx.bootstrap.VertxHolder;
 import org.jspare.vertx.utils.JsonObjectLoader;
 
 import io.vertx.core.Vertx;
@@ -51,7 +51,7 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 	}
 
 	@Inject
-	private Context context;
+	private VertxHolder vertxHolder;
 
 	@Override
 	public void inject(Object result, Field field) {
@@ -61,8 +61,7 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 		try {
 
 			VertxInject inject = field.getAnnotation(VertxInject.class);
-			String instanceRef = inject.value();
-			Optional<Vertx> oVertx = Optional.ofNullable(context.getAs(formatInstanceKey(instanceRef)));
+			Optional<Vertx> oVertx = Optional.ofNullable(vertxHolder.vertx());
 			if (oVertx.isPresent()) {
 
 				vertx = oVertx.get();
@@ -91,7 +90,7 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 	protected void setField(Object result, Field field, Vertx vertx) throws IllegalArgumentException, IllegalAccessException {
 
 		field.setAccessible(true);
-
+		
 		if (Vertx.class.equals(field.getType())) {
 
 			field.set(result, vertx);

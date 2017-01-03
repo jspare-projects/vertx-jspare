@@ -13,26 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.builder;
+package org.jspare.vertx.annotation;
 
-import org.apache.commons.lang.StringUtils;
-import org.jspare.vertx.annotation.ProxyHandler;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import lombok.experimental.UtilityClass;
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE })
+public @interface RegisterProxyService {
 
-@UtilityClass
-public class ProxyHandlerUtils {
-
-	public String getAddress(ProxyHandler proxyHandler, Class<?> serviceType) {
-		String address = proxyHandler.value();
-		if (StringUtils.isEmpty(address)) {
-
-			address = defaultAddress(serviceType);
-		}
-		return address;
-	}
-
-	public String defaultAddress(Class<?> clazz) {
-		return "service." + clazz.getSimpleName().toLowerCase();
-	}
+	String value();
 }

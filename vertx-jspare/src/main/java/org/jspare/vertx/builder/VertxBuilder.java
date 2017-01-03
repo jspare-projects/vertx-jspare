@@ -15,29 +15,15 @@
  */
 package org.jspare.vertx.builder;
 
-import static org.jspare.core.container.Environment.my;
+import static org.jspare.core.container.Environment.registryResource;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
-import org.jspare.core.container.Context;
-import org.jspare.vertx.annotation.EventBusController;
-import org.jspare.vertx.annotation.VertxInject;
-import org.jspare.vertx.injector.VertxInjectStrategy;
+import org.jspare.vertx.bootstrap.VertxHolder;
 
-import io.github.lukehutch.fastclasspathscanner.matchprocessor.ClassAnnotationMatchProcessor;
-import io.github.lukehutch.fastclasspathscanner.matchprocessor.MethodAnnotationMatchProcessor;
-import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
-import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
-import io.vertx.core.eventbus.EventBus;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,8 +32,6 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @EqualsAndHashCode(callSuper = false)
 public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
-
-	private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
 
 	public static VertxBuilder create() {
 
@@ -71,50 +55,7 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 	@Setter
 	private VertxOptions options;
 
-	@Getter
-	@Setter
-	private boolean scanClasspath4verticles;
-
-	@Getter
-	@Setter
-	private boolean scanClasspath4eventbus;
-
-	@Getter
-	@Setter
-	private Set<Class<?>> verticlesClasses;
-
-	@Getter
-	@Setter
-	private Set<String> verticlesPackages;
-
-	private Map<String, DeploymentOptions> sVerticle2deploy;
-
-	private Map<Verticle, DeploymentOptions> iVerticle2deploy;
-
-	@Getter
-	@Setter
-	private List<Class<?>> eventBusClasses;
-
-	@Getter
-	@Setter
-	private List<String> eventBusPackages;
-
 	private VertxBuilder() {
-
-		name = VertxInject.DEFAULT;
-		scanClasspath4verticles = false;
-		scanClasspath4eventbus = false;
-		verticlesClasses = new HashSet<>();
-		verticlesPackages = new HashSet<>();
-		eventBusClasses = new ArrayList<>();
-		eventBusPackages = new ArrayList<>();
-		sVerticle2deploy = new HashMap<>();
-		iVerticle2deploy = new HashMap<>();
-	}
-
-	public VertxBuilder addEventBusController(Class<? extends EventBusController> controllerClass) {
-		eventBusClasses.add(controllerClass);
-		return this;
 	}
 
 	@Override
@@ -128,12 +69,6 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 			// Registry vertx
 			this.vertx = vertx;
 
-			// Collect and registry event bus
-			collectAndRegistryEventBusControllers();
-
-			// Collect, create and registry one verticle
-			collectAndRegistryVerticles();
-
 			future.complete(vertx);
 		};
 
@@ -145,33 +80,10 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 			createVertx(runner);
 		}
 
-		my(Context.class).put(VertxInjectStrategy.formatInstanceKey(name), vertx);
+		// Register vertx on VertxHolder. This interaction allow that the Vertx can be accessed internally by application.
+		registryResource(new VertxHolder().vertx(vertx));
 
 		return future;
-	}
-
-	public VertxBuilder deployVerticle(Class<?> verticle) {
-
-		verticlesClasses.add(verticle);
-		return this;
-	}
-
-	public VertxBuilder deployVerticle(String deploymentId, DeploymentOptions deploymentOptions) {
-
-		sVerticle2deploy.put(deploymentId, deploymentOptions);
-		return this;
-	}
-
-	public VertxBuilder deployVerticle(Verticle verticle) {
-
-		iVerticle2deploy.put(verticle, new DeploymentOptions());
-		return this;
-	}
-
-	public VertxBuilder deployVerticle(Verticle verticle, DeploymentOptions deploymentOptions) {
-
-		iVerticle2deploy.put(verticle, deploymentOptions);
-		return this;
 	}
 
 	protected void createVertx(Consumer<Vertx> runner) {
@@ -195,73 +107,5 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 
 			runner.accept(Vertx.vertx(options));
 		}
-	}
-
-	/**
-	 * Collect and registry event bus controllers on {@link Vertx} instance.
-	 *
-	 * @param vertx
-	 *            the vertx
-	 */
-	private void collectAndRegistryEventBusControllers() {
-
-		if (scanClasspath4eventbus) {
-			eventBusPackages.clear();
-			eventBusPackages.add(".*");
-		}
-
-		// Iterate eventBusPackages scannig and adding classes to
-		// eventBusClasses
-
-		MethodAnnotationMatchProcessor processor = (c, m) -> eventBusClasses.add(c);
-
-		eventBusPackages.forEach(scanSpec -> {
-
-			ClasspathScannerUtils.scanner(scanSpec).matchClassesWithMethodAnnotation(org.jspare.vertx.annotation.Consumer.class, processor)
-					.scan(NUMBER_CLASSPATH_SCANNER_THREADS);
-		});
-
-		List<MessageData> consumers = new ArrayList<>();
-
-		// Iterate eventBusClasses and add consumers to will process
-		eventBusClasses.forEach(c -> consumers.addAll(my(EventBusCollector.class).collect(c)));
-
-		// Process consumers
-		EventBus eventBus = vertx.eventBus();
-		consumers.forEach(md -> eventBus.consumer(md.name(), md.wrap()));
-	}
-
-	private void collectAndRegistryVerticles() {
-
-		// Check if default package are available to scan and add to
-		// eventBusPackages
-		if (scanClasspath4verticles) {
-			verticlesPackages.clear();
-			verticlesPackages.add(".*");
-		}
-
-		ClassAnnotationMatchProcessor processor = (c) -> verticlesClasses.add(c);
-
-		// Iterate eventBusPackages scannig and adding classes to
-		// eventBusClasses
-		verticlesPackages.forEach(scanSpec -> {
-
-			ClasspathScannerUtils.scanner(scanSpec).matchClassesWithAnnotation(org.jspare.vertx.annotation.Verticle.class, processor)
-					.scan(NUMBER_CLASSPATH_SCANNER_THREADS);
-		});
-
-		List<VerticleData> verticles = new ArrayList<>();
-
-		// Iterate verticlesClasses and add verticles to will process
-		verticlesClasses.forEach(c -> {
-			my(VerticleCollector.class).collect(c).ifPresent(verticles::add);
-		});
-
-		// Process and deploy verticles
-		verticles.forEach(vd -> vertx.deployVerticle(vd.verticle(), vd.deploymentOptions()));
-
-		sVerticle2deploy.forEach((k, v) -> vertx.deployVerticle(k, v));
-
-		iVerticle2deploy.forEach((k, v) -> vertx.deployVerticle(k, v));
 	}
 }

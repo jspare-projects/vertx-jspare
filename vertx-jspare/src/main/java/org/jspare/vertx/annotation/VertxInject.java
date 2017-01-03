@@ -26,9 +26,5 @@ import org.apache.commons.lang.StringUtils;
 @Target({ ElementType.FIELD })
 public @interface VertxInject {
 
-	String DEFAULT = "main";
-
-	String value() default DEFAULT;
-
 	String vertxOptions() default StringUtils.EMPTY;
 }

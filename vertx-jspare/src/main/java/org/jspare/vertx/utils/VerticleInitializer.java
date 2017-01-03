@@ -30,4 +30,17 @@ public class VerticleInitializer {
 		ContainerUtils.processInjection(verticle);
 		return verticle;
 	}
+
+	@SneakyThrows
+	public Verticle initialize(Verticle verticle) {
+		ContainerUtils.processInjection(verticle);
+		return verticle;
+	}
+	
+	@SneakyThrows
+	@SuppressWarnings("unchecked")
+	public Verticle initialize(String name) {
+		Class<? extends Verticle> clazz = (Class<? extends Verticle>) Class.forName(name);
+		return initialize(clazz);
+	}
 }

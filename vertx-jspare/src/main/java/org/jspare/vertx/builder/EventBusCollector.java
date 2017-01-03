@@ -32,7 +32,7 @@ import org.jspare.vertx.annotation.EventBusController;
 import lombok.SneakyThrows;
 
 @Resource
-public class EventBusCollector implements Collector<Collection<MessageData>> {
+public class EventBusCollector implements Collector<Collection<EventBusData>> {
 
 	private Map<Class<?>, Object> controllers;
 
@@ -42,7 +42,7 @@ public class EventBusCollector implements Collector<Collection<MessageData>> {
 	}
 
 	@Override
-	public Collection<MessageData> collect(Class<?> clazz, Object... args) {
+	public Collection<EventBusData> collect(Class<?> clazz, Object... args) {
 
 		// Ignore all classes without EventBusController
 		if (!clazz.isAnnotationPresent(EventBusController.class)) {
@@ -50,7 +50,7 @@ public class EventBusCollector implements Collector<Collection<MessageData>> {
 			return Arrays.asList();
 		}
 
-		List<MessageData> handlers = new ArrayList<>();
+		List<EventBusData> handlers = new ArrayList<>();
 		List<Method> methodsCollected = new ArrayList<>();
 
 		Arrays.asList(clazz.getDeclaredMethods()).forEach(m -> {
@@ -67,7 +67,7 @@ public class EventBusCollector implements Collector<Collection<MessageData>> {
 			handlers.addAll(methodsCollected.stream().map(method -> {
 
 				Consumer consumer = method.getAnnotation(Consumer.class);
-				return new MessageData(instance, method, consumer.value());
+				return new EventBusData(instance, method, consumer.value());
 			}).collect(Collectors.toList()));
 		}
 		return handlers;

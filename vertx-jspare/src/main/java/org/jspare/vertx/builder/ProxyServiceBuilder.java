@@ -20,7 +20,7 @@ import static org.jspare.core.container.Environment.my;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jspare.vertx.annotation.ProxyHandler;
+import org.jspare.vertx.annotation.RegisterProxyService;
 
 import io.github.lukehutch.fastclasspathscanner.matchprocessor.ClassAnnotationMatchProcessor;
 import io.vertx.core.Vertx;
@@ -51,22 +51,22 @@ public class ProxyServiceBuilder extends AbstractBuilder<Void> {
 
 	@Getter
 	@Setter
-	private Set<Class<?>> proxyServiceClasses;
+	private Set<Class<?>> classes;
 
 	@Getter
 	@Setter
-	private Set<String> proxyServicePackages;
+	private Set<String> scanSpecs;
 
 	private ProxyServiceBuilder(Vertx vertx) {
 
 		this.vertx = vertx;
 		scanClasspath = false;
-		proxyServiceClasses = new HashSet<>();
-		proxyServicePackages = new HashSet<>();
+		classes = new HashSet<>();
+		scanSpecs = new HashSet<>();
 	}
 
-	public ProxyServiceBuilder addProxyService(Class<?> service) {
-		proxyServiceClasses.add(service);
+	public ProxyServiceBuilder addProxyService(Class<?> clazz) {
+		classes.add(clazz);
 		return this;
 	}
 
@@ -74,42 +74,37 @@ public class ProxyServiceBuilder extends AbstractBuilder<Void> {
 	public Void build() {
 
 		// Collect, create and registry proxy services
-		collectAndRegistryProxyServices();
-
-		return null;
-	}
-
-	private void collectAndRegistryProxyServices() {
-
 		// Check if default package are available to scan and add to
-		// eventBusPackages
 		if (scanClasspath) {
-			proxyServicePackages.clear();
-			proxyServicePackages.add(".*");
+			scanSpecs.clear();
+			scanSpecs.add(".*");
 		}
 
-		ClassAnnotationMatchProcessor processor = (c) -> proxyServiceClasses.add(c);
+		ClassAnnotationMatchProcessor processor = (c) -> classes.add(c);
 
-		proxyServicePackages.forEach(scanSpec -> {
+		scanSpecs.forEach(scanSpec -> {
 
-			ClasspathScannerUtils.scanner(scanSpec).matchClassesWithAnnotation(ProxyHandler.class, processor)
+			ClasspathScannerUtils.scanner(scanSpec).matchClassesWithAnnotation(RegisterProxyService.class, processor)
 					.scan(NUMBER_CLASSPATH_SCANNER_THREADS);
 		});
 
 		// Iterate proxyServiceClasses and register service
-		proxyServiceClasses.forEach(this::registerProxyService);
+		classes.forEach(this::registerProxyService);
+
+		return null;
 	}
 
 	private <T> void registerProxyService(Class<T> clazz) {
-		
-		if(!clazz.isAnnotationPresent(ProxyHandler.class)){
-			
-			log.warn("Cannot register service {} with ProxyHelper. One possible cause, the class is not annotated bt ProxyHandler annotation.");
+
+		if (!clazz.isAnnotationPresent(RegisterProxyService.class)) {
+
+			log.warn(
+					"Cannot register service {} with ProxyHelper. One possible cause, the class is not annotated bt ProxyHandler annotation.");
 			return;
 		}
 
-		ProxyHandler proxyHandler = clazz.getAnnotation(ProxyHandler.class);
-		String address = ProxyHandlerUtils.getAddress(proxyHandler, clazz);
+		RegisterProxyService proxyHandler = clazz.getAnnotation(RegisterProxyService.class);
+		String address = ProxyServiceUtils.getAddress(proxyHandler, clazz);
 		T service = my(clazz);
 		ProxyHelper.registerService(clazz, vertx, service, address);
 	}

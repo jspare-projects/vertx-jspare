@@ -13,20 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.builder;
+package org.jspare.vertx.annotation;
 
-import io.vertx.core.DeploymentOptions;
-import io.vertx.core.Verticle;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Data
-@Accessors(fluent = true)
-@AllArgsConstructor
-public class VerticleData {
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD })
+public @interface VertxProxyInject {
 
-	private Verticle verticle;
-
-	private DeploymentOptions deploymentOptions;
+	String value();
 }

@@ -15,24 +15,14 @@
  */
 package org.jspare.vertx.bootstrap;
 
-import org.jspare.core.bootstrap.EnvironmentBuilder;
-import org.jspare.core.bootstrap.Runner;
-import org.jspare.vertx.annotation.ProxyHandler;
-import org.jspare.vertx.annotation.VertxInject;
-import org.jspare.vertx.builder.VertxBuilder;
-import org.jspare.vertx.injector.ProxyHandlerStrategy;
-import org.jspare.vertx.injector.VertxInjectStrategy;
+import static org.jspare.core.container.Environment.registryResource;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.xebia.jacksonlombok.JacksonLombokAnnotationIntrospector;
+import org.jspare.core.bootstrap.Runner;
+import org.jspare.vertx.builder.VertxBuilder;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.Json;
 
 public abstract class VertxRunner extends AbstractVerticle implements Runner {
 
@@ -44,7 +34,12 @@ public abstract class VertxRunner extends AbstractVerticle implements Runner {
 		mySupport();
 
 		vertx().setHandler(res -> {
-			if (res.failed()) {
+			
+			if (res.succeeded()) {
+				
+				registryResource(new VertxHolder().vertx(vertx));
+			}else{
+				
 				throw new RuntimeException("Failed to create Vert.x instance");
 			}
 		});
@@ -53,18 +48,14 @@ public abstract class VertxRunner extends AbstractVerticle implements Runner {
 	@Override
 	public void setup() {
 
-		// Prepare Environment with VertxInject
-		EnvironmentBuilder.create().addInjector(VertxInject.class, new VertxInjectStrategy()).build();
-		EnvironmentBuilder.create().addInjector(ProxyHandler.class, new ProxyHandlerStrategy()).build();
-
-		// Set default Json Mapper options
-		Json.mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector()).setVisibility(PropertyAccessor.ALL, Visibility.ANY)
-				.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).findAndRegisterModules();
+		EnvironmentUtils.register();
 	}
 
 	protected Future<Vertx> vertx() {
 
-		return VertxBuilder.create().deployVerticle(this).build();
+		return VertxBuilder.create().build().compose(vertx -> {
+			
+			vertx.deployVerticle(this);
+		}, Future.succeededFuture());
 	}
 }

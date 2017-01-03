@@ -27,7 +27,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @AllArgsConstructor
-public class MessageData {
+public class EventBusData {
 
 	private Object controller;
 
