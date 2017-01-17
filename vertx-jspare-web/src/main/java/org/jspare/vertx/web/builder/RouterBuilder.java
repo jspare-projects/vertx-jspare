@@ -18,9 +18,12 @@ package org.jspare.vertx.web.builder;
 import static org.jspare.core.container.Environment.my;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.jspare.vertx.builder.AbstractBuilder;
@@ -30,7 +33,6 @@ import org.jspare.vertx.web.handler.DefaultHandler;
 import io.github.lukehutch.fastclasspathscanner.matchprocessor.MethodAnnotationMatchProcessor;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.AuthHandler;
@@ -47,6 +49,8 @@ import lombok.extern.slf4j.Slf4j;
 public class RouterBuilder extends AbstractBuilder<Router> {
 
 	private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
+	
+	public static final String DEFAULT_AUTH_HANDLER_KEY = "default-auth-handler";
 
 	public static RouterBuilder create(Vertx vertx) {
 
@@ -87,12 +91,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 	private SockJSHandlerOptions sockJSHandlerOptions;
 
 	@Getter
-	@Setter
-	private AuthProvider authProvider;
-
-	@Getter
-	@Setter
-	private Class<? extends AuthHandler> authHandlerClass;
+	private Map<String, Supplier<AuthHandler>> authHandlerMap;
 
 	@Getter
 	@Setter
@@ -121,8 +120,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 		skipRoutes = new HashSet<>();
 		handlerClass = DefaultHandler.class;
 		sockJSHandlerOptions = new SockJSHandlerOptions();
-		authProvider = null;
-		authHandlerClass = null;
+		authHandlerMap = new HashMap<>();
 		raml = false;
 	}
 
@@ -140,6 +138,22 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 	public RouterBuilder addRoutePackage(String routePackage) {
 
 		routePackages.add(routePackage);
+		return this;
+	}
+	
+	public RouterBuilder authHandler(Supplier<AuthHandler> authHandler) {
+		
+		authHandler(DEFAULT_AUTH_HANDLER_KEY, authHandler);
+		return this;
+	}
+	
+	public RouterBuilder authHandler(String identity, Supplier<AuthHandler> authHandler) {
+		authHandlerMap.put(identity, authHandler);
+		return this;
+	}
+	
+	public RouterBuilder removeAuthHandler(String identity) {
+		authHandlerMap.remove(identity);
 		return this;
 	}
 

@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,12 +44,10 @@ import org.jspare.vertx.web.annotation.subrouter.SubRouter;
 import org.jspare.vertx.web.handler.BodyEndHandler;
 
 import io.vertx.core.Handler;
-import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.AuthHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -69,8 +68,6 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 		// Retrieve required parameters to collect handlers
 
 		final Class<? extends Handler<RoutingContext>> routeHandlerClass = builder.handlerClass();
-		final AuthProvider authProvider = builder.authProvider();
-		final Class<? extends AuthHandler> authHandlerClass = builder.authHandlerClass();
 		final SockJSHandlerOptions sockJSHandlerOptions = builder.sockJSHandlerOptions();
 
 		// Initialize collected handlers
@@ -107,33 +104,41 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 				hDocumentation.responseSchema(documentation.responseClass());
 			}
 
-			// Authentication block
 			AuthHandler authHandler = null;
-
+			
+			// Validate if route has auth annotation
 			if (hasAuth(clazz, method) && !method.isAnnotationPresent(IgnoreAuth.class)) {
 
-				Optional<AuthHandler> oAuthHandler = createAuthHandler(authProvider, authHandlerClass);
+				// Retrieve auth metadata
+				Auth auth = method.isAnnotationPresent(Auth.class) ? getAuth(method) : getAuth(clazz);
+				
+				// Retrieve auth identity
+				String identity = auth.authHandler();
+				
+				// Get authHandler from RouterBuilder
+				Optional<Supplier<AuthHandler>> oAuthHandler = Optional.ofNullable(builder.authHandlerMap().get(identity));
 
+				// Add authorities if is present on metadata
 				if (oAuthHandler.isPresent()) {
-
-					if (method.isAnnotationPresent(Auth.class)) {
-
-						Auth auth = method.getAnnotation(Auth.class);
-						oAuthHandler.get().addAuthorities(
-								Arrays.asList(auth.value()).stream().filter(a -> StringUtils.isNotEmpty(a)).collect(Collectors.toSet()));
-					} else if (clazz.isAnnotationPresent(Auth.class)) {
-
-						Auth authClass = clazz.getAnnotation(Auth.class);
-						oAuthHandler.get().addAuthorities(Arrays.asList(authClass.value()).stream().filter(a -> StringUtils.isNotEmpty(a))
-								.collect(Collectors.toSet()));
-					}
+					
+					Supplier<AuthHandler> authHandlerSupplier = oAuthHandler.get();
+					authHandler = authHandlerSupplier.get();
+					authHandler.addAuthorities(Arrays.asList(auth.value())
+							.stream()
+							.filter(a -> StringUtils.isNotEmpty(a))
+							.collect(Collectors.toSet()
+					));
 				}
-
-				authHandler = oAuthHandler.orElse(null);
 			}
 
-			HandlerData defaultHandlerData = new HandlerData().clazz(clazz).method(method).consumes(consumes).produces(produces)
-					.bodyEndHandler(bodyEndHandler).authHandler(authHandler).routeHandlerClass(routeHandlerClass)
+			HandlerData defaultHandlerData = new HandlerData()
+					.clazz(clazz)
+					.method(method)
+					.consumes(consumes)
+					.produces(produces)
+					.bodyEndHandler(bodyEndHandler)
+					.authHandler(authHandler)
+					.routeHandlerClass(routeHandlerClass)
 					.documentation(hDocumentation);
 
 			if (hasHttpMethodsPresents(method)) {
@@ -198,6 +203,10 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 		return (clazz.isAnnotationPresent(Auth.class) || method.isAnnotationPresent(Auth.class))
 				&& !method.isAnnotationPresent(IgnoreAuth.class);
 	}
+	
+	protected Auth getAuth(AnnotatedElement annotatedElement){
+		return annotatedElement.getAnnotation(Auth.class);
+	}
 
 	protected boolean isHandlerAnnotation(Annotation handlerType, Class<?> element) {
 		return handlerType.annotationType().equals(element);
@@ -261,18 +270,6 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 			}
 			return null;
 		}).collect(Collectors.toList());
-	}
-
-	@SneakyThrows
-	private Optional<AuthHandler> createAuthHandler(AuthProvider authProvider, Class<? extends AuthHandler> authHandlerClass) {
-
-		if (authProvider == null || authHandlerClass == null) {
-			return Optional.empty();
-		}
-
-		AuthHandler authHandler = (AuthHandler) authHandlerClass.getDeclaredMethod("create", AuthProvider.class).invoke(authProvider,
-				authProvider);
-		return Optional.of(authHandler);
 	}
 
 	@SuppressWarnings("unchecked")
