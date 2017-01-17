@@ -44,12 +44,6 @@ public class EventBusCollector implements Collector<Collection<EventBusData>> {
 	@Override
 	public Collection<EventBusData> collect(Class<?> clazz, Object... args) {
 
-		// Ignore all classes without EventBusController
-		if (!clazz.isAnnotationPresent(EventBusController.class)) {
-
-			return Arrays.asList();
-		}
-
 		List<EventBusData> handlers = new ArrayList<>();
 		List<Method> methodsCollected = new ArrayList<>();
 
@@ -73,24 +67,34 @@ public class EventBusCollector implements Collector<Collection<EventBusData>> {
 		return handlers;
 	}
 
-	@SneakyThrows
-	private Object getInstance(Class<?> controllerClass) {
+	private Object getInstance(Class<?> clazz) {
 
-		EventBusController anEventBusController = controllerClass.getAnnotation(EventBusController.class);
-
-		Object instance = controllers.get(controllerClass);
+		if(!clazz.isAnnotationPresent(EventBusController.class)){
+			
+			return instantiate(clazz);
+		}
+		
+		EventBusController anEventBusController = clazz.getAnnotation(EventBusController.class);
+		Object instance = controllers.get(clazz);
 		if (instance != null) {
 
 			return instance;
 		}
 
-		instance = controllerClass.newInstance();
-		ContainerUtils.processInjection(instance);
+		instance = instantiate(clazz);
 
 		if (anEventBusController.retention()) {
 
-			controllers.put(controllerClass, instance);
+			controllers.put(clazz, instance);
 		}
+		return instance;
+	}
+	
+	@SneakyThrows
+	private Object instantiate(Class<?> clazz){
+		
+		Object instance = clazz.newInstance();
+		ContainerUtils.processInjection(instance);
 		return instance;
 	}
 }

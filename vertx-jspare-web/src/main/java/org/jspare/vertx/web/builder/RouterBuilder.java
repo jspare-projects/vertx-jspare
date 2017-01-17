@@ -105,6 +105,10 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 	@Getter
 	@Setter
 	private Set<String> routePackages;
+	
+	@Getter
+	@Setter
+	private boolean raml;
 
 	private RouterBuilder(Vertx vertx, Router router) {
 
@@ -119,6 +123,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 		sockJSHandlerOptions = new SockJSHandlerOptions();
 		authProvider = null;
 		authHandlerClass = null;
+		raml = false;
 	}
 
 	public RouterBuilder addHandler(Handler<RoutingContext> handler) {
@@ -158,6 +163,12 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 			log.debug("Routing handler {}", hd.toStringLine());
 			HandlerWrapper.prepareHandler(router, hd);
 		});
+		
+		if(raml){
+			
+			generateRamlRoute(router);
+		}
+		
 		return router;
 	}
 
@@ -192,5 +203,9 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 					.matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.SockJsHandler.class, processor)
 					.scan(NUMBER_CLASSPATH_SCANNER_THREADS);
 		});
+	}
+	
+	private void generateRamlRoute(Router router) {
+		
 	}
 }

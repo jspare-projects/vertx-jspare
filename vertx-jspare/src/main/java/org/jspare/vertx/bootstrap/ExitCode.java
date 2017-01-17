@@ -20,7 +20,7 @@ package org.jspare.vertx.bootstrap;
  *
  * The codes above follow
  * <a href="http://vertx.io/docs/vertx-core/java/#_launcher_and_exit_code">Vertx
- * and launcher exit code</a> specification, and can be extendend implemenvThe
+ * and launcher exit code</a> specification, and can be extendend implement the
  * codes above follow Vertx Launcher specification, and can be extended
  * implementing this interface.
  *

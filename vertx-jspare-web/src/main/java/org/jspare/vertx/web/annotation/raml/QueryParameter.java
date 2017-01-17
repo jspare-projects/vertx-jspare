@@ -13,50 +13,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.web.annotation.documentation;
+package org.jspare.vertx.web.annotation.raml;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
- * The Annotation Documentation. <br>
- * Used for documents the current route
+ * The Interface QueryParameter.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD })
-public @interface Documentation {
+@Target({ ElementType.METHOD, ElementType.TYPE })
+public @interface QueryParameter {
 
 	/**
-	 * Description of this handler.
+	 * Description.
 	 *
 	 * @return the string
 	 */
-	String description() default StringUtils.EMPTY;
-
-	QueryParameter[] queryParameters() default {};
+	String description();
 
 	/**
-	 * Request class.
+	 * Key.
 	 *
-	 * @return the class
+	 * @return the string
 	 */
-	Class<?> requestClass() default Object.class;
-
-	/**
-	 * Response class.
-	 *
-	 * @return the class
-	 */
-	Class<?> responseClass() default Object.class;
-
-	/**
-	 * Response status.
-	 *
-	 * @return the status[]
-	 */
-	Status[] responseStatus() default { @Status(code = 200, description = "Success") };
+	String key();
 }
