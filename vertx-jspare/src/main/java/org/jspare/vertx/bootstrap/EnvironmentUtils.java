@@ -8,6 +8,7 @@ import org.jspare.vertx.injector.VertxInjectStrategy;
 
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.xebia.jacksonlombok.JacksonLombokAnnotationIntrospector;
@@ -25,8 +26,12 @@ public class EnvironmentUtils {
 		EnvironmentBuilder.create().addInjector(VertxProxyInject.class, new VertxProxyInjectStrategy()).build();
 
 		// Set default Json Mapper options
-		Json.mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector()).setVisibility(PropertyAccessor.ALL, Visibility.ANY)
-				.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).findAndRegisterModules();
+		Json.mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector())
+			.setVisibility(PropertyAccessor.ALL, Visibility.ANY)
+			.setSerializationInclusion(Include.NON_NULL)
+			.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+			.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+			.findAndRegisterModules();
 	}
 }

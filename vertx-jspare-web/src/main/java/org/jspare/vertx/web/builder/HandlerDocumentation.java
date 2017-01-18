@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jspare.vertx.web.annotation.raml.Status;
+import org.jspare.vertx.web.annotation.documentation.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,7 +43,7 @@ public class HandlerDocumentation {
 
 		private String description;
 
-		public QueryParameter(org.jspare.vertx.web.annotation.raml.QueryParameter aQueryParameter) {
+		public QueryParameter(org.jspare.vertx.web.annotation.documentation.QueryParameter aQueryParameter) {
 			key = aQueryParameter.key();
 			description = aQueryParameter.description();
 		}

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.web.annotation.raml;
+package org.jspare.vertx.web.annotation.documentation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -21,18 +21,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The Interface Status.
+ * The Interface QueryParameter.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.TYPE })
-public @interface Status {
-
-	/**
-	 * Code.
-	 *
-	 * @return the int
-	 */
-	int code();
+public @interface QueryParameter {
 
 	/**
 	 * Description.
@@ -40,4 +33,11 @@ public @interface Status {
 	 * @return the string
 	 */
 	String description();
+
+	/**
+	 * Key.
+	 *
+	 * @return the string
+	 */
+	String key();
 }

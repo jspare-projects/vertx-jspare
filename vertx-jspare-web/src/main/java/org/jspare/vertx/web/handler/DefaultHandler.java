@@ -60,34 +60,34 @@ public class DefaultHandler implements Handler<RoutingContext> {
 	 * @see io.vertx.core.Handler#handle(java.lang.Object)
 	 */
 	@Override
-	public void handle(RoutingContext ctx) {
+	public void handle(RoutingContext context) {
 
 		try {
 
 			// Handle unhandled excetion
-			ctx.vertx().exceptionHandler(t -> {
+			context.vertx().exceptionHandler(t -> {
 
-				ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()).end(ExceptionUtils.getStackTrace(t));
+				context.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()).end(ExceptionUtils.getStackTrace(t));
 			});
 
 			Object newInstance = instantiateHandler();
 
-			setHandlingParameters(ctx, newInstance);
+			setHandlingParameters(context, newInstance);
 
 			// Wrap bodyEndHandler to share routingContext
-			handlerData.bodyEndHandler().forEach(h -> ctx.addBodyEndHandler(event -> {
+			handlerData.bodyEndHandler().forEach(h -> context.addBodyEndHandler(event -> {
 
-				h.handle(ctx);
+				h.handle(context);
 			}));
 
-			Object[] parameters = collectParameters(ctx);
+			Object[] parameters = collectParameters(context);
 
 			// Call method of handler data
 			handlerData.method().invoke(newInstance, parameters);
 
 		} catch (Throwable t) {
 
-			catchInvoke(ctx, t);
+			catchInvoke(context, t);
 		}
 	}
 
@@ -238,9 +238,10 @@ public class DefaultHandler implements Handler<RoutingContext> {
 		// If Route is handling by abstract Handling inject some resources
 		if (newInstance instanceof APIHandler) {
 
+			((APIHandler) newInstance).setVertx(routingContext.vertx());
 			((APIHandler) newInstance).setReq(routingContext.request());
 			((APIHandler) newInstance).setRes(routingContext.response());
-			((APIHandler) newInstance).setCtx(routingContext);
+			((APIHandler) newInstance).setContext(routingContext);
 		}
 	}
 }

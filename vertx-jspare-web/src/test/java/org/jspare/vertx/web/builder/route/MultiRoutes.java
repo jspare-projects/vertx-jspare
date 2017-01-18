@@ -29,7 +29,7 @@ public class MultiRoutes extends APIHandler {
 	public void handler1() {
 
 		res.write("multiRoutes 1\n");
-		ctx.next();
+		context.next();
 	}
 
 	@Consumes("*/*")
