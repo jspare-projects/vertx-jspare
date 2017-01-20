@@ -19,7 +19,7 @@ Read this in other languages: [English](README.md), [简体中文](README.zh-cn.
   * [Version Reference] (#version-reference)
 * [vertx-jspare](#vertx-jspare)
 * [vertx-jspare-web](#vertx-jspare-web)
-* [examples](#examples)
+* [Examples](#examples)
 * [Getting help and Reporting Issues](#help)
 * [RoadMap](#roadmap)
 * [Feedback](#feedback)
