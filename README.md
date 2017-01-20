@@ -217,7 +217,14 @@ dependencies {
 
 ## Getting help and Reporting Issues
 
+Having trouble with vertx-jspare? We’d like to help!
+
+* Check the reference documentation at [vertx.jspare.org](http://vertx.jspare.org) — they provide solutions to the most common questions.
+* Report bugs and issues at https://github.com/jspare-projects/vertx-jspare/issues
+
 ## RoadMap
+
+We are working to improve each times more. Soon more news!
 
 ## Feedback
 
