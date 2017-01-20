@@ -35,6 +35,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -161,6 +162,10 @@ public class DefaultHandler implements Handler<RoutingContext> {
 		if (parameter.getType().equals(HttpServerResponse.class)) {
 
 			return routingContext.response();
+		}
+		if (parameter.getType().equals(JsonObject.class)) {
+			if(StringUtils.isEmpty(routingContext.getBody().toString())) return null;
+			return routingContext.getBodyAsJson();
 		}
 		if (StringUtils.isNotEmpty(routingContext.request().getParam(parameter.getName()))) {
 
