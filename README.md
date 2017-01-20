@@ -60,11 +60,10 @@ Our great goal is to try to extract the best of both worlds, keep the essence an
 
 ### Version Reference
 
-Right now, there are three artifacts available:
+Right now, there are twoo artifacts available:
 
-* vertx-core
-* vertx-web
-* vertx-service-proxy
+* vertx-jspare
+* vertx-jspare-web
 
 | vert.x | jspare-core | vertx-jspare |
 |--------|-------------|--------------|
