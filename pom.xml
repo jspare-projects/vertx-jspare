@@ -55,7 +55,7 @@
 		<lombok.version>1.16.8</lombok.version>
 		<logback.version>1.1.6</logback.version>
 		<junit.version>4.12</junit.version>
-		<jspare.core.version>2.0.1-SNAPSHOT</jspare.core.version>
+		<jspare.core.version>2.0.1</jspare.core.version>
 		<maven.javadoc.version>2.10.4</maven.javadoc.version>
 		<vertx.version>3.3.3</vertx.version>
 	</properties>
@@ -167,6 +167,7 @@
 			<version>${logback.version}</version>
 		</dependency>
 
+		<!-- JSpare Framework -->
 		<dependency>
 			<groupId>org.jspare</groupId>
 			<artifactId>jspare-core</artifactId>
@@ -181,13 +182,13 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Vert.x Core -->
+		<!-- Vert.x -->
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-core</artifactId>
 			<version>${vertx.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-service-proxy</artifactId>
@@ -202,6 +203,18 @@
 		</dependency>
 
 	</dependencies>
+
+	<dependencyManagement>
+	
+		<dependencies>
+			<dependency>
+				<groupId>io.vertx</groupId>
+				<artifactId>vertx-web</artifactId>
+				<version>${vertx.version}</version>
+			</dependency>
+		</dependencies>
+
+	</dependencyManagement>
 
 	<modules>
 		<module>vertx-jspare</module>
