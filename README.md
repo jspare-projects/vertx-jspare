@@ -115,6 +115,27 @@ dependencies {
 
 #### VerxtJspareLauncher extending io.vertx.core.Launcher
 
+The vert.x Launcher is used in fat jar as main class, and by the vertx command line utility. It executes a set of commands such as run, bare, start...
+
+To extract a better initialization of the two worlds a small customization was created in the launcher to use the class VertxJspareLauncher. You can add the vertx-jspare to your vertx/bin directory and start with one single cli command.
+
+```
+
+Initializing by cli:
+vertx-jspare run MyVerticle -conf src/main/conf/conf.json
+
+Intializing by Main class:
+org.jspare.vertx.bootstrap.VertxJspareLauncher run MyVerticle -conf src/main/conf/conf.json
+
+```
+
+Packing your fat-jar use the org.jspare.vertx.bootstrap.VertxJspareLauncher like your main class
+
+```
+java -jar my-fat-jar.jar
+```
+**NOTE**: For CLI all the default commands are present, as well as all the functionality of the original Launcher class.
+
 #### Boostrap runner for start programatically with cluster support
 
 ### Fluent builders with classpath scanner
