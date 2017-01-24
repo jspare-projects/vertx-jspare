@@ -188,7 +188,7 @@ public class ClusteredBootstrap extends VertxClusteredRunner{
 	@Override
 	public void start() throws Exception {
 		
-  // Scan classpath to create proxy for vertx @Proxygen with @RegisterProxyService
+	  	// Scan classpath to create proxy for vertx @Proxygen with @RegisterProxyService
 		ProxyServiceBuilder.create(vertx).scanClasspath(true).build();
 	}
 
@@ -215,9 +215,43 @@ protected Future<Vertx> vertx() {
 
 ### Fluent builders with classpath scanner
 
+The framework offers some useful classes for you to create and manipulate some common behaviors of your application, we call builders because we will build and delegate the behavior of the application through them.
+
 #### Vertx instance builder
 
+The class org.jspare.vertx.builder.VertxBuilder offers a building tool to get in the io.vertx.core.Vertx class
+
+The use of it is very basic, we will register in the container some parameters. You can name this instance of vertx through the name(String name) method, or you can add VertxOptions through the options(VertxOptions options). See there is no secret and the final result will be a Future <Vertx>.
+
+```java
+@Override
+protected Future<Vertx> vertx() {
+
+	return VertxBuilder.create().name("my-vertx-instance")
+		.options(new VertxOptions().setMaxEventLoopExecutionTime(60000l))
+		.build().compose(vertx -> vertx.deployVerticle(this), Future.succeededFuture());
+}
+```
+
 #### Event-bus builder
+
+It is possible to define message handler classes of a clear event-bus that this is an item that we will soon see, EventBusBuilder just like VertxBuilder is a utility to help with reading and initializing your application. Its main features are:
+
+* Allow classpath scanner for consumers
+* Allow add programatically your controllers
+* Allow parse and send quickly messages with event-bus
+
+The eventbus builder will look for your classes that are annotated with the following annotations: @Consumer and @LocalConsumer that follow vertx.consumer() vertx.localConsumer(). Every class scanned with these annotations can be found by the container if this option is available.
+
+```java
+
+// For create new EventBusBuilder vertx parameter are mandatory on fluent constructor.
+ // Vertx is mandatory parameter.
+EventBusBuilder.create(vertx)
+
+```
+
+You will see that the framework provides a way to integrate with the very practical eventbus.
 
 ### CDI with JSpare Environemnt
 
