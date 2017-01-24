@@ -138,6 +138,81 @@ java -jar my-fat-jar.jar
 
 #### Boostrap runner for start programatically with cluster support
 
+An alternative to initialize your application programmatically is extending org.jspare.vertx.bootstrap.VertxRunner as your main class. This class will provide all the options for you to make the bootstrap of your application standalone.
+
+
+```java
+import org.jspare.core.bootstrap.Runner;
+import org.jspare.vertx.bootstrap.VertxRunner;
+import org.jspare.vertx.samples.verticle.StartVerticle;
+import org.jspare.vertx.utils.VerticleInitializer;
+
+public class Bootstrap extends VertxRunner {
+
+	public static void main(String[] args) {
+
+		Runner.run(Bootstrap.class);
+	}
+
+	@Override
+	public void start() {
+
+		vertx.deployVerticle(VerticleInitializer.initialize(StartVerticle.class), ar -> {
+			if(ar.succeeded()){
+				
+				vertx.eventBus().send("hello", "World!!");
+			}
+		});
+	}
+}
+
+```
+
+Note, when the start method is called vertx can already be invoked, this is possible because the container already created an instance of vertx for you. For clustered vertx use org.jspare.vertx.bootstrap.VertxClusteredRunner.
+
+```java
+import org.jspare.core.bootstrap.Runner;
+import org.jspare.vertx.bootstrap.VertxClusteredRunner;
+import org.jspare.vertx.builder.ProxyServiceBuilder;
+
+import io.vertx.core.spi.cluster.ClusterManager;
+import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
+
+public class ClusteredBootstrap extends VertxClusteredRunner{
+
+	public static void main(String[] args) {
+
+		Runner.run(ClusteredBootstrap.class);
+	}
+
+	@Override
+	public void start() throws Exception {
+		
+  // Scan classpath to create proxy for vertx @Proxygen with @RegisterProxyService
+		ProxyServiceBuilder.create(vertx).scanClasspath(true).build();
+	}
+
+	@Override
+	protected ClusterManager clusterManager() {
+		
+		return new HazelcastClusterManager();
+	}
+}
+```
+
+For provide vertx instance you can provider your own implementation, just overwrite the method Future<Vertx> vertx();
+
+```java
+protected Future<Vertx> vertx() {
+
+		return VertxBuilder.create().build().compose(vertx -> {
+			
+			vertx.deployVerticle(this);
+		}, Future.succeededFuture());
+}
+```
+**NOTE**: You can use jspare builders to help to build your instances, let's see this in sequence.
+
 ### Fluent builders with classpath scanner
 
 #### Vertx instance builder
