@@ -251,21 +251,221 @@ EventBusBuilder.create(vertx)
 
 ```
 
-You will see that the framework provides a way to integrate with the very practical eventbus.
+You will see that the framework provides a way to integrate with the very practical eventbus. 
 
 ### CDI with JSpare Environemnt
 
-#### Custom CDI injector to work with vert.
+The jspare container provides directives so we can perform dependency injection of the vertx core components. The environment has the ability to handle a main instance or derived, this allows at any point of the application you access the vertx.
+
+#### VertxInject
+
+Inject at any point of your application the vertx native features, with vertxInject you have the inversion of control in your hands.
+
+```java
+// Inject vertx in your resource or component bellow jspare container
+@VertxInject
+private Vertx vertx;
+
+```
+
+**Note**: To have the vertx available in the container it is important that your application has been raised by one of vertx-jspare bootstrap mechanisms. (When using VertxJspareLauncher or VertxRunner the container will store the main instance of vertx.)
+
+It is also possible to inject vertx direct resources through VertxInject.
+
+```java
+// The Vertx instance
+@VertxInject
+private Vertx vertx;
+
+// Use directly eventbus
+@VertxInject
+private EventBus eventBus;
+
+// Inject and create one worker from vertx
+@VertxInject
+private WorkerExecutor worker;
+
+// Custom shared worker with SharedWokerExecutor annotation
+@SharedWorkerExecutor(name = "worker-name", maxExecuteTime = 0l, poolSize = 1l)
+@VertxInject
+private WorkerExecutor worker;
+
+// The async fileSystem of vertx
+@VertxInject
+private FileSystem fs;
+
+
+// The SharedData instance
+@VertxInject
+private SharedData data;
+
+// The vertx context instance
+// Invoke getOrCreateContext method of vertx
+@VertxInject
+private Context context;
+
+```
+
+Usage sample of EventBus:
+
+```java
+// Some resource using jspare dependecy injection
+@Resource
+public class FooResource {
+
+ @VertxInject
+ private EventBus eventbus;
+
+ public void foo(){
+   
+   eventbus.send("some-eb-address", "some-message");
+ }
+
+}
+```
+
+#### EventBus
+
+Now we will understand how to optimize the use of some important vertx features, the EventBus.
+
+The event bus is the nervous system of Vert.x.
+
+There is a single event bus instance for every Vert.x instance and it is obtained using the method eventBus.
+
+The event bus allows different parts of your application to communicate with each other irrespective of what language they are written in, and whether they’re in the same Vert.x instance, or in a different Vert.x instance.
+
+Access official documentation for more details:
+
+
+With vertx-jspare you can create controllers for the eventbus, just annotate a class with the annotation @EventBusController or add directly class to EventBusBuilder (See, builders section of this docs).
+
+What really matters to the control classes, are the methods of addressing, the consumers.
+
+Using only vertx you can access the eventBus and create consumers. 
+
+```java
+
+EventBus eb = vertx.eventBus();
+eb.consumer("address", event -> {
+
+});
+```
+
+Within a control class, just note the method with @Consumer so that it is registered in the eventbus as an event consumer
+
+```java
+@EventBusController
+public class Hello {
+
+ @Consumer("address")
+ public void helloWorld(Message<String> event) {
+   log.debug("Event driven says Hello {}", event.body());
+   event.reply("Hello " + event.body());
+ }
+}
+
+// Sender
+
+vertx.eventBus().send("hello", "world");
+
+// Output on helloWorld method
+// --> Hello world
+```
 
 #### Service Proxy support
 
-#### Verticle initializer with CDI support
+That’s the main purpose of service proxies. It lets you expose a service on the event bus, so, any other vert.x component can consume it, as soon as they know the address on which the service is published.
 
-### Utils
+A service is described with a Java interface containing methods following the async pattern. Behind the hood, messages are sent on the event bus to invoke the service and get the response back. But to make it more easy to use for you, it generates a proxy that you can invoke directly (using the API from the service interface).
 
-#### Future helpers
+The jspare-vertx allow that you create the proxies services using the jspare componentization concepts. Simply create your component interface, its implementation then register it.
 
-#### JsobObjectParser
+##### Service register
+
+Originally:
+
+```java
+@ProxyGen
+@VertxGen
+public interface ProductService {
+
+  String ADDRESS = "service.product";
+  
+  void findProductById(int id, Handler<AsyncResult<JsonObject>> resultHandler);
+
+}
+```
+
+Proxy register handler:
+
+```java
+
+ProductService service = new ProductServiceImpl();
+// Register the handler
+ProxyHelper.registerService(ProductService.class, vertx, service, ProductService.ADDRESS);
+```
+
+With vertx-jspare you need only:
+
+```java
+@ProxyGen
+@VertxGen
+@Component // JSpare container annotation to handle you impl without manual instantiation
+@RegisterProxyService(ProductService.ADDRESS) // Register service automatically
+public interface ProductService {
+
+  String ADDRESS = "service.product";
+  
+  void findProductById(int id, Handler<AsyncResult<JsonObject>> resultHandler);
+
+}
+```
+
+It`s done, the purpose here is to simplify, in our interface we define that a component is a member of the service proxy and will be available to be consumed.
+
+##### Consuming
+
+Originally:
+
+```java
+ProductService service = ProxyHelper.createProxy(ProductService.class, vertx, ProductService.ADDRESS);
+```
+
+With container injetio:
+
+```java
+@VertxProxyInject
+private ProductService service;
+```
+
+Using vertx-jspare, VertxProxyInject will inject the proxy service for you.
+
+**Note**: No vertix feature is overwritten with the displayed functions or calls. The expected behavior is the native one by the framework, and there is no impact on the merge of the methodologies.
+
+#### Utils
+
+##### Verticle initializer
+
+To create a verticle using the jspare container internally, use the VerticleInitializer, it takes care of making a call processing the control inversion using the jspare lifecycle.
+
+```java
+// Some verticle class
+Verticle verticle = VerticleInitializer.initialize(MyVerticleClass.class);
+
+// SOme verticle classname
+Verticle verticle = VerticleInitializer.initialize("mypackage.MyVerticleClass");
+```
+
+##### Future helpers
+
+In some cases you will need to sequence futures, use the FutureSupplier class for this.
+
+```java
+Future<String> future = FutureSupplier.supply(() -> {
+
+ return "future string";
+});
+```
 
 ## vertx-jspare-web
 
