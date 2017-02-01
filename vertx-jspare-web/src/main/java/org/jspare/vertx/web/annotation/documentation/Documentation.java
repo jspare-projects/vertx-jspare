@@ -37,6 +37,11 @@ public @interface Documentation {
 	 */
 	String description() default StringUtils.EMPTY;
 
+	/**
+	 * Query parameters.
+	 *
+	 * @return the query parameter[]
+	 */
 	QueryParameter[] queryParameters() default {};
 
 	/**

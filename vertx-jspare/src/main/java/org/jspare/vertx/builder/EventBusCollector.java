@@ -31,16 +31,28 @@ import org.jspare.vertx.annotation.EventBusController;
 
 import lombok.SneakyThrows;
 
+/**
+ * The Class EventBusCollector.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 @Resource
 public class EventBusCollector implements Collector<Collection<EventBusData>> {
 
+	/** The controllers. */
 	private Map<Class<?>, Object> controllers;
 
+	/**
+	 * Instantiates a new event bus collector.
+	 */
 	public EventBusCollector() {
 
 		controllers = new HashMap<>();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jspare.vertx.builder.Collector#collect(java.lang.Class, java.lang.Object[])
+	 */
 	@Override
 	public Collection<EventBusData> collect(Class<?> clazz, Object... args) {
 
@@ -67,13 +79,19 @@ public class EventBusCollector implements Collector<Collection<EventBusData>> {
 		return handlers;
 	}
 
+	/**
+	 * Gets the single instance of EventBusCollector.
+	 *
+	 * @param clazz the clazz
+	 * @return single instance of EventBusCollector
+	 */
 	private Object getInstance(Class<?> clazz) {
 
-		if(!clazz.isAnnotationPresent(EventBusController.class)){
-			
+		if (!clazz.isAnnotationPresent(EventBusController.class)) {
+
 			return instantiate(clazz);
 		}
-		
+
 		EventBusController anEventBusController = clazz.getAnnotation(EventBusController.class);
 		Object instance = controllers.get(clazz);
 		if (instance != null) {
@@ -89,10 +107,16 @@ public class EventBusCollector implements Collector<Collection<EventBusData>> {
 		}
 		return instance;
 	}
-	
+
+	/**
+	 * Instantiate.
+	 *
+	 * @param clazz the clazz
+	 * @return the object
+	 */
 	@SneakyThrows
-	private Object instantiate(Class<?> clazz){
-		
+	private Object instantiate(Class<?> clazz) {
+
 		Object instance = clazz.newInstance();
 		ContainerUtils.processInjection(instance);
 		return instance;

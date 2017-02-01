@@ -27,12 +27,17 @@ import io.vertx.core.Vertx;
 import io.vertx.serviceproxy.ProxyHelper;
 import lombok.extern.slf4j.Slf4j;
 
+/** The Constant log. */
 @Slf4j
 public class VertxProxyInjectStrategy extends MySupport implements InjectorStrategy {
 
+	/** The vertx. */
 	@VertxInject
 	private Vertx vertx;
 
+	/* (non-Javadoc)
+	 * @see org.jspare.core.container.InjectorStrategy#inject(java.lang.Object, java.lang.reflect.Field)
+	 */
 	@Override
 	public void inject(Object obj, Field field) {
 

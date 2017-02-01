@@ -22,9 +22,19 @@ import java.lang.annotation.Target;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * The Interface VertxInject.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 public @interface VertxInject {
 
+	/**
+	 * Vertx options.
+	 *
+	 * @return the string
+	 */
 	String vertxOptions() default StringUtils.EMPTY;
 }

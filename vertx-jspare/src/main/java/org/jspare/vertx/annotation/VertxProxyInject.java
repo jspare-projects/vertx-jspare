@@ -20,9 +20,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * The Interface VertxProxyInject.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 public @interface VertxProxyInject {
 
+	/**
+	 * Value.
+	 *
+	 * @return the string
+	 */
 	String value();
 }

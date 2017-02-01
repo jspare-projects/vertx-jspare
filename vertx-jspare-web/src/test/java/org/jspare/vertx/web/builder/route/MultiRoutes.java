@@ -22,8 +22,16 @@ import org.jspare.vertx.web.annotation.handler.Handler;
 import org.jspare.vertx.web.annotation.method.Get;
 import org.jspare.vertx.web.handler.APIHandler;
 
+/**
+ * The Class MultiRoutes.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 public class MultiRoutes extends APIHandler {
 
+	/**
+	 * Handler 1.
+	 */
 	@Handler
 	@Get("/multiRoutes/1")
 	public void handler1() {
@@ -32,6 +40,9 @@ public class MultiRoutes extends APIHandler {
 		context.next();
 	}
 
+	/**
+	 * Handler 2.
+	 */
 	@Consumes("*/*")
 	@Produces("text/plain")
 	@BlockingHandler(order = 1)

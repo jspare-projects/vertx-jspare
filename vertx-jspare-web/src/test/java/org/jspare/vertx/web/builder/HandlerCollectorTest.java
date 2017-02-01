@@ -23,8 +23,16 @@ import org.jspare.vertx.web.builder.route.MultiRoutes;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * The Class HandlerCollectorTest.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 public class HandlerCollectorTest extends AbstractCollectorTest {
 
+	/**
+	 * Collect route set test.
+	 */
 	@Test
 	public void collectRouteSetTest() {
 
@@ -51,6 +59,9 @@ public class HandlerCollectorTest extends AbstractCollectorTest {
 		Assert.assertEquals("text/plain", handler2.produces());
 	}
 
+	/**
+	 * Multi handlers test.
+	 */
 	@Test
 	public void multiHandlersTest() {
 
@@ -58,6 +69,9 @@ public class HandlerCollectorTest extends AbstractCollectorTest {
 		Assert.assertEquals(3, handlers.size());
 	}
 
+	/**
+	 * Multi http methods test.
+	 */
 	@Test
 	public void multiHttpMethodsTest() {
 

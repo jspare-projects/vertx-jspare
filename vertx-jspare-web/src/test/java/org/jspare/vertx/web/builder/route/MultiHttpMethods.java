@@ -29,7 +29,16 @@ import org.jspare.vertx.web.annotation.method.Put;
 import org.jspare.vertx.web.annotation.method.Trace;
 import org.jspare.vertx.web.handler.APIHandler;
 
+/**
+ * The Class MultiHttpMethods.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 public class MultiHttpMethods extends APIHandler {
+	
+	/**
+	 * Handler 1.
+	 */
 	@All
 	@Connect
 	@Delete
@@ -45,6 +54,9 @@ public class MultiHttpMethods extends APIHandler {
 	public void handler1() {
 	}
 
+	/**
+	 * Handler 2.
+	 */
 	@All
 	@Connect
 	@Delete

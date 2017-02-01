@@ -499,6 +499,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 		return fut;
 	}
 
+	/** The executor. */
 	private final Executor executor;
 
 	// ============= Wrapping methods =============
@@ -566,22 +567,35 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
 	// ============= with context methods =============
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#acceptEither(java.util.concurrent.CompletionStage, java.util.function.Consumer)
+	 */
 	@Override
 	public VertxCompletableFuture<Void> acceptEither(CompletionStage<? extends T> other, Consumer<? super T> action) {
 		return new VertxCompletableFuture<>(context, super.acceptEither(other, action));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#acceptEitherAsync(java.util.concurrent.CompletionStage, java.util.function.Consumer)
+	 */
 	@Override
-	public VertxCompletableFuture<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super T> action) {
+	public VertxCompletableFuture<Void> acceptEitherAsync(CompletionStage<? extends T> other,
+			Consumer<? super T> action) {
 		return new VertxCompletableFuture<>(context, super.acceptEitherAsync(other, action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#acceptEitherAsync(java.util.concurrent.CompletionStage, java.util.function.Consumer, java.util.concurrent.Executor)
+	 */
 	@Override
-	public VertxCompletableFuture<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super T> action,
-			Executor executor) {
+	public VertxCompletableFuture<Void> acceptEitherAsync(CompletionStage<? extends T> other,
+			Consumer<? super T> action, Executor executor) {
 		return new VertxCompletableFuture<>(context, super.acceptEitherAsync(other, action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#applyToEither(java.util.concurrent.CompletionStage, java.util.function.Function)
+	 */
 	@Override
 	public <U> VertxCompletableFuture<U> applyToEither(CompletionStage<? extends T> other, Function<? super T, U> fn) {
 		return new VertxCompletableFuture<>(context, super.applyToEither(other, fn));
@@ -589,14 +603,21 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
 	// ============= Composite Future implementation =============
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#applyToEitherAsync(java.util.concurrent.CompletionStage, java.util.function.Function)
+	 */
 	@Override
-	public <U> VertxCompletableFuture<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super T, U> fn) {
+	public <U> VertxCompletableFuture<U> applyToEitherAsync(CompletionStage<? extends T> other,
+			Function<? super T, U> fn) {
 		return new VertxCompletableFuture<>(context, super.applyToEitherAsync(other, fn, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#applyToEitherAsync(java.util.concurrent.CompletionStage, java.util.function.Function, java.util.concurrent.Executor)
+	 */
 	@Override
-	public <U> VertxCompletableFuture<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super T, U> fn,
-			Executor executor) {
+	public <U> VertxCompletableFuture<U> applyToEitherAsync(CompletionStage<? extends T> other,
+			Function<? super T, U> fn, Executor executor) {
 		return new VertxCompletableFuture<>(context, super.applyToEitherAsync(other, fn, executor));
 	}
 
@@ -608,146 +629,235 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 		return context;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#handle(java.util.function.BiFunction)
+	 */
 	@Override
 	public <U> VertxCompletableFuture<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
 		return new VertxCompletableFuture<>(context, super.handle(fn));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#handleAsync(java.util.function.BiFunction)
+	 */
 	@Override
 	public <U> VertxCompletableFuture<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn) {
 		return new VertxCompletableFuture<>(context, super.handleAsync(fn, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#handleAsync(java.util.function.BiFunction, java.util.concurrent.Executor)
+	 */
 	@Override
-	public <U> VertxCompletableFuture<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
+	public <U> VertxCompletableFuture<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn,
+			Executor executor) {
 		return new VertxCompletableFuture<>(context, super.handleAsync(fn, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#runAfterBoth(java.util.concurrent.CompletionStage, java.lang.Runnable)
+	 */
 	@Override
 	public VertxCompletableFuture<Void> runAfterBoth(CompletionStage<?> other, Runnable action) {
 		return new VertxCompletableFuture<>(context, super.runAfterBoth(other, action));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#runAfterBothAsync(java.util.concurrent.CompletionStage, java.lang.Runnable)
+	 */
 	@Override
 	public VertxCompletableFuture<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action) {
 		return new VertxCompletableFuture<>(context, super.runAfterBothAsync(other, action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#runAfterBothAsync(java.util.concurrent.CompletionStage, java.lang.Runnable, java.util.concurrent.Executor)
+	 */
 	@Override
-	public VertxCompletableFuture<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action, Executor executor) {
+	public VertxCompletableFuture<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action,
+			Executor executor) {
 		return new VertxCompletableFuture<>(context, super.runAfterBothAsync(other, action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#runAfterEither(java.util.concurrent.CompletionStage, java.lang.Runnable)
+	 */
 	@Override
 	public VertxCompletableFuture<Void> runAfterEither(CompletionStage<?> other, Runnable action) {
 		return new VertxCompletableFuture<>(context, super.runAfterEither(other, action));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#runAfterEitherAsync(java.util.concurrent.CompletionStage, java.lang.Runnable)
+	 */
 	@Override
 	public VertxCompletableFuture<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action) {
 		return new VertxCompletableFuture<>(context, super.runAfterEitherAsync(other, action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#runAfterEitherAsync(java.util.concurrent.CompletionStage, java.lang.Runnable, java.util.concurrent.Executor)
+	 */
 	@Override
-	public VertxCompletableFuture<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action, Executor executor) {
+	public VertxCompletableFuture<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action,
+			Executor executor) {
 		return new VertxCompletableFuture<>(context, super.runAfterEitherAsync(other, action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenAccept(java.util.function.Consumer)
+	 */
 	@Override
 	public VertxCompletableFuture<Void> thenAccept(Consumer<? super T> action) {
 		return new VertxCompletableFuture<>(context, super.thenAccept(action));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenAcceptAsync(java.util.function.Consumer)
+	 */
 	@Override
 	public VertxCompletableFuture<Void> thenAcceptAsync(Consumer<? super T> action) {
 		return new VertxCompletableFuture<>(context, super.thenAcceptAsync(action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenAcceptAsync(java.util.function.Consumer, java.util.concurrent.Executor)
+	 */
 	@Override
 	public VertxCompletableFuture<Void> thenAcceptAsync(Consumer<? super T> action, Executor executor) {
 		return new VertxCompletableFuture<>(context, super.thenAcceptAsync(action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenAcceptBoth(java.util.concurrent.CompletionStage, java.util.function.BiConsumer)
+	 */
 	@Override
-	public <U> VertxCompletableFuture<Void> thenAcceptBoth(CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action) {
+	public <U> VertxCompletableFuture<Void> thenAcceptBoth(CompletionStage<? extends U> other,
+			BiConsumer<? super T, ? super U> action) {
 		return new VertxCompletableFuture<>(context, super.thenAcceptBoth(other, action));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenAcceptBothAsync(java.util.concurrent.CompletionStage, java.util.function.BiConsumer)
+	 */
 	@Override
 	public <U> VertxCompletableFuture<Void> thenAcceptBothAsync(CompletionStage<? extends U> other,
 			BiConsumer<? super T, ? super U> action) {
 		return new VertxCompletableFuture<>(context, super.thenAcceptBothAsync(other, action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenAcceptBothAsync(java.util.concurrent.CompletionStage, java.util.function.BiConsumer, java.util.concurrent.Executor)
+	 */
 	@Override
-	public <U> VertxCompletableFuture<Void> thenAcceptBothAsync(CompletionStage<? extends U> other, BiConsumer<? super T, ? super U> action,
-			Executor executor) {
+	public <U> VertxCompletableFuture<Void> thenAcceptBothAsync(CompletionStage<? extends U> other,
+			BiConsumer<? super T, ? super U> action, Executor executor) {
 		return new VertxCompletableFuture<>(context, super.thenAcceptBothAsync(other, action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenApply(java.util.function.Function)
+	 */
 	@Override
 	public <U> VertxCompletableFuture<U> thenApply(Function<? super T, ? extends U> fn) {
 		return new VertxCompletableFuture<>(context, super.thenApply(fn));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenApplyAsync(java.util.function.Function)
+	 */
 	@Override
 	public <U> VertxCompletableFuture<U> thenApplyAsync(Function<? super T, ? extends U> fn) {
 		return new VertxCompletableFuture<>(context, super.thenApplyAsync(fn, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenApplyAsync(java.util.function.Function, java.util.concurrent.Executor)
+	 */
 	@Override
 	public <U> VertxCompletableFuture<U> thenApplyAsync(Function<? super T, ? extends U> fn, Executor executor) {
 		return new VertxCompletableFuture<>(context, super.thenApplyAsync(fn, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenCombine(java.util.concurrent.CompletionStage, java.util.function.BiFunction)
+	 */
 	@Override
 	public <U, V> VertxCompletableFuture<V> thenCombine(CompletionStage<? extends U> other,
 			BiFunction<? super T, ? super U, ? extends V> fn) {
 		return new VertxCompletableFuture<>(context, super.thenCombine(other, fn));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenCombineAsync(java.util.concurrent.CompletionStage, java.util.function.BiFunction)
+	 */
 	@Override
 	public <U, V> VertxCompletableFuture<V> thenCombineAsync(CompletionStage<? extends U> other,
 			BiFunction<? super T, ? super U, ? extends V> fn) {
 		return new VertxCompletableFuture<>(context, super.thenCombineAsync(other, fn, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenCombineAsync(java.util.concurrent.CompletionStage, java.util.function.BiFunction, java.util.concurrent.Executor)
+	 */
 	@Override
 	public <U, V> VertxCompletableFuture<V> thenCombineAsync(CompletionStage<? extends U> other,
 			BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
 		return new VertxCompletableFuture<>(context, super.thenCombineAsync(other, fn, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenCompose(java.util.function.Function)
+	 */
 	@Override
 	public <U> VertxCompletableFuture<U> thenCompose(Function<? super T, ? extends CompletionStage<U>> fn) {
 		return new VertxCompletableFuture<>(context, super.thenCompose(fn));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenComposeAsync(java.util.function.Function)
+	 */
 	@Override
 	public <U> VertxCompletableFuture<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn) {
 		return new VertxCompletableFuture<>(context, super.thenComposeAsync(fn, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenComposeAsync(java.util.function.Function, java.util.concurrent.Executor)
+	 */
 	@Override
-	public <U> VertxCompletableFuture<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn, Executor executor) {
+	public <U> VertxCompletableFuture<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn,
+			Executor executor) {
 		return new VertxCompletableFuture<>(context, super.thenComposeAsync(fn, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenRun(java.lang.Runnable)
+	 */
 	@Override
 	public VertxCompletableFuture<Void> thenRun(Runnable action) {
 		return new VertxCompletableFuture<>(context, super.thenRun(action));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenRunAsync(java.lang.Runnable)
+	 */
 	@Override
 	public VertxCompletableFuture<Void> thenRunAsync(Runnable action) {
 		return new VertxCompletableFuture<>(context, super.thenRunAsync(action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#thenRunAsync(java.lang.Runnable, java.util.concurrent.Executor)
+	 */
 	@Override
 	public VertxCompletableFuture<Void> thenRunAsync(Runnable action, Executor executor) {
 		return new VertxCompletableFuture<>(context, super.thenRunAsync(action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#toCompletableFuture()
+	 */
 	@Override
 	public VertxCompletableFuture<T> toCompletableFuture() {
 		return this;
@@ -763,18 +873,28 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 		return VertxCompletableFuture.toFuture(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#whenComplete(java.util.function.BiConsumer)
+	 */
 	@Override
 	public VertxCompletableFuture<T> whenComplete(BiConsumer<? super T, ? super Throwable> action) {
 		return new VertxCompletableFuture<>(context, super.whenComplete(action));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#whenCompleteAsync(java.util.function.BiConsumer)
+	 */
 	@Override
 	public VertxCompletableFuture<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action) {
 		return new VertxCompletableFuture<>(context, super.whenCompleteAsync(action, executor));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.CompletableFuture#whenCompleteAsync(java.util.function.BiConsumer, java.util.concurrent.Executor)
+	 */
 	@Override
-	public VertxCompletableFuture<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action, Executor executor) {
+	public VertxCompletableFuture<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action,
+			Executor executor) {
 		return new VertxCompletableFuture<>(context, super.whenCompleteAsync(action, executor));
 	}
 
@@ -823,6 +943,12 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 		return withContext(Objects.requireNonNull(vertx).getOrCreateContext());
 	}
 
+	/**
+	 * Complete.
+	 *
+	 * @param result the result
+	 * @param error the error
+	 */
 	private void complete(T result, Throwable error) {
 		if (error == null) {
 			super.complete(result);
@@ -831,6 +957,11 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 		}
 	}
 
+	/**
+	 * Complete from async result.
+	 *
+	 * @param ar the ar
+	 */
 	private void completeFromAsyncResult(AsyncResult<T> ar) {
 		if (ar.succeeded()) {
 			super.complete(ar.result());

@@ -24,17 +24,37 @@ import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 
+/* (non-Javadoc)
+ * @see java.lang.Object#toString()
+ */
 @Data
 @Accessors(fluent = true)
+
+/**
+ * Instantiates a new event bus data.
+ *
+ * @param controller the controller
+ * @param method the method
+ * @param name the name
+ */
 @AllArgsConstructor
 public class EventBusData {
 
+	/** The controller. */
 	private Object controller;
 
+	/** The method. */
 	private Method method;
 
+	/** The name. */
 	private String name;
 
+	/**
+	 * Wrap.
+	 *
+	 * @param <T> the generic type
+	 * @return the handler
+	 */
 	public <T> Handler<Message<T>> wrap() {
 
 		return new Handler<Message<T>>() {

@@ -32,30 +32,79 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
+/**
+ * The Class JsonObjectLoader.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 @Resource
 public class JsonObjectLoader {
 
+	/** The Constant CONVERTER_PATTERN. */
 	private static final String CONVERTER_PATTERN = "%sConverter";
 
+	/**
+	 * Sets the default charset.
+	 *
+	 * @param defaultCharset the new default charset
+	 */
 	@Setter
+	
+	/**
+	 * Gets the default charset.
+	 *
+	 * @return the default charset
+	 */
 	@Getter
 	private Charset defaultCharset = StandardCharsets.UTF_8;
 
+	/**
+	 * Sets the default root path.
+	 *
+	 * @param defaultRootPath the new default root path
+	 */
 	@Setter
+	
+	/**
+	 * Gets the default root path.
+	 *
+	 * @return the default root path
+	 */
 	@Getter
 	private String defaultRootPath = "vertx";
 
+	/**
+	 * Load options.
+	 *
+	 * @param filename the filename
+	 * @return the json object
+	 */
 	public JsonObject loadOptions(String filename) {
 
 		return loadOptions(defaultRootPath, filename);
 	}
 
+	/**
+	 * Load options.
+	 *
+	 * @param <T> the generic type
+	 * @param filename the filename
+	 * @param optionClazz the option clazz
+	 * @return the t
+	 */
 	@SneakyThrows
 	public <T> T loadOptions(String filename, Class<T> optionClazz) {
 
 		return loadOptions(defaultRootPath, filename, optionClazz);
 	}
 
+	/**
+	 * Load options.
+	 *
+	 * @param defaultRootPath the default root path
+	 * @param filename the filename
+	 * @return the json object
+	 */
 	@SneakyThrows(IOException.class)
 	public JsonObject loadOptions(String defaultRootPath, String filename) {
 
@@ -67,12 +116,22 @@ public class JsonObjectLoader {
 			json = FileUtils.readFileToString(path.toFile(), defaultCharset);
 		} else {
 
-			json = IOUtils.toString(this.getClass().getResourceAsStream(String.format("/%s", path.toString())), getDefaultCharset());
+			json = IOUtils.toString(this.getClass().getResourceAsStream(String.format("/%s", path.toString())),
+					getDefaultCharset());
 		}
 
 		return new JsonObject(json);
 	}
 
+	/**
+	 * Load options.
+	 *
+	 * @param <T> the generic type
+	 * @param defaultRootPath the default root path
+	 * @param filename the filename
+	 * @param optionClazz the option clazz
+	 * @return the t
+	 */
 	@SneakyThrows
 	public <T> T loadOptions(String defaultRootPath, String filename, Class<T> optionClazz) {
 

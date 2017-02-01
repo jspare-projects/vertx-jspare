@@ -22,16 +22,28 @@ import org.junit.Test;
 
 import io.vertx.core.Vertx;
 
+/**
+ * The Class VertxInjectTest.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 public class VertxInjectTest extends AbstractVertxApplicationTest {
 
+	/** The vertx. */
 	@VertxInject
 	private Vertx vertx;
 
+	/**
+	 * Components creation test.
+	 */
 	@Test
 	public void componentsCreationTest() {
 
 	}
 
+	/**
+	 * Vertx test.
+	 */
 	@Test
 	public void vertxTest() {
 

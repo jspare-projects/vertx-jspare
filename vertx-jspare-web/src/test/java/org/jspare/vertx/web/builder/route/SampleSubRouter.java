@@ -22,9 +22,19 @@ import org.jspare.vertx.web.annotation.subrouter.SubRouter;
 
 import io.vertx.ext.web.RoutingContext;
 
+/**
+ * The Class SampleSubRouter.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 @SubRouter("/subRouter")
 public class SampleSubRouter {
 
+	/**
+	 * Sub 1.
+	 *
+	 * @param routingContext the routing context
+	 */
 	@Handler
 	@Get("/sub/1")
 	public void sub1(RoutingContext routingContext) {
@@ -33,6 +43,11 @@ public class SampleSubRouter {
 		routingContext.response().end();
 	}
 
+	/**
+	 * Sub 2.
+	 *
+	 * @param routingContext the routing context
+	 */
 	@Handler
 	@Get("/sub/2")
 	public void sub2(RoutingContext routingContext) {
@@ -41,6 +56,11 @@ public class SampleSubRouter {
 		routingContext.response().end();
 	}
 
+	/**
+	 * Sub 3.
+	 *
+	 * @param routingContext the routing context
+	 */
 	@IgnoreSubRouter
 	@Handler
 	@Get("/sub/3")

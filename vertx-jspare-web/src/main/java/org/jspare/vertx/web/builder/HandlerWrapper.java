@@ -28,14 +28,30 @@ import io.vertx.ext.web.RoutingContext;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Instantiates a new handler wrapper.
+ */
 @UtilityClass
 public class HandlerWrapper {
 
+	/**
+	 * Prepare handler.
+	 *
+	 * @param router the router
+	 * @param handlerData the handler data
+	 */
 	public void prepareHandler(Router router, HandlerData handlerData) {
 
 		setHandler(router, handlerData);
 	}
 
+	/**
+	 * Creates the route.
+	 *
+	 * @param router the router
+	 * @param data the data
+	 * @return the route
+	 */
 	protected Route createRoute(Router router, HandlerData data) {
 		Route route = router.route();
 
@@ -60,6 +76,12 @@ public class HandlerWrapper {
 		return route;
 	}
 
+	/**
+	 * Sets the order.
+	 *
+	 * @param data the data
+	 * @param route the route
+	 */
 	private void setOrder(HandlerData data, Route route) {
 
 		if (Integer.MIN_VALUE != data.order()) {
@@ -68,10 +90,22 @@ public class HandlerWrapper {
 		}
 	}
 
+	/**
+	 * Sets the consumes.
+	 *
+	 * @param data the data
+	 * @param route the route
+	 */
 	protected void setConsumes(HandlerData data, Route route) {
 		route.consumes(data.consumes());
 	}
 
+	/**
+	 * Sets the handler.
+	 *
+	 * @param router the router
+	 * @param data the data
+	 */
 	protected void setHandler(Router router, HandlerData data) {
 
 		// Create auth handler if is setted
@@ -99,10 +133,22 @@ public class HandlerWrapper {
 		}
 	}
 
+	/**
+	 * Sets the method.
+	 *
+	 * @param data the data
+	 * @param route the route
+	 */
 	protected void setMethod(HandlerData data, Route route) {
 		route.method(HttpMethod.valueOf(data.httpMethod()));
 	}
 
+	/**
+	 * Sets the path.
+	 *
+	 * @param data the data
+	 * @param route the route
+	 */
 	protected void setPath(HandlerData data, Route route) {
 		if (data.pathRegex()) {
 
@@ -113,16 +159,34 @@ public class HandlerWrapper {
 		}
 	}
 
+	/**
+	 * Sets the produces.
+	 *
+	 * @param data the data
+	 * @param route the route
+	 */
 	protected void setProduces(HandlerData data, Route route) {
 		route.produces(data.produces());
 	}
 
+	/**
+	 * Prepare handler.
+	 *
+	 * @param handlerData the handler data
+	 * @return the handler
+	 */
 	@SneakyThrows({ InstantiationException.class, IllegalAccessException.class, IllegalArgumentException.class,
 			InvocationTargetException.class, NoSuchMethodException.class })
 	private Handler<RoutingContext> prepareHandler(HandlerData handlerData) {
 		return handlerData.routeHandlerClass().getConstructor(HandlerData.class).newInstance(handlerData);
 	}
 
+	/**
+	 * Prepare sock js handler.
+	 *
+	 * @param handlerData the handler data
+	 * @return the handler
+	 */
 	private Handler<RoutingContext> prepareSockJsHandler(HandlerData handlerData) {
 
 		return handlerData.sockJSHandler().socketHandler(e -> DefaultSockJSHandler.socketHandler(handlerData, e));

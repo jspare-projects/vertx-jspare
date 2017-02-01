@@ -21,9 +21,19 @@ import org.jspare.vertx.annotation.VertxProxyInject;
 
 import lombok.experimental.UtilityClass;
 
+/**
+ * Instantiates a new proxy service utils.
+ */
 @UtilityClass
 public class ProxyServiceUtils {
 
+	/**
+	 * Gets the address.
+	 *
+	 * @param vertxProxyInject the vertx proxy inject
+	 * @param serviceType the service type
+	 * @return the address
+	 */
 	public String getAddress(VertxProxyInject vertxProxyInject, Class<?> serviceType) {
 		String address = vertxProxyInject.value();
 		if (StringUtils.isEmpty(address)) {
@@ -32,7 +42,14 @@ public class ProxyServiceUtils {
 		}
 		return address;
 	}
-	
+
+	/**
+	 * Gets the address.
+	 *
+	 * @param registerProxyService the register proxy service
+	 * @param serviceType the service type
+	 * @return the address
+	 */
 	public String getAddress(RegisterProxyService registerProxyService, Class<?> serviceType) {
 		String address = registerProxyService.value();
 		if (StringUtils.isEmpty(address)) {
@@ -42,6 +59,12 @@ public class ProxyServiceUtils {
 		return address;
 	}
 
+	/**
+	 * Default address.
+	 *
+	 * @param clazz the clazz
+	 * @return the string
+	 */
 	public String defaultAddress(Class<?> clazz) {
 		return "service." + clazz.getSimpleName().toLowerCase();
 	}

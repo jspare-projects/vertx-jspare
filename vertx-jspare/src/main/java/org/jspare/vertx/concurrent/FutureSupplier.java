@@ -23,30 +23,41 @@ import io.vertx.core.Future;
 import io.vertx.core.impl.CompositeFutureImpl;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Instantiates a new future supplier.
+ */
 @UtilityClass
 public class FutureSupplier {
-	
-	  /**
-	   * Sequence with a list of futures. Transforms a `List[Future[R]]` into a `Future[List[R]]`.
-	   * <p>
-	   * When all futures succeed, the result future completes with the list of each result of elements in {@code futures}.
-	   * </p>
-	   * The returned future fails as soon as one of the futures in {@code futures} fails.
-	   * When the list is empty, the returned future will be already completed.
-	   *
-	   * Useful for reducing many futures into a single @{link Future}.
-	   *
-	   * @param futures a list of {@link Future futures}
-	   * @return the transformed future
-	   */
-	  public static <R> Future<List<R>> sequenceFuture(List<Future<R>> futures) {
-	    return CompositeFutureImpl.all(futures.toArray(new Future[futures.size()]))
-	      .map(v -> futures.stream()
-	          .map(Future::result)
-	          .collect(Collectors.toList())
-	      );
-	  }
 
+	/**
+	 * Sequence with a list of futures. Transforms a `List[Future[R]]` into a
+	 * `Future[List[R]]`.
+	 * <p>
+	 * When all futures succeed, the result future completes with the list of
+	 * each result of elements in {@code futures}.
+	 * </p>
+	 * The returned future fails as soon as one of the futures in
+	 * {@code futures} fails. When the list is empty, the returned future will
+	 * be already completed.
+	 *
+	 * Useful for reducing many futures into a single @{link Future}.
+	 *
+	 * @param futures
+	 *            a list of {@link Future futures}
+	 * @return the transformed future
+	 */
+	public static <R> Future<List<R>> sequenceFuture(List<Future<R>> futures) {
+		return CompositeFutureImpl.all(futures.toArray(new Future[futures.size()]))
+				.map(v -> futures.stream().map(Future::result).collect(Collectors.toList()));
+	}
+
+	/**
+	 * Supply.
+	 *
+	 * @param <T> the generic type
+	 * @param event the event
+	 * @return the future
+	 */
 	public <T> Future<T> supply(Supplier<T> event) {
 
 		Future<T> future = Future.future();

@@ -27,9 +27,18 @@ import io.vertx.ext.web.handler.sockjs.SockJSSocket;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Instantiates a new default sock JS handler.
+ */
 @UtilityClass
 public class DefaultSockJSHandler {
 
+	/**
+	 * Socket handler.
+	 *
+	 * @param handlerData the handler data
+	 * @param event the event
+	 */
 	@SneakyThrows
 	public void socketHandler(HandlerData handlerData, SockJSSocket event) {
 
@@ -43,6 +52,13 @@ public class DefaultSockJSHandler {
 		handlerData.method().invoke(instance, parameters);
 	}
 
+	/**
+	 * Collect parameters.
+	 *
+	 * @param handlerData the handler data
+	 * @param event the event
+	 * @return the object[]
+	 */
 	@SneakyThrows
 	private Object[] collectParameters(HandlerData handlerData, SockJSSocket event) {
 
@@ -57,6 +73,13 @@ public class DefaultSockJSHandler {
 		return parameters;
 	}
 
+	/**
+	 * Resolve parameter.
+	 *
+	 * @param parameter the parameter
+	 * @param event the event
+	 * @return the object
+	 */
 	protected Object resolveParameter(Parameter parameter, SockJSSocket event) {
 
 		if (parameter.getType().equals(SockJSSocket.class)) {
@@ -87,6 +110,12 @@ public class DefaultSockJSHandler {
 		return null;
 	}
 
+	/**
+	 * Sets the handling parameters.
+	 *
+	 * @param event the event
+	 * @param newInstance the new instance
+	 */
 	protected void setHandlingParameters(SockJSSocket event, Object newInstance) {
 		// If Route is handling by abstract Handling inject some resources
 		if (newInstance instanceof APIHandler) {

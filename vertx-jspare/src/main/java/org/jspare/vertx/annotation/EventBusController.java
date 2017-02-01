@@ -27,5 +27,10 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 public @interface EventBusController {
 
+	/**
+	 * Retention.
+	 *
+	 * @return true, if successful
+	 */
 	boolean retention() default true;
 }

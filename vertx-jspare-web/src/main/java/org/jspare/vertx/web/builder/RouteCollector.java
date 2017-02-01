@@ -50,17 +50,21 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions;
 import lombok.extern.slf4j.Slf4j;
 
+/** The Constant log. */
 @Slf4j
 @Resource
 public class RouteCollector implements Collector<Collection<HandlerData>> {
 
+	/* (non-Javadoc)
+	 * @see org.jspare.vertx.builder.Collector#collect(java.lang.Class, java.lang.Object[])
+	 */
 	@Override
 	public Collection<HandlerData> collect(Class<?> clazz, Object... args) {
 
 		if (args.length < 1) {
 
-			throw new IllegalArgumentException(
-					String.format("Cannot collect route class [%s] without routeHandlerClass or authHandler", clazz.getName()));
+			throw new IllegalArgumentException(String.format(
+					"Cannot collect route class [%s] without routeHandlerClass or authHandler", clazz.getName()));
 		}
 
 		final RouterBuilder builder = (RouterBuilder) args[0];
@@ -85,8 +89,10 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 			final List<Annotation> handlerHttpMethodsAnnotations = new ArrayList<>();
 			handlerHttpMethodsAnnotations.addAll(httpMethodsAnnotations);
 
-			String consumes = method.isAnnotationPresent(Consumes.class) ? method.getAnnotation(Consumes.class).value() : StringUtils.EMPTY;
-			String produces = method.isAnnotationPresent(Produces.class) ? method.getAnnotation(Produces.class).value() : StringUtils.EMPTY;
+			String consumes = method.isAnnotationPresent(Consumes.class) ? method.getAnnotation(Consumes.class).value()
+					: StringUtils.EMPTY;
+			String produces = method.isAnnotationPresent(Produces.class) ? method.getAnnotation(Produces.class).value()
+					: StringUtils.EMPTY;
 			List<BodyEndHandler> bodyEndHandler = collectBodyEndHandlers(method);
 
 			HandlerDocumentation hDocumentation = null;
@@ -105,41 +111,33 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 			}
 
 			AuthHandler authHandler = null;
-			
+
 			// Validate if route has auth annotation
 			if (hasAuth(clazz, method) && !method.isAnnotationPresent(IgnoreAuth.class)) {
 
 				// Retrieve auth metadata
 				Auth auth = method.isAnnotationPresent(Auth.class) ? getAuth(method) : getAuth(clazz);
-				
+
 				// Retrieve auth identity
 				String identity = auth.authHandler();
-				
+
 				// Get authHandler from RouterBuilder
-				Optional<Supplier<AuthHandler>> oAuthHandler = Optional.ofNullable(builder.authHandlerMap().get(identity));
+				Optional<Supplier<AuthHandler>> oAuthHandler = Optional
+						.ofNullable(builder.authHandlerMap().get(identity));
 
 				// Add authorities if is present on metadata
 				if (oAuthHandler.isPresent()) {
-					
+
 					Supplier<AuthHandler> authHandlerSupplier = oAuthHandler.get();
 					authHandler = authHandlerSupplier.get();
-					authHandler.addAuthorities(Arrays.asList(auth.value())
-							.stream()
-							.filter(a -> StringUtils.isNotEmpty(a))
-							.collect(Collectors.toSet()
-					));
+					authHandler.addAuthorities(Arrays.asList(auth.value()).stream()
+							.filter(a -> StringUtils.isNotEmpty(a)).collect(Collectors.toSet()));
 				}
 			}
 
-			HandlerData defaultHandlerData = new HandlerData()
-					.clazz(clazz)
-					.method(method)
-					.consumes(consumes)
-					.produces(produces)
-					.bodyEndHandler(bodyEndHandler)
-					.authHandler(authHandler)
-					.routeHandlerClass(routeHandlerClass)
-					.documentation(hDocumentation);
+			HandlerData defaultHandlerData = new HandlerData().clazz(clazz).method(method).consumes(consumes)
+					.produces(produces).bodyEndHandler(bodyEndHandler).authHandler(authHandler)
+					.routeHandlerClass(routeHandlerClass).documentation(hDocumentation);
 
 			if (hasHttpMethodsPresents(method)) {
 
@@ -166,7 +164,8 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 						collectedHandlers.add(handlerData);
 						return;
 
-					} else if (isHandlerAnnotation(handlerType, org.jspare.vertx.web.annotation.handler.Handler.class)) {
+					} else if (isHandlerAnnotation(handlerType,
+							org.jspare.vertx.web.annotation.handler.Handler.class)) {
 
 						handlerData.handlerType(HandlerType.HANDLER);
 					} else if (isHandlerAnnotation(handlerType, FailureHandler.class)) {
@@ -192,51 +191,68 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 					}
 				} catch (Exception e) {
 
-					log.warn("Ignoring handler class {} method {} - {}", clazz.getName(), method.getName(), e.getCause().toString());
+					log.warn("Ignoring handler class {} method {} - {}", clazz.getName(), method.getName(),
+							e.getCause().toString());
 				}
 			});
 		}
 		return collectedHandlers;
 	}
 
-	protected boolean hasAuth(Class<?> clazz, Method method) {
-		return (clazz.isAnnotationPresent(Auth.class) || method.isAnnotationPresent(Auth.class))
-				&& !method.isAnnotationPresent(IgnoreAuth.class);
-	}
-	
-	protected Auth getAuth(AnnotatedElement annotatedElement){
-		return annotatedElement.getAnnotation(Auth.class);
-	}
-
-	protected boolean isHandlerAnnotation(Annotation handlerType, Class<?> element) {
-		return handlerType.annotationType().equals(element);
-	}
-
+	/**
+	 * Annotation method.
+	 *
+	 * @param <T> the generic type
+	 * @param annotation the annotation
+	 * @param methodRef the method ref
+	 * @return the t
+	 * @throws NoSuchMethodException the no such method exception
+	 * @throws SecurityException the security exception
+	 * @throws IllegalAccessException the illegal access exception
+	 * @throws IllegalArgumentException the illegal argument exception
+	 * @throws InvocationTargetException the invocation target exception
+	 */
 	@SuppressWarnings("unchecked")
-	private <T> T annotationMethod(Annotation annotation, String methodRef)
-			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	private <T> T annotationMethod(Annotation annotation, String methodRef) throws NoSuchMethodException,
+			SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Method method = annotation.annotationType().getMethod(methodRef);
 		return (T) method.invoke(annotation);
 	}
 
+	/**
+	 * Collect body end handlers.
+	 *
+	 * @param method the method
+	 * @return the list
+	 */
 	private List<BodyEndHandler> collectBodyEndHandlers(Method method) {
 
 		List<BodyEndHandler> handlers = new ArrayList<>();
 		if (method.isAnnotationPresent(org.jspare.vertx.web.annotation.handler.BodyEndHandler.class)) {
 
-			Arrays.asList(method.getAnnotation(org.jspare.vertx.web.annotation.handler.BodyEndHandler.class).value()).forEach(c -> {
-				try {
-					handlers.add(c.newInstance());
-				} catch (InstantiationException | IllegalAccessException e) {
+			Arrays.asList(method.getAnnotation(org.jspare.vertx.web.annotation.handler.BodyEndHandler.class).value())
+					.forEach(c -> {
+						try {
+							handlers.add(c.newInstance());
+						} catch (InstantiationException | IllegalAccessException e) {
 
-					log.error("Cannot add bodyEndHandler [{}] to route instead of [{}]", c.getName(), method.getName());
-				}
-			});
+							log.error("Cannot add bodyEndHandler [{}] to route instead of [{}]", c.getName(),
+									method.getName());
+						}
+					});
 		}
 		return handlers;
 	}
 
-	private Collection<HandlerData> collectByMethods(HandlerData handlerSource, List<Annotation> httpMethodsAnnotations) {
+	/**
+	 * Collect by methods.
+	 *
+	 * @param handlerSource the handler source
+	 * @param httpMethodsAnnotations the http methods annotations
+	 * @return the collection
+	 */
+	private Collection<HandlerData> collectByMethods(HandlerData handlerSource,
+			List<Annotation> httpMethodsAnnotations) {
 
 		return httpMethodsAnnotations.stream().map(annotationHttpMethod -> {
 
@@ -266,41 +282,104 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 				return handlerData;
 			} catch (Exception e) {
 
-				log.warn("Ignoring handler class {} method {} - {}", handlerSource.clazz().getName(), handlerSource.method().getName(), e);
+				log.warn("Ignoring handler class {} method {} - {}", handlerSource.clazz().getName(),
+						handlerSource.method().getName(), e);
 			}
 			return null;
 		}).collect(Collectors.toList());
 	}
 
+	/**
+	 * Gets the handlers presents.
+	 *
+	 * @param method the method
+	 * @return the handlers presents
+	 */
 	@SuppressWarnings("unchecked")
 	private List<Annotation> getHandlersPresents(Method method) {
 
 		List<Class<?>> handlerClass = Arrays.asList(HandlerType.values()).stream().map(ht -> ht.getHandlerClass())
 				.collect(Collectors.toList());
-		return handlerClass.stream().filter(handlerType -> method.isAnnotationPresent((Class<? extends Annotation>) handlerType))
-				.map(handlerType -> method.getAnnotation((Class<? extends Annotation>) handlerType)).collect(Collectors.toList());
+		return handlerClass.stream()
+				.filter(handlerType -> method.isAnnotationPresent((Class<? extends Annotation>) handlerType))
+				.map(handlerType -> method.getAnnotation((Class<? extends Annotation>) handlerType))
+				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Gets the http methods presents.
+	 *
+	 * @param element the element
+	 * @return the http methods presents
+	 */
 	@SuppressWarnings("unchecked")
 	private List<Annotation> getHttpMethodsPresents(AnnotatedElement element) {
 
 		List<Class<?>> filteredClazz = new ArrayList<>();
-		filteredClazz
-				.addAll(Arrays.asList(HttpMethodType.values()).stream().map(ht -> ht.getHttpMethodClass()).collect(Collectors.toList()));
-		filteredClazz.removeIf(clazzHttpMethodType -> !element.isAnnotationPresent((Class<? extends Annotation>) clazzHttpMethodType));
-		return filteredClazz.stream().map(httpMethodClazz -> element.getAnnotation((Class<? extends Annotation>) httpMethodClazz))
+		filteredClazz.addAll(Arrays.asList(HttpMethodType.values()).stream().map(ht -> ht.getHttpMethodClass())
+				.collect(Collectors.toList()));
+		filteredClazz.removeIf(
+				clazzHttpMethodType -> !element.isAnnotationPresent((Class<? extends Annotation>) clazzHttpMethodType));
+		return filteredClazz.stream()
+				.map(httpMethodClazz -> element.getAnnotation((Class<? extends Annotation>) httpMethodClazz))
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Checks for http methods presents.
+	 *
+	 * @param method the method
+	 * @return true, if successful
+	 */
 	private boolean hasHttpMethodsPresents(Method method) {
 
-		return getHttpMethodsPresents(method).stream().filter(annotation -> method.isAnnotationPresent(annotation.annotationType()))
-				.count() >= 1;
+		return getHttpMethodsPresents(method).stream()
+				.filter(annotation -> method.isAnnotationPresent(annotation.annotationType())).count() >= 1;
 	}
 
+	/**
+	 * Checks if is handler.
+	 *
+	 * @param method the method
+	 * @return true, if is handler
+	 */
 	private boolean isHandler(Method method) {
 
 		return getHandlersPresents(method).stream()
-				.filter(handlerAnnotation -> method.isAnnotationPresent(handlerAnnotation.annotationType())).count() >= 1;
+				.filter(handlerAnnotation -> method.isAnnotationPresent(handlerAnnotation.annotationType()))
+				.count() >= 1;
+	}
+
+	/**
+	 * Gets the auth.
+	 *
+	 * @param annotatedElement the annotated element
+	 * @return the auth
+	 */
+	protected Auth getAuth(AnnotatedElement annotatedElement) {
+		return annotatedElement.getAnnotation(Auth.class);
+	}
+
+	/**
+	 * Checks for auth.
+	 *
+	 * @param clazz the clazz
+	 * @param method the method
+	 * @return true, if successful
+	 */
+	protected boolean hasAuth(Class<?> clazz, Method method) {
+		return (clazz.isAnnotationPresent(Auth.class) || method.isAnnotationPresent(Auth.class))
+				&& !method.isAnnotationPresent(IgnoreAuth.class);
+	}
+
+	/**
+	 * Checks if is handler annotation.
+	 *
+	 * @param handlerType the handler type
+	 * @param element the element
+	 * @return true, if is handler annotation
+	 */
+	protected boolean isHandlerAnnotation(Annotation handlerType, Class<?> element) {
+		return handlerType.annotationType().equals(element);
 	}
 }

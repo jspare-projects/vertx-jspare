@@ -18,14 +18,25 @@ package org.jspare.vertx;
 import org.jspare.vertx.bootstrap.VertxRunner;
 import org.junit.Before;
 
+/**
+ * The Class AbstractVertxApplicationTest.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 public class AbstractVertxApplicationTest extends VertxRunner {
 
+	/**
+	 * Load.
+	 */
 	@Before
 	public void load() {
 
 		run();
 	}
 
+	/* (non-Javadoc)
+	 * @see io.vertx.core.AbstractVerticle#start()
+	 */
 	@Override
 	public void start() {
 	}

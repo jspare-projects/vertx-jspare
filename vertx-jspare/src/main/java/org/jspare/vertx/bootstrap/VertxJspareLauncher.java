@@ -23,6 +23,11 @@ import io.vertx.core.Launcher;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 
+/**
+ * The Class VertxJspareLauncher.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 public class VertxJspareLauncher extends Launcher implements Runner {
 
 	/**
@@ -35,6 +40,9 @@ public class VertxJspareLauncher extends Launcher implements Runner {
 		new VertxJspareLauncher().dispatch(args);
 	}
 
+	/* (non-Javadoc)
+	 * @see io.vertx.core.Launcher#afterStartingVertx(io.vertx.core.Vertx)
+	 */
 	@Override
 	public void afterStartingVertx(Vertx vertx) {
 
@@ -43,6 +51,9 @@ public class VertxJspareLauncher extends Launcher implements Runner {
 		run();
 	}
 
+	/* (non-Javadoc)
+	 * @see io.vertx.core.Launcher#beforeStartingVertx(io.vertx.core.VertxOptions)
+	 */
 	@Override
 	public void beforeStartingVertx(VertxOptions options) {
 
@@ -51,6 +62,9 @@ public class VertxJspareLauncher extends Launcher implements Runner {
 		mySupport();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jspare.core.bootstrap.Runner#setup()
+	 */
 	@Override
 	public void setup() {
 

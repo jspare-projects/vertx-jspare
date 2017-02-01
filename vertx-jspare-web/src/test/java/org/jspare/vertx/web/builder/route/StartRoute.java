@@ -19,9 +19,17 @@ import org.jspare.vertx.web.annotation.handler.Handler;
 import org.jspare.vertx.web.annotation.method.Get;
 import org.jspare.vertx.web.handler.APIHandler;
 
+/**
+ * The Class StartRoute.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 @Get("/start")
 public class StartRoute extends APIHandler {
 
+	/**
+	 * Route 1.
+	 */
 	@Handler
 	public void route1() {
 
@@ -29,6 +37,9 @@ public class StartRoute extends APIHandler {
 		context.next();
 	}
 
+	/**
+	 * Route 2.
+	 */
 	@Handler
 	public void route2() {
 

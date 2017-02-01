@@ -28,32 +28,94 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+/**
+ * The Class EventBusBuilder.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 @Accessors(fluent = true)
+
+/* (non-Javadoc)
+ * @see java.lang.Object#hashCode()
+ */
 @EqualsAndHashCode(callSuper = false)
 public class EventBusBuilder extends AbstractBuilder<Void> {
 
+	/** The Constant NUMBER_CLASSPATH_SCANNER_THREADS. */
 	private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
 
+	/**
+	 * Creates the.
+	 *
+	 * @param vertx the vertx
+	 * @return the event bus builder
+	 */
 	public static EventBusBuilder create(Vertx vertx) {
 
 		return new EventBusBuilder(vertx);
 	}
 
+	/**
+	 * Vertx.
+	 *
+	 * @return the vertx
+	 */
 	@Getter
 	private final Vertx vertx;
 
+	/**
+	 * Scan classpath.
+	 *
+	 * @return true, if successful
+	 */
 	@Getter
+	
+	/**
+	 * Scan classpath.
+	 *
+	 * @param scanClasspath the scan classpath
+	 * @return the event bus builder
+	 */
 	@Setter
 	private boolean scanClasspath;
 
+	/**
+	 * Classes.
+	 *
+	 * @return the list
+	 */
 	@Getter
+	
+	/**
+	 * Classes.
+	 *
+	 * @param classes the classes
+	 * @return the event bus builder
+	 */
 	@Setter
 	private List<Class<?>> classes;
 
+	/**
+	 * Scan specs.
+	 *
+	 * @return the list
+	 */
 	@Getter
+	
+	/**
+	 * Scan specs.
+	 *
+	 * @param scanSpecs the scan specs
+	 * @return the event bus builder
+	 */
 	@Setter
 	private List<String> scanSpecs;
 
+	/**
+	 * Instantiates a new event bus builder.
+	 *
+	 * @param vertx the vertx
+	 */
 	private EventBusBuilder(Vertx vertx) {
 
 		this.vertx = vertx;
@@ -62,6 +124,9 @@ public class EventBusBuilder extends AbstractBuilder<Void> {
 		scanSpecs = new ArrayList<>();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jspare.vertx.builder.AbstractBuilder#build()
+	 */
 	@Override
 	public Void build() {
 
@@ -76,7 +141,8 @@ public class EventBusBuilder extends AbstractBuilder<Void> {
 		MethodAnnotationMatchProcessor processor = (c, m) -> classes.add(c);
 		scanSpecs.forEach(scanSpec -> {
 
-			ClasspathScannerUtils.scanner(scanSpec).matchClassesWithMethodAnnotation(org.jspare.vertx.annotation.Consumer.class, processor)
+			ClasspathScannerUtils.scanner(scanSpec)
+					.matchClassesWithMethodAnnotation(org.jspare.vertx.annotation.Consumer.class, processor)
 					.scan(NUMBER_CLASSPATH_SCANNER_THREADS);
 		});
 

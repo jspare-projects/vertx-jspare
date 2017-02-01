@@ -41,6 +41,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+/** The Constant log. */
 @Slf4j
 
 /**
@@ -48,6 +49,12 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @param handlerData
  *            the handler data
+ */
+
+/**
+ * Instantiates a new default handler.
+ *
+ * @param handlerData the handler data
  */
 @AllArgsConstructor
 public class DefaultHandler implements Handler<RoutingContext> {
@@ -68,7 +75,8 @@ public class DefaultHandler implements Handler<RoutingContext> {
 			// Handle unhandled excetion
 			context.vertx().exceptionHandler(t -> {
 
-				context.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()).end(ExceptionUtils.getStackTrace(t));
+				context.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
+						.end(ExceptionUtils.getStackTrace(t));
 			});
 
 			Object newInstance = instantiateHandler();
@@ -131,6 +139,11 @@ public class DefaultHandler implements Handler<RoutingContext> {
 		return parameters;
 	}
 
+	/**
+	 * Instantiate handler.
+	 *
+	 * @return the object
+	 */
 	@SneakyThrows
 	protected Object instantiateHandler() {
 		// Inject Request and Response if is Available
@@ -164,7 +177,9 @@ public class DefaultHandler implements Handler<RoutingContext> {
 			return routingContext.response();
 		}
 		if (parameter.getType().equals(JsonObject.class)) {
-			if(StringUtils.isEmpty(routingContext.getBody().toString())) return null;
+			if (StringUtils.isEmpty(routingContext.getBody().toString())) {
+				return null;
+			}
 			return routingContext.getBodyAsJson();
 		}
 		if (StringUtils.isNotEmpty(routingContext.request().getParam(parameter.getName()))) {
@@ -186,8 +201,8 @@ public class DefaultHandler implements Handler<RoutingContext> {
 			return MapModelParser.toMap(routingContext.getBody().toString(), value);
 		}
 
-		if (parameter.getType().getPackage().getName().endsWith(".model") || parameter.getType().isAnnotationPresent(Model.class)
-				|| parameter.isAnnotationPresent(Model.class)) {
+		if (parameter.getType().getPackage().getName().endsWith(".model")
+				|| parameter.getType().isAnnotationPresent(Model.class) || parameter.isAnnotationPresent(Model.class)) {
 
 			try {
 				if (routingContext.getBody() == null) {
@@ -198,13 +213,15 @@ public class DefaultHandler implements Handler<RoutingContext> {
 				return Json.decodeValue(routingContext.getBody().toString(), parameter.getType());
 			} catch (SerializationException e) {
 
-				log.debug("Invalid content of body for class [{}] on parameter [{}]", parameter.getClass(), parameter.getName());
+				log.debug("Invalid content of body for class [{}] on parameter [{}]", parameter.getClass(),
+						parameter.getName());
 				return null;
 			}
 		}
 		if (parameter.isAnnotationPresent(org.jspare.vertx.web.annotation.handling.Parameter.class)) {
 
-			String parameterName = parameter.getAnnotation(org.jspare.vertx.web.annotation.handling.Parameter.class).value();
+			String parameterName = parameter.getAnnotation(org.jspare.vertx.web.annotation.handling.Parameter.class)
+					.value();
 			// Test types
 			Type typeOfParameter = parameter.getType();
 			if (typeOfParameter.equals(Integer.class)) {
@@ -236,9 +253,16 @@ public class DefaultHandler implements Handler<RoutingContext> {
 	 *            the status
 	 */
 	protected void sendStatus(RoutingContext routingContext, HttpResponseStatus status) {
-		routingContext.response().setStatusCode(status.code()).setStatusMessage(status.reasonPhrase()).end(status.reasonPhrase());
+		routingContext.response().setStatusCode(status.code()).setStatusMessage(status.reasonPhrase())
+				.end(status.reasonPhrase());
 	}
 
+	/**
+	 * Sets the handling parameters.
+	 *
+	 * @param routingContext the routing context
+	 * @param newInstance the new instance
+	 */
 	protected void setHandlingParameters(RoutingContext routingContext, Object newInstance) {
 		// If Route is handling by abstract Handling inject some resources
 		if (newInstance instanceof APIHandler) {

@@ -26,34 +26,94 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+/**
+ * The Class HttpServerBuilder.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 @Accessors(fluent = true)
+
+/* (non-Javadoc)
+ * @see java.lang.Object#hashCode()
+ */
 @EqualsAndHashCode(callSuper = false)
 public class HttpServerBuilder extends AbstractBuilder<HttpServer> {
 
+	/**
+	 * Creates the.
+	 *
+	 * @param vertx the vertx
+	 * @return the http server builder
+	 */
 	public static HttpServerBuilder create(Vertx vertx) {
 
 		return new HttpServerBuilder(vertx);
 	}
 
+	/** The vertx. */
 	private final Vertx vertx;
 
+	/**
+	 * Http server.
+	 *
+	 * @return the http server
+	 */
 	@Getter
+	
+	/**
+	 * Http server.
+	 *
+	 * @param httpServer the http server
+	 * @return the http server builder
+	 */
 	@Setter
 	private HttpServer httpServer;
 
+	/**
+	 * Http server options.
+	 *
+	 * @return the http server options
+	 */
 	@Getter
+	
+	/**
+	 * Http server options.
+	 *
+	 * @param httpServerOptions the http server options
+	 * @return the http server builder
+	 */
 	@Setter
 	private HttpServerOptions httpServerOptions;
 
+	/**
+	 * Router.
+	 *
+	 * @return the router
+	 */
 	@Getter
+	
+	/**
+	 * Router.
+	 *
+	 * @param router the router
+	 * @return the http server builder
+	 */
 	@Setter
 	private Router router;
 
+	/**
+	 * Instantiates a new http server builder.
+	 *
+	 * @param vertx the vertx
+	 */
 	private HttpServerBuilder(Vertx vertx) {
 
 		this.vertx = vertx;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jspare.vertx.builder.AbstractBuilder#build()
+	 */
 	@Override
 	public HttpServer build() {
 

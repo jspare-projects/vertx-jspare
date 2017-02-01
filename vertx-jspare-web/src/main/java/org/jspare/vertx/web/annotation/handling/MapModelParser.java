@@ -22,8 +22,22 @@ import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import lombok.SneakyThrows;
 
+/**
+ * The Class MapModelParser.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 public class MapModelParser {
 
+	/**
+	 * To map.
+	 *
+	 * @param <K> the key type
+	 * @param <V> the value type
+	 * @param json the json
+	 * @param value the value
+	 * @return the map
+	 */
 	@SneakyThrows
 	@SuppressWarnings("unchecked")
 	public static <K, V> Map<K, V> toMap(String json, Class<V> value) {

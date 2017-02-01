@@ -31,32 +31,86 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
+/** The Constant log. */
 @Slf4j
 @Accessors(fluent = true)
+
+/* (non-Javadoc)
+ * @see java.lang.Object#hashCode()
+ */
 @EqualsAndHashCode(callSuper = false)
 public class ProxyServiceBuilder extends AbstractBuilder<Void> {
 
+	/** The Constant NUMBER_CLASSPATH_SCANNER_THREADS. */
 	private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
 
+	/**
+	 * Creates the.
+	 *
+	 * @param vertx the vertx
+	 * @return the proxy service builder
+	 */
 	public static ProxyServiceBuilder create(Vertx vertx) {
 
 		return new ProxyServiceBuilder(vertx);
 	}
 
+	/** The vertx. */
 	private final Vertx vertx;
 
+	/**
+	 * Scan classpath.
+	 *
+	 * @return true, if successful
+	 */
 	@Getter
+	
+	/**
+	 * Scan classpath.
+	 *
+	 * @param scanClasspath the scan classpath
+	 * @return the proxy service builder
+	 */
 	@Setter
 	private boolean scanClasspath;
 
+	/**
+	 * Classes.
+	 *
+	 * @return the sets the
+	 */
 	@Getter
+	
+	/**
+	 * Classes.
+	 *
+	 * @param classes the classes
+	 * @return the proxy service builder
+	 */
 	@Setter
 	private Set<Class<?>> classes;
 
+	/**
+	 * Scan specs.
+	 *
+	 * @return the sets the
+	 */
 	@Getter
+	
+	/**
+	 * Scan specs.
+	 *
+	 * @param scanSpecs the scan specs
+	 * @return the proxy service builder
+	 */
 	@Setter
 	private Set<String> scanSpecs;
 
+	/**
+	 * Instantiates a new proxy service builder.
+	 *
+	 * @param vertx the vertx
+	 */
 	private ProxyServiceBuilder(Vertx vertx) {
 
 		this.vertx = vertx;
@@ -65,11 +119,20 @@ public class ProxyServiceBuilder extends AbstractBuilder<Void> {
 		scanSpecs = new HashSet<>();
 	}
 
+	/**
+	 * Adds the proxy service.
+	 *
+	 * @param clazz the clazz
+	 * @return the proxy service builder
+	 */
 	public ProxyServiceBuilder addProxyService(Class<?> clazz) {
 		classes.add(clazz);
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jspare.vertx.builder.AbstractBuilder#build()
+	 */
 	@Override
 	public Void build() {
 
@@ -94,6 +157,12 @@ public class ProxyServiceBuilder extends AbstractBuilder<Void> {
 		return null;
 	}
 
+	/**
+	 * Register proxy service.
+	 *
+	 * @param <T> the generic type
+	 * @param clazz the clazz
+	 */
 	private <T> void registerProxyService(Class<T> clazz) {
 
 		if (!clazz.isAnnotationPresent(RegisterProxyService.class)) {

@@ -13,34 +13,58 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.utils;
+package org.jspare.vertx.bootstrap;
+
+import static org.jspare.core.container.Environment.my;
 
 import org.jspare.core.container.ContainerUtils;
+import org.jspare.vertx.experimental.AutoConfigurationInitializer;
 
 import io.vertx.core.Verticle;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Instantiates a new verticle initializer.
+ */
 @UtilityClass
 public class VerticleInitializer {
 
+	/**
+	 * Initialize.
+	 *
+	 * @param clazz the clazz
+	 * @return the verticle
+	 */
 	@SneakyThrows
 	public Verticle initialize(Class<? extends Verticle> clazz) {
 		Verticle verticle = clazz.newInstance();
-		ContainerUtils.processInjection(verticle);
-		return verticle;
+		return initialize(verticle);
 	}
 
-	@SneakyThrows
-	public Verticle initialize(Verticle verticle) {
-		ContainerUtils.processInjection(verticle);
-		return verticle;
-	}
-	
+	/**
+	 * Initialize.
+	 *
+	 * @param name the name
+	 * @return the verticle
+	 */
 	@SneakyThrows
 	@SuppressWarnings("unchecked")
 	public Verticle initialize(String name) {
 		Class<? extends Verticle> clazz = (Class<? extends Verticle>) Class.forName(name);
 		return initialize(clazz);
+	}
+
+	/**
+	 * Initialize.
+	 *
+	 * @param verticle the verticle
+	 * @return the verticle
+	 */
+	@SneakyThrows
+	public Verticle initialize(Verticle verticle) {
+		ContainerUtils.processInjection(verticle);
+		my(AutoConfigurationInitializer.class).initialize(verticle);
+		return verticle;
 	}
 }

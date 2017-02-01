@@ -20,13 +20,24 @@ import org.jspare.vertx.web.annotation.handler.FailureHandler;
 import org.jspare.vertx.web.annotation.handler.Handler;
 import org.jspare.vertx.web.handler.APIHandler;
 
+/**
+ * The Class MultiHandlers.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 public class MultiHandlers extends APIHandler {
 
+	/**
+	 * Handler 1.
+	 */
 	@Handler
 	@BlockingHandler
 	public void handler1() {
 	}
 
+	/**
+	 * Handler 2.
+	 */
 	@FailureHandler
 	public void handler2() {
 	}

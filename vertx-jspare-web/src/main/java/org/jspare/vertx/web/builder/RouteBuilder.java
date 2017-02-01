@@ -17,8 +17,18 @@ package org.jspare.vertx.web.builder;
 
 import io.vertx.ext.web.Route;
 
+/**
+ * The Interface RouteBuilder.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 @FunctionalInterface
 public interface RouteBuilder {
 
+	/**
+	 * Creates the.
+	 *
+	 * @param route the route
+	 */
 	void create(Route route);
 }

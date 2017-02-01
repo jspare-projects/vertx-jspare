@@ -24,8 +24,16 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 
+/**
+ * The Class VertxRunner.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 public abstract class VertxRunner extends AbstractVerticle implements Runner {
 
+	/* (non-Javadoc)
+	 * @see org.jspare.core.bootstrap.Runner#run()
+	 */
 	@Override
 	public void run() {
 
@@ -34,28 +42,36 @@ public abstract class VertxRunner extends AbstractVerticle implements Runner {
 		mySupport();
 
 		vertx().setHandler(res -> {
-			
+
 			if (res.succeeded()) {
-				
+
 				registryResource(new VertxHolder().vertx(vertx));
-			}else{
-				
+			} else {
+
 				throw new RuntimeException("Failed to create Vert.x instance");
 			}
 		});
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jspare.core.bootstrap.Runner#setup()
+	 */
 	@Override
 	public void setup() {
 
 		EnvironmentUtils.register();
 	}
 
+	/**
+	 * Vertx.
+	 *
+	 * @return the future
+	 */
 	protected Future<Vertx> vertx() {
 
 		return VertxBuilder.create().build().compose(vertx -> {
-			
-			vertx.deployVerticle(this);
+
+			vertx.deployVerticle(VerticleInitializer.initialize(this));
 		}, Future.succeededFuture());
 	}
 }

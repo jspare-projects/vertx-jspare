@@ -22,13 +22,33 @@ import java.lang.annotation.Target;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * The Interface SharedWorkerExecutor.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 public @interface SharedWorkerExecutor {
 
+	/**
+	 * Max execute time.
+	 *
+	 * @return the long
+	 */
 	long maxExecuteTime() default 60000l;
 
+	/**
+	 * Name.
+	 *
+	 * @return the string
+	 */
 	String name() default StringUtils.EMPTY;
 
+	/**
+	 * Pool size.
+	 *
+	 * @return the int
+	 */
 	int poolSize() default 20;
 }

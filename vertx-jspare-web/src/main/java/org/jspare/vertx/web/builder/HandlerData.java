@@ -31,28 +31,90 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+/* (non-Javadoc)
+ * @see java.lang.Object#toString()
+ */
 @Data
 @Accessors(fluent = true)
+
+/**
+ * Instantiates a new handler data.
+ */
 @NoArgsConstructor
+
+/**
+ * Instantiates a new handler data.
+ *
+ * @param clazz the clazz
+ * @param method the method
+ * @param handlerType the handler type
+ * @param routeHandlerClass the route handler class
+ * @param sockJSHandler the sock JS handler
+ * @param path the path
+ * @param order the order
+ * @param pathRegex the path regex
+ * @param httpMethod the http method
+ * @param consumes the consumes
+ * @param produces the produces
+ * @param bodyEndHandler the body end handler
+ * @param authHandler the auth handler
+ * @param documentation the documentation
+ */
 @AllArgsConstructor
+
+/* (non-Javadoc)
+ * @see java.lang.Object#hashCode()
+ */
 @EqualsAndHashCode
 public class HandlerData implements Cloneable {
 
+	/** The clazz. */
 	private Class<?> clazz;
+	
+	/** The method. */
 	private Method method;
+	
+	/** The handler type. */
 	private HandlerType handlerType;
+	
+	/** The route handler class. */
 	private Class<? extends Handler<RoutingContext>> routeHandlerClass;
+	
+	/** The sock JS handler. */
 	private SockJSHandler sockJSHandler;
+	
+	/** The path. */
 	private String path = StringUtils.EMPTY;
+	
+	/** The order. */
 	private int order;
+	
+	/** The path regex. */
 	private boolean pathRegex;
+	
+	/** The http method. */
 	private String httpMethod;
+	
+	/** The consumes. */
 	private String consumes;
+	
+	/** The produces. */
 	private String produces;
+	
+	/** The body end handler. */
 	private List<BodyEndHandler> bodyEndHandler;
+	
+	/** The auth handler. */
 	private AuthHandler authHandler;
+	
+	/** The documentation. */
 	private HandlerDocumentation documentation;
 
+	/**
+	 * To string line.
+	 *
+	 * @return the string
+	 */
 	public String toStringLine() {
 		StringBuilder line = new StringBuilder();
 		line.append(String.format("[%s.%s]", clazz().getSimpleName(), method().getName()));
@@ -63,11 +125,15 @@ public class HandlerData implements Cloneable {
 		if (StringUtils.isNotEmpty(path())) {
 			line.append(String.format("[%s] ", path()));
 		} else {
-			line.append(String.format("[%s] ", clazz().getSimpleName())).append(String.format("[%s] ", method().getName()));
+			line.append(String.format("[%s] ", clazz().getSimpleName()))
+					.append(String.format("[%s] ", method().getName()));
 		}
 		return line.toString();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 

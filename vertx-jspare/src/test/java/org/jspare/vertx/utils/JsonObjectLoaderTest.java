@@ -24,8 +24,16 @@ import org.junit.Test;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonObject;
 
+/**
+ * The Class JsonObjectLoaderTest.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 public class JsonObjectLoaderTest extends AbstractVertxApplicationTest {
 
+	/**
+	 * Load test.
+	 */
 	@Test
 	public void loadTest() {
 

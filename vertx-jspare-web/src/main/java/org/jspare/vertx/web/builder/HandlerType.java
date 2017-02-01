@@ -23,12 +23,27 @@ import org.jspare.vertx.web.annotation.handler.SockJsHandler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Instantiates a new handler type.
+ *
+ * @param handlerClass the handler class
+ */
 @AllArgsConstructor
 public enum HandlerType {
 
-	HANDLER(Handler.class), BLOCKING_HANDLER(BlockingHandler.class), FAILURE_HANDLER(FailureHandler.class), SOCKETJS_HANDLER(
-			SockJsHandler.class);
+	/** The handler. */
+	HANDLER(Handler.class), /** The blocking handler. */
+ BLOCKING_HANDLER(BlockingHandler.class), /** The failure handler. */
+ FAILURE_HANDLER(
+			FailureHandler.class), 
+ /** The socketjs handler. */
+ SOCKETJS_HANDLER(SockJsHandler.class);
 
+	/**
+	 * Gets the handler class.
+	 *
+	 * @return the handler class
+	 */
 	@Getter
 	private Class<?> handlerClass;
 }

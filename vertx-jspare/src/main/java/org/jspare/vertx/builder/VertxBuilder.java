@@ -29,35 +29,97 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+/**
+ * The Class VertxBuilder.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 @Accessors(fluent = true)
+
+/* (non-Javadoc)
+ * @see java.lang.Object#hashCode()
+ */
 @EqualsAndHashCode(callSuper = false)
 public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 
+	/**
+	 * Creates the.
+	 *
+	 * @return the vertx builder
+	 */
 	public static VertxBuilder create() {
 
 		return new VertxBuilder();
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param vertxOptions the vertx options
+	 * @return the vertx builder
+	 */
 	public static VertxBuilder create(VertxOptions vertxOptions) {
 
 		return new VertxBuilder().options(vertxOptions);
 	}
 
+	/**
+	 * Name.
+	 *
+	 * @return the string
+	 */
 	@Getter
+	
+	/**
+	 * Name.
+	 *
+	 * @param name the name
+	 * @return the vertx builder
+	 */
 	@Setter
 	private String name;
 
+	/**
+	 * Vertx.
+	 *
+	 * @return the vertx
+	 */
 	@Getter
+	
+	/**
+	 * Vertx.
+	 *
+	 * @param vertx the vertx
+	 * @return the vertx builder
+	 */
 	@Setter
 	private Vertx vertx;
 
+	/**
+	 * Options.
+	 *
+	 * @return the vertx options
+	 */
 	@Getter
+	
+	/**
+	 * Options.
+	 *
+	 * @param options the options
+	 * @return the vertx builder
+	 */
 	@Setter
 	private VertxOptions options;
 
+	/**
+	 * Instantiates a new vertx builder.
+	 */
 	private VertxBuilder() {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jspare.vertx.builder.AbstractBuilder#build()
+	 */
 	@Override
 	public Future<Vertx> build() {
 
@@ -80,12 +142,18 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 			createVertx(runner);
 		}
 
-		// Register vertx on VertxHolder. This interaction allow that the Vertx can be accessed internally by application.
+		// Register vertx on VertxHolder. This interaction allow that the Vertx
+		// can be accessed internally by application.
 		registryResource(new VertxHolder().vertx(vertx));
 
 		return future;
 	}
 
+	/**
+	 * Creates the vertx.
+	 *
+	 * @param runner the runner
+	 */
 	protected void createVertx(Consumer<Vertx> runner) {
 
 		if (options == null) {

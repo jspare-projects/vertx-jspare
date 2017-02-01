@@ -30,12 +30,38 @@ import org.jspare.vertx.web.annotation.method.Trace;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Instantiates a new http method type.
+ *
+ * @param httpMethodClass the http method class
+ */
 @AllArgsConstructor
 public enum HttpMethodType {
 
-	ALL(All.class), CONNECT(Connect.class), DELETE(Delete.class), GET(Get.class), HEAD(Head.class), OPTIONS(Options.class), OTHER(
-			Other.class), PATH(Path.class), POST(Post.class), PUT(Put.class), TRACE(Trace.class);
+	/** The all. */
+	ALL(All.class), /** The connect. */
+ CONNECT(Connect.class), /** The delete. */
+ DELETE(Delete.class), /** The get. */
+ GET(Get.class), /** The head. */
+ HEAD(Head.class), /** The options. */
+ OPTIONS(
+			Options.class), 
+ /** The other. */
+ OTHER(Other.class), 
+ /** The path. */
+ PATH(Path.class), 
+ /** The post. */
+ POST(Post.class), 
+ /** The put. */
+ PUT(Put.class), 
+ /** The trace. */
+ TRACE(Trace.class);
 
+	/**
+	 * Gets the http method class.
+	 *
+	 * @return the http method class
+	 */
 	@Getter
 	private Class<?> httpMethodClass;
 }

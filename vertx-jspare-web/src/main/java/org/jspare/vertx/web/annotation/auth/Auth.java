@@ -30,7 +30,12 @@ import org.jspare.vertx.web.builder.RouterBuilder;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.TYPE })
 public @interface Auth {
-	
+
+	/**
+	 * Auth handler.
+	 *
+	 * @return the string
+	 */
 	String authHandler() default RouterBuilder.DEFAULT_AUTH_HANDLER_KEY;
 
 	/**

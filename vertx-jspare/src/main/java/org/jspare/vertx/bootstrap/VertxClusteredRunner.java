@@ -19,11 +19,11 @@ import static org.jspare.core.container.Environment.registryResource;
 
 import org.jspare.core.bootstrap.EnvironmentBuilder;
 import org.jspare.core.bootstrap.Runner;
-import org.jspare.vertx.annotation.VertxProxyInject;
 import org.jspare.vertx.annotation.VertxInject;
+import org.jspare.vertx.annotation.VertxProxyInject;
 import org.jspare.vertx.builder.VertxBuilder;
-import org.jspare.vertx.injector.VertxProxyInjectStrategy;
 import org.jspare.vertx.injector.VertxInjectStrategy;
+import org.jspare.vertx.injector.VertxProxyInjectStrategy;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -38,8 +38,16 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.json.Json;
 import io.vertx.core.spi.cluster.ClusterManager;
 
+/**
+ * The Class VertxClusteredRunner.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 public abstract class VertxClusteredRunner extends AbstractVerticle implements Runner {
 
+	/* (non-Javadoc)
+	 * @see org.jspare.core.bootstrap.Runner#run()
+	 */
 	@Override
 	public void run() {
 
@@ -59,6 +67,9 @@ public abstract class VertxClusteredRunner extends AbstractVerticle implements R
 		});
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jspare.core.bootstrap.Runner#setup()
+	 */
 	@Override
 	public void setup() {
 
@@ -67,13 +78,24 @@ public abstract class VertxClusteredRunner extends AbstractVerticle implements R
 		EnvironmentBuilder.create().addInjector(VertxProxyInject.class, new VertxProxyInjectStrategy()).build();
 
 		// Set default Json Mapper options
-		Json.mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector()).setVisibility(PropertyAccessor.ALL, Visibility.ANY)
-				.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+		Json.mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector())
+				.setVisibility(PropertyAccessor.ALL, Visibility.ANY).disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+				.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).findAndRegisterModules();
 	}
 
+	/**
+	 * Cluster manager.
+	 *
+	 * @return the cluster manager
+	 */
 	protected abstract ClusterManager clusterManager();
 
+	/**
+	 * Vertx.
+	 *
+	 * @return the future
+	 */
 	protected Future<Vertx> vertx() {
 
 		VertxOptions options = new VertxOptions();

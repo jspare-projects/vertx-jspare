@@ -39,20 +39,37 @@ import io.vertx.core.file.FileSystem;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.shareddata.SharedData;
 
+/**
+ * The Class VertxInjectStrategy.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 
+	/** The Constant DEFAULT_WORKER_EXECUTOR_NAME. */
 	private static final String DEFAULT_WORKER_EXECUTOR_NAME = "defaultWorkerExecutor";
 
+	/** The Constant VERTX_PATTERN. */
 	private static final String VERTX_PATTERN = "vertx:%s";
 
+	/**
+	 * Format instance key.
+	 *
+	 * @param instanceRef the instance ref
+	 * @return the string
+	 */
 	public static String formatInstanceKey(String instanceRef) {
 
 		return String.format(VERTX_PATTERN, instanceRef);
 	}
 
+	/** The vertx holder. */
 	@Inject
 	private VertxHolder vertxHolder;
 
+	/* (non-Javadoc)
+	 * @see org.jspare.core.container.InjectorStrategy#inject(java.lang.Object, java.lang.reflect.Field)
+	 */
 	@Override
 	public void inject(Object result, Field field) {
 
@@ -87,10 +104,20 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 		}
 	}
 
-	protected void setField(Object result, Field field, Vertx vertx) throws IllegalArgumentException, IllegalAccessException {
+	/**
+	 * Sets the field.
+	 *
+	 * @param result the result
+	 * @param field the field
+	 * @param vertx the vertx
+	 * @throws IllegalArgumentException the illegal argument exception
+	 * @throws IllegalAccessException the illegal access exception
+	 */
+	protected void setField(Object result, Field field, Vertx vertx)
+			throws IllegalArgumentException, IllegalAccessException {
 
 		field.setAccessible(true);
-		
+
 		if (Vertx.class.equals(field.getType())) {
 
 			field.set(result, vertx);
@@ -108,7 +135,8 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 			if (field.isAnnotationPresent(SharedWorkerExecutor.class)) {
 
 				SharedWorkerExecutor annWe = field.getAnnotation(SharedWorkerExecutor.class);
-				field.set(result, vertx.createSharedWorkerExecutor(annWe.name(), annWe.poolSize(), annWe.maxExecuteTime()));
+				field.set(result,
+						vertx.createSharedWorkerExecutor(annWe.name(), annWe.poolSize(), annWe.maxExecuteTime()));
 			} else {
 
 				field.set(result, vertx.createSharedWorkerExecutor(DEFAULT_WORKER_EXECUTOR_NAME));
