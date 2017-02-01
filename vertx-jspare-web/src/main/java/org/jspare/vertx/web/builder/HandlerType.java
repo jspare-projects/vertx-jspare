@@ -24,10 +24,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Instantiates a new handler type.
+ * The Enum HandlerType.
  *
- * @param handlerClass
- *          the handler class
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @AllArgsConstructor
 public enum HandlerType {

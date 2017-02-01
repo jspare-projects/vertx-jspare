@@ -34,7 +34,6 @@ import org.jspare.vertx.web.annotation.auth.Auth;
 import org.jspare.vertx.web.annotation.auth.IgnoreAuth;
 import org.jspare.vertx.web.annotation.content.Consumes;
 import org.jspare.vertx.web.annotation.content.Produces;
-import org.jspare.vertx.web.annotation.documentation.Documentation;
 import org.jspare.vertx.web.annotation.handler.BlockingHandler;
 import org.jspare.vertx.web.annotation.handler.FailureHandler;
 import org.jspare.vertx.web.annotation.handler.SockJsHandler;
@@ -98,20 +97,6 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
           : StringUtils.EMPTY;
       List<BodyEndHandler> bodyEndHandler = collectBodyEndHandlers(method);
 
-      HandlerDocumentation hDocumentation = null;
-
-      // Documentation block
-      if (method.isAnnotationPresent(Documentation.class)) {
-        Documentation documentation = method.getAnnotation(Documentation.class);
-        hDocumentation = new HandlerDocumentation();
-        hDocumentation.description(documentation.description());
-        hDocumentation.status(Arrays.asList(documentation.responseStatus()).stream()
-            .map(s -> new HandlerDocumentation.ResponseStatus(s)).collect(Collectors.toList()));
-        hDocumentation.queryParameters(Arrays.asList(documentation.queryParameters()).stream()
-            .map(q -> new HandlerDocumentation.QueryParameter(q)).collect(Collectors.toList()));
-        hDocumentation.requestSchema(documentation.requestClass());
-        hDocumentation.responseSchema(documentation.responseClass());
-      }
 
       AuthHandler authHandler = null;
 
@@ -139,7 +124,7 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 
       HandlerData defaultHandlerData = new HandlerData().clazz(clazz).method(method).consumes(consumes)
           .produces(produces).bodyEndHandler(bodyEndHandler).authHandler(authHandler)
-          .routeHandlerClass(routeHandlerClass).documentation(hDocumentation);
+          .routeHandlerClass(routeHandlerClass);
 
       if (hasHttpMethodsPresents(method)) {
 

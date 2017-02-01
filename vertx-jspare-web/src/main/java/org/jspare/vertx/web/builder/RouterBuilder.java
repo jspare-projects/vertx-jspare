@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,7 @@ import org.jspare.vertx.web.handler.DefaultHandler;
 import io.github.lukehutch.fastclasspathscanner.matchprocessor.MethodAnnotationMatchProcessor;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.AuthHandler;
@@ -246,23 +248,6 @@ public class RouterBuilder extends AbstractBuilder<Router> {
   private Set<String> routePackages;
 
   /**
-   * Raml.
-   *
-   * @return true, if successful
-   */
-  @Getter
-
-  /**
-   * Raml.
-   *
-   * @param raml
-   *          the raml
-   * @return the router builder
-   */
-  @Setter
-  private boolean raml;
-
-  /**
    * Instantiates a new router builder.
    *
    * @param vertx
@@ -282,7 +267,6 @@ public class RouterBuilder extends AbstractBuilder<Router> {
     handlerClass = DefaultHandler.class;
     sockJSHandlerOptions = new SockJSHandlerOptions();
     authHandlerMap = new HashMap<>();
-    raml = false;
   }
 
   /**
@@ -375,12 +359,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
       log.debug("Routing handler {}", hd.toStringLine());
       HandlerWrapper.prepareHandler(router, hd);
     });
-
-    if (raml) {
-
-      generateRamlRoute(router);
-    }
-
+    
     return router;
   }
 
@@ -403,9 +382,9 @@ public class RouterBuilder extends AbstractBuilder<Router> {
    *          the builder
    * @return the router builder
    */
-  public RouterBuilder route(RouteBuilder builder) {
+  public RouterBuilder route(Consumer<Route> builder) {
     log.debug("Routing custom route [{}]", builder.getClass());
-    builder.create(router.route());
+    builder.accept(router.route());
     return this;
   }
 
@@ -444,15 +423,5 @@ public class RouterBuilder extends AbstractBuilder<Router> {
           .matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.SockJsHandler.class, processor)
           .scan(NUMBER_CLASSPATH_SCANNER_THREADS);
     });
-  }
-
-  /**
-   * Generate raml route.
-   *
-   * @param router
-   *          the router
-   */
-  private void generateRamlRoute(Router router) {
-
   }
 }

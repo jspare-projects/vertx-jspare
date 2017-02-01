@@ -123,9 +123,6 @@ public class HandlerData implements Cloneable {
   /** The auth handler. */
   private AuthHandler authHandler;
 
-  /** The documentation. */
-  private HandlerDocumentation documentation;
-
   /**
    * To string line.
    *

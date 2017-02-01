@@ -31,11 +31,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Instantiates a new http method type.
+ * The Enum HttpMethodType.
  *
- * @param httpMethodClass
- *          the http method class
- * 
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @AllArgsConstructor

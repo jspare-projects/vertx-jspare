@@ -48,48 +48,18 @@ import lombok.Setter;
  */
 public abstract class APIHandler {
 
-  /**
-   * Sets the vertx.
-   *
-   * @param vertx
-   *          the new vertx
-   */
   @Setter
   protected Vertx vertx;
 
-  /**
-   * Sets the req.
-   *
-   * @param req
-   *          the new req
-   */
   @Setter
   protected HttpServerRequest req;
 
-  /**
-   * Sets the res.
-   *
-   * @param res
-   *          the new res
-   */
   @Setter
   protected HttpServerResponse res;
 
-  /**
-   * Sets the context.
-   *
-   * @param context
-   *          the new context
-   */
   @Setter
   protected RoutingContext context;
 
-  /**
-   * Sets the sock JS event.
-   *
-   * @param sockJSEvent
-   *          the new sock JS event
-   */
   @Setter
   protected SockJSSocket sockJSEvent;
 

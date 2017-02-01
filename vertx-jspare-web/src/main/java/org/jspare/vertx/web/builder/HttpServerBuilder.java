@@ -55,7 +55,7 @@ public class HttpServerBuilder extends AbstractBuilder<HttpServer> {
 
   /** The vertx. */
   private final Vertx vertx;
-
+  
   /**
    * Http server.
    *

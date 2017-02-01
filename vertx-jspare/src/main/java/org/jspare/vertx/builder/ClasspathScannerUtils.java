@@ -27,7 +27,7 @@ import lombok.experimental.UtilityClass;
 public class ClasspathScannerUtils {
 
   /** The Constant ALL_SCAN_QUOTE. */
-  public String ALL_SCAN_QUOTE = ".*";
+  public static final String ALL_SCAN_QUOTE = ".*";
 
   /**
    * Resolve package name.
