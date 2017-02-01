@@ -26,45 +26,50 @@ import lombok.experimental.UtilityClass;
 
 /**
  * Instantiates a new verticle initializer.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @UtilityClass
 public class VerticleInitializer {
 
-	/**
-	 * Initialize.
-	 *
-	 * @param clazz the clazz
-	 * @return the verticle
-	 */
-	@SneakyThrows
-	public Verticle initialize(Class<? extends Verticle> clazz) {
-		Verticle verticle = clazz.newInstance();
-		return initialize(verticle);
-	}
+  /**
+   * Initialize.
+   *
+   * @param clazz
+   *          the clazz
+   * @return the verticle
+   */
+  @SneakyThrows
+  public Verticle initialize(Class<? extends Verticle> clazz) {
+    Verticle verticle = clazz.newInstance();
+    return initialize(verticle);
+  }
 
-	/**
-	 * Initialize.
-	 *
-	 * @param name the name
-	 * @return the verticle
-	 */
-	@SneakyThrows
-	@SuppressWarnings("unchecked")
-	public Verticle initialize(String name) {
-		Class<? extends Verticle> clazz = (Class<? extends Verticle>) Class.forName(name);
-		return initialize(clazz);
-	}
+  /**
+   * Initialize.
+   *
+   * @param name
+   *          the name
+   * @return the verticle
+   */
+  @SneakyThrows
+  @SuppressWarnings("unchecked")
+  public Verticle initialize(String name) {
+    Class<? extends Verticle> clazz = (Class<? extends Verticle>) Class.forName(name);
+    return initialize(clazz);
+  }
 
-	/**
-	 * Initialize.
-	 *
-	 * @param verticle the verticle
-	 * @return the verticle
-	 */
-	@SneakyThrows
-	public Verticle initialize(Verticle verticle) {
-		ContainerUtils.processInjection(verticle);
-		my(AutoConfigurationInitializer.class).initialize(verticle);
-		return verticle;
-	}
+  /**
+   * Initialize.
+   *
+   * @param verticle
+   *          the verticle
+   * @return the verticle
+   */
+  @SneakyThrows
+  public Verticle initialize(Verticle verticle) {
+    ContainerUtils.processInjection(verticle);
+    my(AutoConfigurationInitializer.class).initialize(verticle);
+    return verticle;
+  }
 }

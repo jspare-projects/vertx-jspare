@@ -25,19 +25,21 @@ import org.junit.Before;
  */
 public class AbstractVertxApplicationTest extends VertxRunner {
 
-	/**
-	 * Load.
-	 */
-	@Before
-	public void load() {
+  /**
+   * Load.
+   */
+  @Before
+  public void load() {
 
-		run();
-	}
+    run();
+  }
 
-	/* (non-Javadoc)
-	 * @see io.vertx.core.AbstractVerticle#start()
-	 */
-	@Override
-	public void start() {
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see io.vertx.core.AbstractVerticle#start()
+   */
+  @Override
+  public void start() {
+  }
 }

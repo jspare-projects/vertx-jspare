@@ -35,40 +35,40 @@ import org.jspare.vertx.web.handler.APIHandler;
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 public class MultiHttpMethods extends APIHandler {
-	
-	/**
-	 * Handler 1.
-	 */
-	@All
-	@Connect
-	@Delete
-	@Get
-	@Post
-	@Head
-	@Options
-	@Other
-	@Path
-	@Put
-	@Trace
-	@Handler
-	public void handler1() {
-	}
 
-	/**
-	 * Handler 2.
-	 */
-	@All
-	@Connect
-	@Delete
-	@Get
-	@Post
-	@Head
-	@Options
-	@Other
-	@Path
-	@Put
-	@Trace
-	@Handler
-	public void handler2() {
-	}
+  /**
+   * Handler 1.
+   */
+  @All
+  @Connect
+  @Delete
+  @Get
+  @Post
+  @Head
+  @Options
+  @Other
+  @Path
+  @Put
+  @Trace
+  @Handler
+  public void handler1() {
+  }
+
+  /**
+   * Handler 2.
+   */
+  @All
+  @Connect
+  @Delete
+  @Get
+  @Post
+  @Head
+  @Options
+  @Other
+  @Path
+  @Put
+  @Trace
+  @Handler
+  public void handler2() {
+  }
 }

@@ -24,44 +24,46 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * The Annotation Documentation. <br>
- * Used for documents the current route
+ * Used for documents the current route.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 public @interface Documentation {
 
-	/**
-	 * Description of this handler.
-	 *
-	 * @return the string
-	 */
-	String description() default StringUtils.EMPTY;
+  /**
+   * Description of this handler.
+   *
+   * @return the string
+   */
+  String description() default StringUtils.EMPTY;
 
-	/**
-	 * Query parameters.
-	 *
-	 * @return the query parameter[]
-	 */
-	QueryParameter[] queryParameters() default {};
+  /**
+   * Query parameters.
+   *
+   * @return the query parameter[]
+   */
+  QueryParameter[] queryParameters() default {};
 
-	/**
-	 * Request class.
-	 *
-	 * @return the class
-	 */
-	Class<?> requestClass() default Object.class;
+  /**
+   * Request class.
+   *
+   * @return the class
+   */
+  Class<?> requestClass() default Object.class;
 
-	/**
-	 * Response class.
-	 *
-	 * @return the class
-	 */
-	Class<?> responseClass() default Object.class;
+  /**
+   * Response class.
+   *
+   * @return the class
+   */
+  Class<?> responseClass() default Object.class;
 
-	/**
-	 * Response status.
-	 *
-	 * @return the status[]
-	 */
-	Status[] responseStatus() default { @Status(code = 200, description = "Success") };
+  /**
+   * Response status.
+   *
+   * @return the status[]
+   */
+  Status[] responseStatus() default { @Status(code = 200, description = "Success") };
 }

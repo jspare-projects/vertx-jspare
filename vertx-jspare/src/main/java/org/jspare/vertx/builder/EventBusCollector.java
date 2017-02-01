@@ -39,86 +39,91 @@ import lombok.SneakyThrows;
 @Resource
 public class EventBusCollector implements Collector<Collection<EventBusData>> {
 
-	/** The controllers. */
-	private Map<Class<?>, Object> controllers;
+  /** The controllers. */
+  private Map<Class<?>, Object> controllers;
 
-	/**
-	 * Instantiates a new event bus collector.
-	 */
-	public EventBusCollector() {
+  /**
+   * Instantiates a new event bus collector.
+   */
+  public EventBusCollector() {
 
-		controllers = new HashMap<>();
-	}
+    controllers = new HashMap<>();
+  }
 
-	/* (non-Javadoc)
-	 * @see org.jspare.vertx.builder.Collector#collect(java.lang.Class, java.lang.Object[])
-	 */
-	@Override
-	public Collection<EventBusData> collect(Class<?> clazz, Object... args) {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.jspare.vertx.builder.Collector#collect(java.lang.Class,
+   * java.lang.Object[])
+   */
+  @Override
+  public Collection<EventBusData> collect(Class<?> clazz, Object... args) {
 
-		List<EventBusData> handlers = new ArrayList<>();
-		List<Method> methodsCollected = new ArrayList<>();
+    List<EventBusData> handlers = new ArrayList<>();
+    List<Method> methodsCollected = new ArrayList<>();
 
-		Arrays.asList(clazz.getDeclaredMethods()).forEach(m -> {
+    Arrays.asList(clazz.getDeclaredMethods()).forEach(m -> {
 
-			if (m.isAnnotationPresent(Consumer.class)) {
+      if (m.isAnnotationPresent(Consumer.class)) {
 
-				methodsCollected.add(m);
-			}
-		});
+        methodsCollected.add(m);
+      }
+    });
 
-		if (!methodsCollected.isEmpty()) {
+    if (!methodsCollected.isEmpty()) {
 
-			Object instance = getInstance(clazz);
-			handlers.addAll(methodsCollected.stream().map(method -> {
+      Object instance = getInstance(clazz);
+      handlers.addAll(methodsCollected.stream().map(method -> {
 
-				Consumer consumer = method.getAnnotation(Consumer.class);
-				return new EventBusData(instance, method, consumer.value());
-			}).collect(Collectors.toList()));
-		}
-		return handlers;
-	}
+        Consumer consumer = method.getAnnotation(Consumer.class);
+        return new EventBusData(instance, method, consumer.value());
+      }).collect(Collectors.toList()));
+    }
+    return handlers;
+  }
 
-	/**
-	 * Gets the single instance of EventBusCollector.
-	 *
-	 * @param clazz the clazz
-	 * @return single instance of EventBusCollector
-	 */
-	private Object getInstance(Class<?> clazz) {
+  /**
+   * Gets the single instance of EventBusCollector.
+   *
+   * @param clazz
+   *          the clazz
+   * @return single instance of EventBusCollector
+   */
+  private Object getInstance(Class<?> clazz) {
 
-		if (!clazz.isAnnotationPresent(EventBusController.class)) {
+    if (!clazz.isAnnotationPresent(EventBusController.class)) {
 
-			return instantiate(clazz);
-		}
+      return instantiate(clazz);
+    }
 
-		EventBusController anEventBusController = clazz.getAnnotation(EventBusController.class);
-		Object instance = controllers.get(clazz);
-		if (instance != null) {
+    EventBusController anEventBusController = clazz.getAnnotation(EventBusController.class);
+    Object instance = controllers.get(clazz);
+    if (instance != null) {
 
-			return instance;
-		}
+      return instance;
+    }
 
-		instance = instantiate(clazz);
+    instance = instantiate(clazz);
 
-		if (anEventBusController.retention()) {
+    if (anEventBusController.retention()) {
 
-			controllers.put(clazz, instance);
-		}
-		return instance;
-	}
+      controllers.put(clazz, instance);
+    }
+    return instance;
+  }
 
-	/**
-	 * Instantiate.
-	 *
-	 * @param clazz the clazz
-	 * @return the object
-	 */
-	@SneakyThrows
-	private Object instantiate(Class<?> clazz) {
+  /**
+   * Instantiate.
+   *
+   * @param clazz
+   *          the clazz
+   * @return the object
+   */
+  @SneakyThrows
+  private Object instantiate(Class<?> clazz) {
 
-		Object instance = clazz.newInstance();
-		ContainerUtils.processInjection(instance);
-		return instance;
-	}
+    Object instance = clazz.newInstance();
+    ContainerUtils.processInjection(instance);
+    return instance;
+  }
 }

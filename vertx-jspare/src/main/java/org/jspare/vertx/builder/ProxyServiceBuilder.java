@@ -35,146 +35,158 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Accessors(fluent = true)
 
-/* (non-Javadoc)
+/*
+ * (non-Javadoc)
+ * 
  * @see java.lang.Object#hashCode()
  */
 @EqualsAndHashCode(callSuper = false)
 public class ProxyServiceBuilder extends AbstractBuilder<Void> {
 
-	/** The Constant NUMBER_CLASSPATH_SCANNER_THREADS. */
-	private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
+  /** The Constant NUMBER_CLASSPATH_SCANNER_THREADS. */
+  private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
 
-	/**
-	 * Creates the.
-	 *
-	 * @param vertx the vertx
-	 * @return the proxy service builder
-	 */
-	public static ProxyServiceBuilder create(Vertx vertx) {
+  /**
+   * Creates the.
+   *
+   * @param vertx
+   *          the vertx
+   * @return the proxy service builder
+   */
+  public static ProxyServiceBuilder create(Vertx vertx) {
 
-		return new ProxyServiceBuilder(vertx);
-	}
+    return new ProxyServiceBuilder(vertx);
+  }
 
-	/** The vertx. */
-	private final Vertx vertx;
+  /** The vertx. */
+  private final Vertx vertx;
 
-	/**
-	 * Scan classpath.
-	 *
-	 * @return true, if successful
-	 */
-	@Getter
-	
-	/**
-	 * Scan classpath.
-	 *
-	 * @param scanClasspath the scan classpath
-	 * @return the proxy service builder
-	 */
-	@Setter
-	private boolean scanClasspath;
+  /**
+   * Scan classpath.
+   *
+   * @return true, if successful
+   */
+  @Getter
 
-	/**
-	 * Classes.
-	 *
-	 * @return the sets the
-	 */
-	@Getter
-	
-	/**
-	 * Classes.
-	 *
-	 * @param classes the classes
-	 * @return the proxy service builder
-	 */
-	@Setter
-	private Set<Class<?>> classes;
+  /**
+   * Scan classpath.
+   *
+   * @param scanClasspath
+   *          the scan classpath
+   * @return the proxy service builder
+   */
+  @Setter
+  private boolean scanClasspath;
 
-	/**
-	 * Scan specs.
-	 *
-	 * @return the sets the
-	 */
-	@Getter
-	
-	/**
-	 * Scan specs.
-	 *
-	 * @param scanSpecs the scan specs
-	 * @return the proxy service builder
-	 */
-	@Setter
-	private Set<String> scanSpecs;
+  /**
+   * Classes.
+   *
+   * @return the sets the
+   */
+  @Getter
 
-	/**
-	 * Instantiates a new proxy service builder.
-	 *
-	 * @param vertx the vertx
-	 */
-	private ProxyServiceBuilder(Vertx vertx) {
+  /**
+   * Classes.
+   *
+   * @param classes
+   *          the classes
+   * @return the proxy service builder
+   */
+  @Setter
+  private Set<Class<?>> classes;
 
-		this.vertx = vertx;
-		scanClasspath = false;
-		classes = new HashSet<>();
-		scanSpecs = new HashSet<>();
-	}
+  /**
+   * Scan specs.
+   *
+   * @return the sets the
+   */
+  @Getter
 
-	/**
-	 * Adds the proxy service.
-	 *
-	 * @param clazz the clazz
-	 * @return the proxy service builder
-	 */
-	public ProxyServiceBuilder addProxyService(Class<?> clazz) {
-		classes.add(clazz);
-		return this;
-	}
+  /**
+   * Scan specs.
+   *
+   * @param scanSpecs
+   *          the scan specs
+   * @return the proxy service builder
+   */
+  @Setter
+  private Set<String> scanSpecs;
 
-	/* (non-Javadoc)
-	 * @see org.jspare.vertx.builder.AbstractBuilder#build()
-	 */
-	@Override
-	public Void build() {
+  /**
+   * Instantiates a new proxy service builder.
+   *
+   * @param vertx
+   *          the vertx
+   */
+  private ProxyServiceBuilder(Vertx vertx) {
 
-		// Collect, create and registry proxy services
-		// Check if default package are available to scan and add to
-		if (scanClasspath) {
-			scanSpecs.clear();
-			scanSpecs.add(".*");
-		}
+    this.vertx = vertx;
+    scanClasspath = false;
+    classes = new HashSet<>();
+    scanSpecs = new HashSet<>();
+  }
 
-		ClassAnnotationMatchProcessor processor = (c) -> classes.add(c);
+  /**
+   * Adds the proxy service.
+   *
+   * @param clazz
+   *          the clazz
+   * @return the proxy service builder
+   */
+  public ProxyServiceBuilder addProxyService(Class<?> clazz) {
+    classes.add(clazz);
+    return this;
+  }
 
-		scanSpecs.forEach(scanSpec -> {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.jspare.vertx.builder.AbstractBuilder#build()
+   */
+  @Override
+  public Void build() {
 
-			ClasspathScannerUtils.scanner(scanSpec).matchClassesWithAnnotation(RegisterProxyService.class, processor)
-					.scan(NUMBER_CLASSPATH_SCANNER_THREADS);
-		});
+    // Collect, create and registry proxy services
+    // Check if default package are available to scan and add to
+    if (scanClasspath) {
+      scanSpecs.clear();
+      scanSpecs.add(".*");
+    }
 
-		// Iterate proxyServiceClasses and register service
-		classes.forEach(this::registerProxyService);
+    ClassAnnotationMatchProcessor processor = (c) -> classes.add(c);
 
-		return null;
-	}
+    scanSpecs.forEach(scanSpec -> {
 
-	/**
-	 * Register proxy service.
-	 *
-	 * @param <T> the generic type
-	 * @param clazz the clazz
-	 */
-	private <T> void registerProxyService(Class<T> clazz) {
+      ClasspathScannerUtils.scanner(scanSpec).matchClassesWithAnnotation(RegisterProxyService.class, processor)
+          .scan(NUMBER_CLASSPATH_SCANNER_THREADS);
+    });
 
-		if (!clazz.isAnnotationPresent(RegisterProxyService.class)) {
+    // Iterate proxyServiceClasses and register service
+    classes.forEach(this::registerProxyService);
 
-			log.warn(
-					"Cannot register service {} with ProxyHelper. One possible cause, the class is not annotated bt ProxyHandler annotation.");
-			return;
-		}
+    return null;
+  }
 
-		RegisterProxyService proxyHandler = clazz.getAnnotation(RegisterProxyService.class);
-		String address = ProxyServiceUtils.getAddress(proxyHandler, clazz);
-		T service = my(clazz);
-		ProxyHelper.registerService(clazz, vertx, service, address);
-	}
+  /**
+   * Register proxy service.
+   *
+   * @param <T>
+   *          the generic type
+   * @param clazz
+   *          the clazz
+   */
+  private <T> void registerProxyService(Class<T> clazz) {
+
+    if (!clazz.isAnnotationPresent(RegisterProxyService.class)) {
+
+      log.warn(
+          "Cannot register service {} with ProxyHelper. One possible cause, the class is not annotated bt ProxyHandler annotation.");
+      return;
+    }
+
+    RegisterProxyService proxyHandler = clazz.getAnnotation(RegisterProxyService.class);
+    String address = ProxyServiceUtils.getAddress(proxyHandler, clazz);
+    T service = my(clazz);
+    ProxyHelper.registerService(clazz, vertx, service, address);
+  }
 }

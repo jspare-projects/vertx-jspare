@@ -29,10 +29,10 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD })
 public @interface VertxProxyInject {
 
-	/**
-	 * Value.
-	 *
-	 * @return the string
-	 */
-	String value();
+  /**
+   * Value.
+   *
+   * @return the string
+   */
+  String value();
 }

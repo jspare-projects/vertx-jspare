@@ -47,387 +47,412 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Accessors(fluent = true)
 
-/* (non-Javadoc)
+/*
+ * (non-Javadoc)
+ * 
  * @see java.lang.Object#hashCode()
  */
 @EqualsAndHashCode(callSuper = false)
 public class RouterBuilder extends AbstractBuilder<Router> {
 
-	/** The Constant NUMBER_CLASSPATH_SCANNER_THREADS. */
-	private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
+  /** The Constant NUMBER_CLASSPATH_SCANNER_THREADS. */
+  private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
 
-	/** The Constant DEFAULT_AUTH_HANDLER_KEY. */
-	public static final String DEFAULT_AUTH_HANDLER_KEY = "default-auth-handler";
+  /** The Constant DEFAULT_AUTH_HANDLER_KEY. */
+  public static final String DEFAULT_AUTH_HANDLER_KEY = "default-auth-handler";
 
-	/**
-	 * Creates the.
-	 *
-	 * @param vertx the vertx
-	 * @return the router builder
-	 */
-	public static RouterBuilder create(Vertx vertx) {
+  /**
+   * Creates the.
+   *
+   * @param vertx
+   *          the vertx
+   * @return the router builder
+   */
+  public static RouterBuilder create(Vertx vertx) {
 
-		return new RouterBuilder(vertx, Router.router(vertx));
-	}
+    return new RouterBuilder(vertx, Router.router(vertx));
+  }
 
-	/**
-	 * Creates the.
-	 *
-	 * @param vertx the vertx
-	 * @param router the router
-	 * @return the router builder
-	 */
-	public static RouterBuilder create(Vertx vertx, Router router) {
+  /**
+   * Creates the.
+   *
+   * @param vertx
+   *          the vertx
+   * @param router
+   *          the router
+   * @return the router builder
+   */
+  public static RouterBuilder create(Vertx vertx, Router router) {
 
-		return new RouterBuilder(vertx, router);
-	}
+    return new RouterBuilder(vertx, router);
+  }
 
-	/**
-	 * Vertx.
-	 *
-	 * @return the vertx
-	 */
-	@Getter
-	private final Vertx vertx;
+  /**
+   * Vertx.
+   *
+   * @return the vertx
+   */
+  @Getter
+  private final Vertx vertx;
 
-	/**
-	 * Router.
-	 *
-	 * @return the router
-	 */
-	@Getter
-	
-	/**
-	 * Router.
-	 *
-	 * @param router the router
-	 * @return the router builder
-	 */
-	@Setter
-	private Router router;
+  /**
+   * Router.
+   *
+   * @return the router
+   */
+  @Getter
 
-	/**
-	 * Scan classpath.
-	 *
-	 * @return true, if successful
-	 */
-	@Getter
-	
-	/**
-	 * Scan classpath.
-	 *
-	 * @param scanClasspath the scan classpath
-	 * @return the router builder
-	 */
-	@Setter
-	private boolean scanClasspath;
+  /**
+   * Router.
+   *
+   * @param router
+   *          the router
+   * @return the router builder
+   */
+  @Setter
+  private Router router;
 
-	/**
-	 * Handlers.
-	 *
-	 * @return the sets the
-	 */
-	@Getter
-	
-	/**
-	 * Handlers.
-	 *
-	 * @param handlers the handlers
-	 * @return the router builder
-	 */
-	@Setter
-	private Set<Handler<RoutingContext>> handlers;
+  /**
+   * Scan classpath.
+   *
+   * @return true, if successful
+   */
+  @Getter
 
-	/**
-	 * Handler class.
-	 *
-	 * @return the class<? extends handler< routing context>>
-	 */
-	@Getter
-	
-	/**
-	 * Handler class.
-	 *
-	 * @param handlerClass the handler class
-	 * @return the router builder
-	 */
-	@Setter
-	private Class<? extends Handler<RoutingContext>> handlerClass;
+  /**
+   * Scan classpath.
+   *
+   * @param scanClasspath
+   *          the scan classpath
+   * @return the router builder
+   */
+  @Setter
+  private boolean scanClasspath;
 
-	/**
-	 * The sock JS handler options. </br>
-	 * Used for all SockJsHandlers mapped by this RouterBuilder
-	 *
-	 */
-	
-	/**
-	 * Sock JS handler options.
-	 *
-	 * @return the sock JS handler options
-	 */
-	@Getter
-	
-	/**
-	 * Sock JS handler options.
-	 *
-	 * @param sockJSHandlerOptions the sock JS handler options
-	 * @return the router builder
-	 */
-	@Setter
-	private SockJSHandlerOptions sockJSHandlerOptions;
+  /**
+   * Handlers.
+   *
+   * @return the sets the
+   */
+  @Getter
 
-	/**
-	 * Auth handler map.
-	 *
-	 * @return the map
-	 */
-	@Getter
-	private Map<String, Supplier<AuthHandler>> authHandlerMap;
+  /**
+   * Handlers.
+   *
+   * @param handlers
+   *          the handlers
+   * @return the router builder
+   */
+  @Setter
+  private Set<Handler<RoutingContext>> handlers;
 
-	/**
-	 * Routes.
-	 *
-	 * @return the sets the
-	 */
-	@Getter
-	
-	/**
-	 * Routes.
-	 *
-	 * @param routes the routes
-	 * @return the router builder
-	 */
-	@Setter
-	private Set<Class<?>> routes;
+  /**
+   * Handler class.
+   *
+   * @return the class<? extends handler< routing context>>
+   */
+  @Getter
 
-	/**
-	 * Skip routes.
-	 *
-	 * @return the sets the
-	 */
-	@Getter
-	
-	/**
-	 * Skip routes.
-	 *
-	 * @param skipRoutes the skip routes
-	 * @return the router builder
-	 */
-	@Setter
-	private Set<Class<?>> skipRoutes;
+  /**
+   * Handler class.
+   *
+   * @param handlerClass
+   *          the handler class
+   * @return the router builder
+   */
+  @Setter
+  private Class<? extends Handler<RoutingContext>> handlerClass;
 
-	/**
-	 * Route packages.
-	 *
-	 * @return the sets the
-	 */
-	@Getter
-	
-	/**
-	 * Route packages.
-	 *
-	 * @param routePackages the route packages
-	 * @return the router builder
-	 */
-	@Setter
-	private Set<String> routePackages;
+  /**
+   * The sock JS handler options. </br>
+   * Used for all SockJsHandlers mapped by this RouterBuilder
+   *
+   */
 
-	/**
-	 * Raml.
-	 *
-	 * @return true, if successful
-	 */
-	@Getter
-	
-	/**
-	 * Raml.
-	 *
-	 * @param raml the raml
-	 * @return the router builder
-	 */
-	@Setter
-	private boolean raml;
+  /**
+   * Sock JS handler options.
+   *
+   * @return the sock JS handler options
+   */
+  @Getter
 
-	/**
-	 * Instantiates a new router builder.
-	 *
-	 * @param vertx the vertx
-	 * @param router the router
-	 */
-	private RouterBuilder(Vertx vertx, Router router) {
+  /**
+   * Sock JS handler options.
+   *
+   * @param sockJSHandlerOptions
+   *          the sock JS handler options
+   * @return the router builder
+   */
+  @Setter
+  private SockJSHandlerOptions sockJSHandlerOptions;
 
-		this.vertx = vertx;
-		this.router = router;
-		handlers = new HashSet<>();
-		scanClasspath = false;
-		routePackages = new HashSet<>();
-		routes = new HashSet<>();
-		skipRoutes = new HashSet<>();
-		handlerClass = DefaultHandler.class;
-		sockJSHandlerOptions = new SockJSHandlerOptions();
-		authHandlerMap = new HashMap<>();
-		raml = false;
-	}
+  /**
+   * Auth handler map.
+   *
+   * @return the map
+   */
+  @Getter
+  private Map<String, Supplier<AuthHandler>> authHandlerMap;
 
-	/**
-	 * Adds the handler.
-	 *
-	 * @param handler the handler
-	 * @return the router builder
-	 */
-	public RouterBuilder addHandler(Handler<RoutingContext> handler) {
-		handlers.add(handler);
-		return this;
-	}
+  /**
+   * Routes.
+   *
+   * @return the sets the
+   */
+  @Getter
 
-	/**
-	 * Adds the route.
-	 *
-	 * @param routeClass the route class
-	 * @return the router builder
-	 */
-	public RouterBuilder addRoute(Class<?> routeClass) {
+  /**
+   * Routes.
+   *
+   * @param routes
+   *          the routes
+   * @return the router builder
+   */
+  @Setter
+  private Set<Class<?>> routes;
 
-		routes.add(routeClass);
-		return this;
-	}
+  /**
+   * Skip routes.
+   *
+   * @return the sets the
+   */
+  @Getter
 
-	/**
-	 * Adds the route package.
-	 *
-	 * @param routePackage the route package
-	 * @return the router builder
-	 */
-	public RouterBuilder addRoutePackage(String routePackage) {
+  /**
+   * Skip routes.
+   *
+   * @param skipRoutes
+   *          the skip routes
+   * @return the router builder
+   */
+  @Setter
+  private Set<Class<?>> skipRoutes;
 
-		routePackages.add(routePackage);
-		return this;
-	}
+  /**
+   * Route packages.
+   *
+   * @return the sets the
+   */
+  @Getter
 
-	/**
-	 * Auth handler.
-	 *
-	 * @param identity the identity
-	 * @param authHandler the auth handler
-	 * @return the router builder
-	 */
-	public RouterBuilder authHandler(String identity, Supplier<AuthHandler> authHandler) {
-		authHandlerMap.put(identity, authHandler);
-		return this;
-	}
+  /**
+   * Route packages.
+   *
+   * @param routePackages
+   *          the route packages
+   * @return the router builder
+   */
+  @Setter
+  private Set<String> routePackages;
 
-	/**
-	 * Auth handler.
-	 *
-	 * @param authHandler the auth handler
-	 * @return the router builder
-	 */
-	public RouterBuilder authHandler(Supplier<AuthHandler> authHandler) {
+  /**
+   * Raml.
+   *
+   * @return true, if successful
+   */
+  @Getter
 
-		authHandler(DEFAULT_AUTH_HANDLER_KEY, authHandler);
-		return this;
-	}
+  /**
+   * Raml.
+   *
+   * @param raml
+   *          the raml
+   * @return the router builder
+   */
+  @Setter
+  private boolean raml;
 
-	/* (non-Javadoc)
-	 * @see org.jspare.vertx.builder.AbstractBuilder#build()
-	 */
-	@Override
-	public Router build() {
+  /**
+   * Instantiates a new router builder.
+   *
+   * @param vertx
+   *          the vertx
+   * @param router
+   *          the router
+   */
+  private RouterBuilder(Vertx vertx, Router router) {
 
-		log.debug("Building Router");
+    this.vertx = vertx;
+    this.router = router;
+    handlers = new HashSet<>();
+    scanClasspath = false;
+    routePackages = new HashSet<>();
+    routes = new HashSet<>();
+    skipRoutes = new HashSet<>();
+    handlerClass = DefaultHandler.class;
+    sockJSHandlerOptions = new SockJSHandlerOptions();
+    authHandlerMap = new HashMap<>();
+    raml = false;
+  }
 
-		handlers.forEach(h -> {
-			log.debug("Routing handler [{}]", h.toString());
-			router.route().handler(h);
-		});
+  /**
+   * Adds the handler.
+   *
+   * @param handler
+   *          the handler
+   * @return the router builder
+   */
+  public RouterBuilder addHandler(Handler<RoutingContext> handler) {
+    handlers.add(handler);
+    return this;
+  }
 
-		collectRoutes();
+  /**
+   * Adds the route.
+   *
+   * @param routeClass
+   *          the route class
+   * @return the router builder
+   */
+  public RouterBuilder addRoute(Class<?> routeClass) {
 
-		List<HandlerData> handlerDataList = new ArrayList<>();
-		routes.stream().filter(c -> !skipRoutes.contains(c)).collect(Collectors.toSet())
-				.forEach(c -> handlerDataList.addAll(my(RouteCollector.class).collect(c, this)));
+    routes.add(routeClass);
+    return this;
+  }
 
-		handlerDataList.forEach(hd -> {
-			log.debug("Routing handler {}", hd.toStringLine());
-			HandlerWrapper.prepareHandler(router, hd);
-		});
+  /**
+   * Adds the route package.
+   *
+   * @param routePackage
+   *          the route package
+   * @return the router builder
+   */
+  public RouterBuilder addRoutePackage(String routePackage) {
 
-		if (raml) {
+    routePackages.add(routePackage);
+    return this;
+  }
 
-			generateRamlRoute(router);
-		}
+  /**
+   * Auth handler.
+   *
+   * @param identity
+   *          the identity
+   * @param authHandler
+   *          the auth handler
+   * @return the router builder
+   */
+  public RouterBuilder authHandler(String identity, Supplier<AuthHandler> authHandler) {
+    authHandlerMap.put(identity, authHandler);
+    return this;
+  }
 
-		return router;
-	}
+  /**
+   * Auth handler.
+   *
+   * @param authHandler
+   *          the auth handler
+   * @return the router builder
+   */
+  public RouterBuilder authHandler(Supplier<AuthHandler> authHandler) {
 
-	/**
-	 * Removes the auth handler.
-	 *
-	 * @param identity the identity
-	 * @return the router builder
-	 */
-	public RouterBuilder removeAuthHandler(String identity) {
-		authHandlerMap.remove(identity);
-		return this;
-	}
+    authHandler(DEFAULT_AUTH_HANDLER_KEY, authHandler);
+    return this;
+  }
 
-	/**
-	 * Route.
-	 *
-	 * @param builder the builder
-	 * @return the router builder
-	 */
-	public RouterBuilder route(RouteBuilder builder) {
-		log.debug("Routing custom route [{}]", builder.getClass());
-		builder.create(router.route());
-		return this;
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.jspare.vertx.builder.AbstractBuilder#build()
+   */
+  @Override
+  public Router build() {
 
-	/**
-	 * Skip route.
-	 *
-	 * @param routeClass the route class
-	 * @return the router builder
-	 */
-	public RouterBuilder skipRoute(Class<?> routeClass) {
+    log.debug("Building Router");
 
-		skipRoutes.add(routeClass);
-		return this;
-	}
+    handlers.forEach(h -> {
+      log.debug("Routing handler [{}]", h.toString());
+      router.route().handler(h);
+    });
 
-	/**
-	 * Collect routes.
-	 */
-	private void collectRoutes() {
+    collectRoutes();
 
-		if (scanClasspath) {
-			routePackages.clear();
-			routePackages.add(".*");
-		}
+    List<HandlerData> handlerDataList = new ArrayList<>();
+    routes.stream().filter(c -> !skipRoutes.contains(c)).collect(Collectors.toSet())
+        .forEach(c -> handlerDataList.addAll(my(RouteCollector.class).collect(c, this)));
 
-		// Iterate routePackages scannig and adding classes to
-		// routes
-		MethodAnnotationMatchProcessor processor = (c, m) -> routes.add(c);
-		routePackages.forEach(scanSpec -> {
+    handlerDataList.forEach(hd -> {
+      log.debug("Routing handler {}", hd.toStringLine());
+      HandlerWrapper.prepareHandler(router, hd);
+    });
 
-			ClasspathScannerUtils.scanner(scanSpec)
-					.matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.Handler.class, processor)
-					.matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.FailureHandler.class,
-							processor)
-					.matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.BlockingHandler.class,
-							processor)
-					.matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.SockJsHandler.class,
-							processor)
-					.scan(NUMBER_CLASSPATH_SCANNER_THREADS);
-		});
-	}
+    if (raml) {
 
-	/**
-	 * Generate raml route.
-	 *
-	 * @param router the router
-	 */
-	private void generateRamlRoute(Router router) {
+      generateRamlRoute(router);
+    }
 
-	}
+    return router;
+  }
+
+  /**
+   * Removes the auth handler.
+   *
+   * @param identity
+   *          the identity
+   * @return the router builder
+   */
+  public RouterBuilder removeAuthHandler(String identity) {
+    authHandlerMap.remove(identity);
+    return this;
+  }
+
+  /**
+   * Route.
+   *
+   * @param builder
+   *          the builder
+   * @return the router builder
+   */
+  public RouterBuilder route(RouteBuilder builder) {
+    log.debug("Routing custom route [{}]", builder.getClass());
+    builder.create(router.route());
+    return this;
+  }
+
+  /**
+   * Skip route.
+   *
+   * @param routeClass
+   *          the route class
+   * @return the router builder
+   */
+  public RouterBuilder skipRoute(Class<?> routeClass) {
+
+    skipRoutes.add(routeClass);
+    return this;
+  }
+
+  /**
+   * Collect routes.
+   */
+  private void collectRoutes() {
+
+    if (scanClasspath) {
+      routePackages.clear();
+      routePackages.add(".*");
+    }
+
+    // Iterate routePackages scannig and adding classes to
+    // routes
+    MethodAnnotationMatchProcessor processor = (c, m) -> routes.add(c);
+    routePackages.forEach(scanSpec -> {
+
+      ClasspathScannerUtils.scanner(scanSpec)
+          .matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.Handler.class, processor)
+          .matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.FailureHandler.class, processor)
+          .matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.BlockingHandler.class, processor)
+          .matchClassesWithMethodAnnotation(org.jspare.vertx.web.annotation.handler.SockJsHandler.class, processor)
+          .scan(NUMBER_CLASSPATH_SCANNER_THREADS);
+    });
+  }
+
+  /**
+   * Generate raml route.
+   *
+   * @param router
+   *          the router
+   */
+  private void generateRamlRoute(Router router) {
+
+  }
 }

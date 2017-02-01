@@ -22,15 +22,17 @@ import java.lang.annotation.Target;
 
 /**
  * The EventBusController Annotation.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 public @interface EventBusController {
 
-	/**
-	 * Retention.
-	 *
-	 * @return true, if successful
-	 */
-	boolean retention() default true;
+  /**
+   * Retention.
+   *
+   * @return true, if successful
+   */
+  boolean retention() default true;
 }

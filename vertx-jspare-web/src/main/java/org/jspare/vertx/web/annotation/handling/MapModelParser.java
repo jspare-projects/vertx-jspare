@@ -29,25 +29,29 @@ import lombok.SneakyThrows;
  */
 public class MapModelParser {
 
-	/**
-	 * To map.
-	 *
-	 * @param <K> the key type
-	 * @param <V> the value type
-	 * @param json the json
-	 * @param value the value
-	 * @return the map
-	 */
-	@SneakyThrows
-	@SuppressWarnings("unchecked")
-	public static <K, V> Map<K, V> toMap(String json, Class<V> value) {
+  /**
+   * To map.
+   *
+   * @param <K>
+   *          the key type
+   * @param <V>
+   *          the value type
+   * @param json
+   *          the json
+   * @param value
+   *          the value
+   * @return the map
+   */
+  @SneakyThrows
+  @SuppressWarnings("unchecked")
+  public static <K, V> Map<K, V> toMap(String json, Class<V> value) {
 
-		Map<K, V> resultMap = new HashMap<>();
-		JsonObject jsonMap = new JsonObject(json);
-		jsonMap.forEach(e -> {
+    Map<K, V> resultMap = new HashMap<>();
+    JsonObject jsonMap = new JsonObject(json);
+    jsonMap.forEach(e -> {
 
-			resultMap.put((K) e.getKey(), Json.decodeValue(((JsonObject) e.getValue()).toString(), value));
-		});
-		return resultMap;
-	}
+      resultMap.put((K) e.getKey(), Json.decodeValue(((JsonObject) e.getValue()).toString(), value));
+    });
+    return resultMap;
+  }
 }

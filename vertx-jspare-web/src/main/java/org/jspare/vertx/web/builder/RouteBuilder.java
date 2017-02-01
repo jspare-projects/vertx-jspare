@@ -25,10 +25,11 @@ import io.vertx.ext.web.Route;
 @FunctionalInterface
 public interface RouteBuilder {
 
-	/**
-	 * Creates the.
-	 *
-	 * @param route the route
-	 */
-	void create(Route route);
+  /**
+   * Creates the.
+   *
+   * @param route
+   *          the route
+   */
+  void create(Route route);
 }

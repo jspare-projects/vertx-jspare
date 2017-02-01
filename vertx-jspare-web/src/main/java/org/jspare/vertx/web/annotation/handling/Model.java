@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 /**
  * The Interface Model.
  *
- * @author pflima
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  * @since 22/04/2016
  */
 @Retention(RetentionPolicy.RUNTIME)

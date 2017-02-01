@@ -46,107 +46,115 @@ import io.vertx.core.shareddata.SharedData;
  */
 public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 
-	/** The Constant DEFAULT_WORKER_EXECUTOR_NAME. */
-	private static final String DEFAULT_WORKER_EXECUTOR_NAME = "defaultWorkerExecutor";
+  /** The Constant DEFAULT_WORKER_EXECUTOR_NAME. */
+  private static final String DEFAULT_WORKER_EXECUTOR_NAME = "defaultWorkerExecutor";
 
-	/** The Constant VERTX_PATTERN. */
-	private static final String VERTX_PATTERN = "vertx:%s";
+  /** The Constant VERTX_PATTERN. */
+  private static final String VERTX_PATTERN = "vertx:%s";
 
-	/**
-	 * Format instance key.
-	 *
-	 * @param instanceRef the instance ref
-	 * @return the string
-	 */
-	public static String formatInstanceKey(String instanceRef) {
+  /**
+   * Format instance key.
+   *
+   * @param instanceRef
+   *          the instance ref
+   * @return the string
+   */
+  public static String formatInstanceKey(String instanceRef) {
 
-		return String.format(VERTX_PATTERN, instanceRef);
-	}
+    return String.format(VERTX_PATTERN, instanceRef);
+  }
 
-	/** The vertx holder. */
-	@Inject
-	private VertxHolder vertxHolder;
+  /** The vertx holder. */
+  @Inject
+  private VertxHolder vertxHolder;
 
-	/* (non-Javadoc)
-	 * @see org.jspare.core.container.InjectorStrategy#inject(java.lang.Object, java.lang.reflect.Field)
-	 */
-	@Override
-	public void inject(Object result, Field field) {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.jspare.core.container.InjectorStrategy#inject(java.lang.Object,
+   * java.lang.reflect.Field)
+   */
+  @Override
+  public void inject(Object result, Field field) {
 
-		Vertx vertx = null;
+    Vertx vertx = null;
 
-		try {
+    try {
 
-			VertxInject inject = field.getAnnotation(VertxInject.class);
-			Optional<Vertx> oVertx = Optional.ofNullable(vertxHolder.vertx());
-			if (oVertx.isPresent()) {
+      VertxInject inject = field.getAnnotation(VertxInject.class);
+      Optional<Vertx> oVertx = Optional.ofNullable(vertxHolder.vertx());
+      if (oVertx.isPresent()) {
 
-				vertx = oVertx.get();
-			} else {
+        vertx = oVertx.get();
+      } else {
 
-				VertxOptions options = null;
-				if (StringUtils.isNotEmpty(inject.vertxOptions())) {
+        VertxOptions options = null;
+        if (StringUtils.isNotEmpty(inject.vertxOptions())) {
 
-					options = my(JsonObjectLoader.class).loadOptions(inject.vertxOptions(), VertxOptions.class);
-				} else {
+          options = my(JsonObjectLoader.class).loadOptions(inject.vertxOptions(), VertxOptions.class);
+        } else {
 
-					options = new VertxOptions();
-				}
+          options = new VertxOptions();
+        }
 
-				vertx = Vertx.vertx(options);
-			}
+        vertx = Vertx.vertx(options);
+      }
 
-			setField(result, field, vertx);
+      setField(result, field, vertx);
 
-		} catch (IllegalArgumentException | IllegalAccessException e) {
+    } catch (IllegalArgumentException | IllegalAccessException e) {
 
-			throw new EnvironmentException(Errors.INVALID_INJECTION.throwable(e));
-		}
-	}
+      throw new EnvironmentException(Errors.INVALID_INJECTION.throwable(e));
+    }
+  }
 
-	/**
-	 * Sets the field.
-	 *
-	 * @param result the result
-	 * @param field the field
-	 * @param vertx the vertx
-	 * @throws IllegalArgumentException the illegal argument exception
-	 * @throws IllegalAccessException the illegal access exception
-	 */
-	protected void setField(Object result, Field field, Vertx vertx)
-			throws IllegalArgumentException, IllegalAccessException {
+  /**
+   * Sets the field.
+   *
+   * @param result
+   *          the result
+   * @param field
+   *          the field
+   * @param vertx
+   *          the vertx
+   * @throws IllegalArgumentException
+   *           the illegal argument exception
+   * @throws IllegalAccessException
+   *           the illegal access exception
+   */
+  protected void setField(Object result, Field field, Vertx vertx)
+      throws IllegalArgumentException, IllegalAccessException {
 
-		field.setAccessible(true);
+    field.setAccessible(true);
 
-		if (Vertx.class.equals(field.getType())) {
+    if (Vertx.class.equals(field.getType())) {
 
-			field.set(result, vertx);
-		} else if (io.vertx.core.Context.class.equals(field.getType())) {
+      field.set(result, vertx);
+    } else if (io.vertx.core.Context.class.equals(field.getType())) {
 
-			field.set(result, vertx.getOrCreateContext());
-		} else if (JsonObject.class.equals(field.getType())) {
+      field.set(result, vertx.getOrCreateContext());
+    } else if (JsonObject.class.equals(field.getType())) {
 
-			field.set(result, vertx.getOrCreateContext().config());
-		} else if (EventBus.class.equals(field.getType())) {
+      field.set(result, vertx.getOrCreateContext().config());
+    } else if (EventBus.class.equals(field.getType())) {
 
-			field.set(result, vertx.eventBus());
-		} else if (WorkerExecutor.class.equals(field.getType())) {
+      field.set(result, vertx.eventBus());
+    } else if (WorkerExecutor.class.equals(field.getType())) {
 
-			if (field.isAnnotationPresent(SharedWorkerExecutor.class)) {
+      if (field.isAnnotationPresent(SharedWorkerExecutor.class)) {
 
-				SharedWorkerExecutor annWe = field.getAnnotation(SharedWorkerExecutor.class);
-				field.set(result,
-						vertx.createSharedWorkerExecutor(annWe.name(), annWe.poolSize(), annWe.maxExecuteTime()));
-			} else {
+        SharedWorkerExecutor annWe = field.getAnnotation(SharedWorkerExecutor.class);
+        field.set(result, vertx.createSharedWorkerExecutor(annWe.name(), annWe.poolSize(), annWe.maxExecuteTime()));
+      } else {
 
-				field.set(result, vertx.createSharedWorkerExecutor(DEFAULT_WORKER_EXECUTOR_NAME));
-			}
-		} else if (FileSystem.class.equals(field.getType())) {
+        field.set(result, vertx.createSharedWorkerExecutor(DEFAULT_WORKER_EXECUTOR_NAME));
+      }
+    } else if (FileSystem.class.equals(field.getType())) {
 
-			field.set(result, vertx.fileSystem());
-		} else if (SharedData.class.equals(field.getType())) {
+      field.set(result, vertx.fileSystem());
+    } else if (SharedData.class.equals(field.getType())) {
 
-			field.set(result, vertx.sharedData());
-		}
-	}
+      field.set(result, vertx.sharedData());
+    }
+  }
 }

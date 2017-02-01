@@ -31,47 +31,51 @@ import io.vertx.core.Vertx;
  */
 public abstract class VertxRunner extends AbstractVerticle implements Runner {
 
-	/* (non-Javadoc)
-	 * @see org.jspare.core.bootstrap.Runner#run()
-	 */
-	@Override
-	public void run() {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.jspare.core.bootstrap.Runner#run()
+   */
+  @Override
+  public void run() {
 
-		setup();
+    setup();
 
-		mySupport();
+    mySupport();
 
-		vertx().setHandler(res -> {
+    vertx().setHandler(res -> {
 
-			if (res.succeeded()) {
+      if (res.succeeded()) {
 
-				registryResource(new VertxHolder().vertx(vertx));
-			} else {
+        registryResource(new VertxHolder().vertx(vertx));
+      } else {
 
-				throw new RuntimeException("Failed to create Vert.x instance");
-			}
-		});
-	}
+        throw new RuntimeException("Failed to create Vert.x instance");
+      }
+    });
+  }
 
-	/* (non-Javadoc)
-	 * @see org.jspare.core.bootstrap.Runner#setup()
-	 */
-	@Override
-	public void setup() {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.jspare.core.bootstrap.Runner#setup()
+   */
+  @Override
+  public void setup() {
 
-		EnvironmentUtils.register();
-	}
+    EnvironmentUtils.register();
+  }
 
-	/**
-	 * Vertx.
-	 *
-	 * @return the future
-	 */
-	protected Future<Vertx> vertx() {
+  /**
+   * Vertx.
+   *
+   * @return the future
+   */
+  protected Future<Vertx> vertx() {
 
-		return VertxBuilder.create().build().compose(vertx -> {
+    return VertxBuilder.create().build().compose(vertx -> {
 
-			vertx.deployVerticle(VerticleInitializer.initialize(this));
-		}, Future.succeededFuture());
-	}
+      vertx.deployVerticle(VerticleInitializer.initialize(this));
+    }, Future.succeededFuture());
+  }
 }

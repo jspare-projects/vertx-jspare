@@ -27,18 +27,18 @@ import org.jspare.vertx.web.handler.APIHandler;
  */
 public class MultiHandlers extends APIHandler {
 
-	/**
-	 * Handler 1.
-	 */
-	@Handler
-	@BlockingHandler
-	public void handler1() {
-	}
+  /**
+   * Handler 1.
+   */
+  @Handler
+  @BlockingHandler
+  public void handler1() {
+  }
 
-	/**
-	 * Handler 2.
-	 */
-	@FailureHandler
-	public void handler2() {
-	}
+  /**
+   * Handler 2.
+   */
+  @FailureHandler
+  public void handler2() {
+  }
 }

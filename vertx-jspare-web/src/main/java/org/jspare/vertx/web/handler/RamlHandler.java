@@ -28,34 +28,38 @@ import lombok.RequiredArgsConstructor;
 /**
  * Instantiates a new raml handler.
  *
- * @param listData the list data
+ * @param listData
+ *          the list data
  */
 @RequiredArgsConstructor
 public class RamlHandler implements Handler<RoutingContext> {
 
-	/** The list data. */
-	private final List<HandlerData> listData;
+  /** The list data. */
+  private final List<HandlerData> listData;
 
-	/* (non-Javadoc)
-	 * @see io.vertx.core.Handler#handle(java.lang.Object)
-	 */
-	@Override
-	public void handle(RoutingContext ctx) {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see io.vertx.core.Handler#handle(java.lang.Object)
+   */
+  @Override
+  public void handle(RoutingContext ctx) {
 
-		HttpServerResponse response = ctx.response();
-		StringBuilder ramlBuilder = new StringBuilder();
-		listData.forEach(hd -> ramlBuilder.append(generateRow(hd)));
-		response.setStatusCode(HttpResponseStatus.OK.code()).putHeader("Content-Type", "text/raml")
-				.end(ramlBuilder.toString());
-	}
+    HttpServerResponse response = ctx.response();
+    StringBuilder ramlBuilder = new StringBuilder();
+    listData.forEach(hd -> ramlBuilder.append(generateRow(hd)));
+    response.setStatusCode(HttpResponseStatus.OK.code()).putHeader("Content-Type", "text/raml")
+        .end(ramlBuilder.toString());
+  }
 
-	/**
-	 * Generate row.
-	 *
-	 * @param handlerData the handler data
-	 * @return the string
-	 */
-	private String generateRow(HandlerData handlerData) {
-		return "";
-	}
+  /**
+   * Generate row.
+   *
+   * @param handlerData
+   *          the handler data
+   * @return the string
+   */
+  private String generateRow(HandlerData handlerData) {
+    return "";
+  }
 }

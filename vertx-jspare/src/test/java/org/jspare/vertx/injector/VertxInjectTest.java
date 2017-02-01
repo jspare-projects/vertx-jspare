@@ -29,24 +29,24 @@ import io.vertx.core.Vertx;
  */
 public class VertxInjectTest extends AbstractVertxApplicationTest {
 
-	/** The vertx. */
-	@VertxInject
-	private Vertx vertx;
+  /** The vertx. */
+  @VertxInject
+  private Vertx vertx;
 
-	/**
-	 * Components creation test.
-	 */
-	@Test
-	public void componentsCreationTest() {
+  /**
+   * Components creation test.
+   */
+  @Test
+  public void componentsCreationTest() {
 
-	}
+  }
 
-	/**
-	 * Vertx test.
-	 */
-	@Test
-	public void vertxTest() {
+  /**
+   * Vertx test.
+   */
+  @Test
+  public void vertxTest() {
 
-		Assert.assertNotNull(vertx);
-	}
+    Assert.assertNotNull(vertx);
+  }
 }

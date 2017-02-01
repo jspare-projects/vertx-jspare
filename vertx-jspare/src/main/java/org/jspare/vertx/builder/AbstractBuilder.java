@@ -19,15 +19,16 @@ package org.jspare.vertx.builder;
  * The Class AbstractBuilder.
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
- * @param <T> the generic type
+ * @param <T>
+ *          the generic type
  */
 public abstract class AbstractBuilder<T> {
 
-	/**
-	 * Builds the.
-	 *
-	 * @return the t
-	 */
-	public abstract T build();
+  /**
+   * Builds the.
+   *
+   * @return the t
+   */
+  public abstract T build();
 
 }

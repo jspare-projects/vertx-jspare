@@ -28,19 +28,22 @@ import io.vertx.core.json.JsonArray;
  */
 public class ArrayModelParser {
 
-	/**
-	 * To list.
-	 *
-	 * @param <T> the generic type
-	 * @param json the json
-	 * @param typeClass the type class
-	 * @return the collection
-	 */
-	public static <T> Collection<T> toList(String json, Class<T> typeClass) {
+  /**
+   * To list.
+   *
+   * @param <T>
+   *          the generic type
+   * @param json
+   *          the json
+   * @param typeClass
+   *          the type class
+   * @return the collection
+   */
+  public static <T> Collection<T> toList(String json, Class<T> typeClass) {
 
-		JsonArray array = new JsonArray(json);
-		Collection<T> collections = array.stream().map(j -> Json.decodeValue(j.toString(), typeClass))
-				.collect(Collectors.toList());
-		return collections;
-	}
+    JsonArray array = new JsonArray(json);
+    Collection<T> collections = array.stream().map(j -> Json.decodeValue(j.toString(), typeClass))
+        .collect(Collectors.toList());
+    return collections;
+  }
 }

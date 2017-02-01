@@ -20,32 +20,36 @@ import lombok.experimental.UtilityClass;
 
 /**
  * Instantiates a new classpath scanner utils.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @UtilityClass
 public class ClasspathScannerUtils {
 
-	/** The Constant ALL_SCAN_QUOTE. */
-	public String ALL_SCAN_QUOTE = ".*";
+  /** The Constant ALL_SCAN_QUOTE. */
+  public String ALL_SCAN_QUOTE = ".*";
 
-	/**
-	 * Resolve package name.
-	 *
-	 * @param cPackage the c package
-	 * @return the string
-	 */
-	public String resolvePackageName(String cPackage) {
+  /**
+   * Resolve package name.
+   *
+   * @param cPackage
+   *          the c package
+   * @return the string
+   */
+  public String resolvePackageName(String cPackage) {
 
-		return cPackage.endsWith(ALL_SCAN_QUOTE) ? cPackage.substring(0, cPackage.length() - 2) : cPackage;
-	}
+    return cPackage.endsWith(ALL_SCAN_QUOTE) ? cPackage.substring(0, cPackage.length() - 2) : cPackage;
+  }
 
-	/**
-	 * Scanner.
-	 *
-	 * @param scanSpec the scan spec
-	 * @return the fast classpath scanner
-	 */
-	public FastClasspathScanner scanner(String scanSpec) {
+  /**
+   * Scanner.
+   *
+   * @param scanSpec
+   *          the scan spec
+   * @return the fast classpath scanner
+   */
+  public FastClasspathScanner scanner(String scanSpec) {
 
-		return new FastClasspathScanner(ClasspathScannerUtils.resolvePackageName(scanSpec));
-	}
+    return new FastClasspathScanner(ClasspathScannerUtils.resolvePackageName(scanSpec));
+  }
 }

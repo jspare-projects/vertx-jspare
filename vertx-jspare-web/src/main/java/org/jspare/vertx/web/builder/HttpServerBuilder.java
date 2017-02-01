@@ -33,102 +33,111 @@ import lombok.experimental.Accessors;
  */
 @Accessors(fluent = true)
 
-/* (non-Javadoc)
+/*
+ * (non-Javadoc)
+ * 
  * @see java.lang.Object#hashCode()
  */
 @EqualsAndHashCode(callSuper = false)
 public class HttpServerBuilder extends AbstractBuilder<HttpServer> {
 
-	/**
-	 * Creates the.
-	 *
-	 * @param vertx the vertx
-	 * @return the http server builder
-	 */
-	public static HttpServerBuilder create(Vertx vertx) {
+  /**
+   * Creates the.
+   *
+   * @param vertx
+   *          the vertx
+   * @return the http server builder
+   */
+  public static HttpServerBuilder create(Vertx vertx) {
 
-		return new HttpServerBuilder(vertx);
-	}
+    return new HttpServerBuilder(vertx);
+  }
 
-	/** The vertx. */
-	private final Vertx vertx;
+  /** The vertx. */
+  private final Vertx vertx;
 
-	/**
-	 * Http server.
-	 *
-	 * @return the http server
-	 */
-	@Getter
-	
-	/**
-	 * Http server.
-	 *
-	 * @param httpServer the http server
-	 * @return the http server builder
-	 */
-	@Setter
-	private HttpServer httpServer;
+  /**
+   * Http server.
+   *
+   * @return the http server
+   */
+  @Getter
 
-	/**
-	 * Http server options.
-	 *
-	 * @return the http server options
-	 */
-	@Getter
-	
-	/**
-	 * Http server options.
-	 *
-	 * @param httpServerOptions the http server options
-	 * @return the http server builder
-	 */
-	@Setter
-	private HttpServerOptions httpServerOptions;
+  /**
+   * Http server.
+   *
+   * @param httpServer
+   *          the http server
+   * @return the http server builder
+   */
+  @Setter
+  private HttpServer httpServer;
 
-	/**
-	 * Router.
-	 *
-	 * @return the router
-	 */
-	@Getter
-	
-	/**
-	 * Router.
-	 *
-	 * @param router the router
-	 * @return the http server builder
-	 */
-	@Setter
-	private Router router;
+  /**
+   * Http server options.
+   *
+   * @return the http server options
+   */
+  @Getter
 
-	/**
-	 * Instantiates a new http server builder.
-	 *
-	 * @param vertx the vertx
-	 */
-	private HttpServerBuilder(Vertx vertx) {
+  /**
+   * Http server options.
+   *
+   * @param httpServerOptions
+   *          the http server options
+   * @return the http server builder
+   */
+  @Setter
+  private HttpServerOptions httpServerOptions;
 
-		this.vertx = vertx;
-	}
+  /**
+   * Router.
+   *
+   * @return the router
+   */
+  @Getter
 
-	/* (non-Javadoc)
-	 * @see org.jspare.vertx.builder.AbstractBuilder#build()
-	 */
-	@Override
-	public HttpServer build() {
+  /**
+   * Router.
+   *
+   * @param router
+   *          the router
+   * @return the http server builder
+   */
+  @Setter
+  private Router router;
 
-		if (httpServerOptions == null) {
+  /**
+   * Instantiates a new http server builder.
+   *
+   * @param vertx
+   *          the vertx
+   */
+  private HttpServerBuilder(Vertx vertx) {
 
-			httpServerOptions = new HttpServerOptions();
-		}
+    this.vertx = vertx;
+  }
 
-		HttpServer httpServer = vertx.createHttpServer(httpServerOptions);
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.jspare.vertx.builder.AbstractBuilder#build()
+   */
+  @Override
+  public HttpServer build() {
 
-		if (router != null) {
+    if (httpServerOptions == null) {
 
-			httpServer.requestHandler(router::accept);
-		}
+      httpServerOptions = new HttpServerOptions();
+    }
 
-		return httpServer;
-	}
+    HttpServer httpServer = vertx.createHttpServer(httpServerOptions);
+
+    if (router != null) {
+
+      httpServer.requestHandler(router::accept);
+    }
+
+    return httpServer;
+  }
 }

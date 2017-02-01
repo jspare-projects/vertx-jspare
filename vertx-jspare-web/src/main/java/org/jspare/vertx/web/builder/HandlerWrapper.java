@@ -30,165 +30,185 @@ import lombok.experimental.UtilityClass;
 
 /**
  * Instantiates a new handler wrapper.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @UtilityClass
 public class HandlerWrapper {
 
-	/**
-	 * Prepare handler.
-	 *
-	 * @param router the router
-	 * @param handlerData the handler data
-	 */
-	public void prepareHandler(Router router, HandlerData handlerData) {
+  /**
+   * Prepare handler.
+   *
+   * @param router
+   *          the router
+   * @param handlerData
+   *          the handler data
+   */
+  public void prepareHandler(Router router, HandlerData handlerData) {
 
-		setHandler(router, handlerData);
-	}
+    setHandler(router, handlerData);
+  }
 
-	/**
-	 * Creates the route.
-	 *
-	 * @param router the router
-	 * @param data the data
-	 * @return the route
-	 */
-	protected Route createRoute(Router router, HandlerData data) {
-		Route route = router.route();
+  /**
+   * Creates the route.
+   *
+   * @param router
+   *          the router
+   * @param data
+   *          the data
+   * @return the route
+   */
+  protected Route createRoute(Router router, HandlerData data) {
+    Route route = router.route();
 
-		setOrder(data, route);
+    setOrder(data, route);
 
-		if (StringUtils.isNotEmpty(data.httpMethod())) {
+    if (StringUtils.isNotEmpty(data.httpMethod())) {
 
-			setMethod(data, route);
-		}
-		if (StringUtils.isNotEmpty(data.path())) {
+      setMethod(data, route);
+    }
+    if (StringUtils.isNotEmpty(data.path())) {
 
-			setPath(data, route);
-		}
-		if (StringUtils.isNotEmpty(data.consumes())) {
+      setPath(data, route);
+    }
+    if (StringUtils.isNotEmpty(data.consumes())) {
 
-			setConsumes(data, route);
-		}
-		if (StringUtils.isNotEmpty(data.produces())) {
+      setConsumes(data, route);
+    }
+    if (StringUtils.isNotEmpty(data.produces())) {
 
-			setProduces(data, route);
-		}
-		return route;
-	}
+      setProduces(data, route);
+    }
+    return route;
+  }
 
-	/**
-	 * Sets the order.
-	 *
-	 * @param data the data
-	 * @param route the route
-	 */
-	private void setOrder(HandlerData data, Route route) {
+  /**
+   * Sets the order.
+   *
+   * @param data
+   *          the data
+   * @param route
+   *          the route
+   */
+  private void setOrder(HandlerData data, Route route) {
 
-		if (Integer.MIN_VALUE != data.order()) {
+    if (Integer.MIN_VALUE != data.order()) {
 
-			route.order(data.order());
-		}
-	}
+      route.order(data.order());
+    }
+  }
 
-	/**
-	 * Sets the consumes.
-	 *
-	 * @param data the data
-	 * @param route the route
-	 */
-	protected void setConsumes(HandlerData data, Route route) {
-		route.consumes(data.consumes());
-	}
+  /**
+   * Sets the consumes.
+   *
+   * @param data
+   *          the data
+   * @param route
+   *          the route
+   */
+  protected void setConsumes(HandlerData data, Route route) {
+    route.consumes(data.consumes());
+  }
 
-	/**
-	 * Sets the handler.
-	 *
-	 * @param router the router
-	 * @param data the data
-	 */
-	protected void setHandler(Router router, HandlerData data) {
+  /**
+   * Sets the handler.
+   *
+   * @param router
+   *          the router
+   * @param data
+   *          the data
+   */
+  protected void setHandler(Router router, HandlerData data) {
 
-		// Create auth handler if is setted
-		if (data.authHandler() != null) {
+    // Create auth handler if is setted
+    if (data.authHandler() != null) {
 
-			Route authRoute = createRoute(router, data);
-			authRoute.handler(data.authHandler());
-		}
+      Route authRoute = createRoute(router, data);
+      authRoute.handler(data.authHandler());
+    }
 
-		// Create route handler
-		Route route = createRoute(router, data);
+    // Create route handler
+    Route route = createRoute(router, data);
 
-		if (HandlerType.HANDLER.equals(data.handlerType())) {
+    if (HandlerType.HANDLER.equals(data.handlerType())) {
 
-			route.handler(prepareHandler(data));
-		} else if (HandlerType.FAILURE_HANDLER.equals(data.handlerType())) {
+      route.handler(prepareHandler(data));
+    } else if (HandlerType.FAILURE_HANDLER.equals(data.handlerType())) {
 
-			route.failureHandler(prepareHandler(data));
-		} else if (HandlerType.BLOCKING_HANDLER.equals(data.handlerType())) {
+      route.failureHandler(prepareHandler(data));
+    } else if (HandlerType.BLOCKING_HANDLER.equals(data.handlerType())) {
 
-			route.blockingHandler(prepareHandler(data), false);
-		} else if (HandlerType.SOCKETJS_HANDLER.equals(data.handlerType())) {
+      route.blockingHandler(prepareHandler(data), false);
+    } else if (HandlerType.SOCKETJS_HANDLER.equals(data.handlerType())) {
 
-			route.handler(prepareSockJsHandler(data));
-		}
-	}
+      route.handler(prepareSockJsHandler(data));
+    }
+  }
 
-	/**
-	 * Sets the method.
-	 *
-	 * @param data the data
-	 * @param route the route
-	 */
-	protected void setMethod(HandlerData data, Route route) {
-		route.method(HttpMethod.valueOf(data.httpMethod()));
-	}
+  /**
+   * Sets the method.
+   *
+   * @param data
+   *          the data
+   * @param route
+   *          the route
+   */
+  protected void setMethod(HandlerData data, Route route) {
+    route.method(HttpMethod.valueOf(data.httpMethod()));
+  }
 
-	/**
-	 * Sets the path.
-	 *
-	 * @param data the data
-	 * @param route the route
-	 */
-	protected void setPath(HandlerData data, Route route) {
-		if (data.pathRegex()) {
+  /**
+   * Sets the path.
+   *
+   * @param data
+   *          the data
+   * @param route
+   *          the route
+   */
+  protected void setPath(HandlerData data, Route route) {
+    if (data.pathRegex()) {
 
-			route.pathRegex(data.path());
-		} else {
+      route.pathRegex(data.path());
+    } else {
 
-			route.path(data.path());
-		}
-	}
+      route.path(data.path());
+    }
+  }
 
-	/**
-	 * Sets the produces.
-	 *
-	 * @param data the data
-	 * @param route the route
-	 */
-	protected void setProduces(HandlerData data, Route route) {
-		route.produces(data.produces());
-	}
+  /**
+   * Sets the produces.
+   *
+   * @param data
+   *          the data
+   * @param route
+   *          the route
+   */
+  protected void setProduces(HandlerData data, Route route) {
+    route.produces(data.produces());
+  }
 
-	/**
-	 * Prepare handler.
-	 *
-	 * @param handlerData the handler data
-	 * @return the handler
-	 */
-	@SneakyThrows({ InstantiationException.class, IllegalAccessException.class, IllegalArgumentException.class,
-			InvocationTargetException.class, NoSuchMethodException.class })
-	private Handler<RoutingContext> prepareHandler(HandlerData handlerData) {
-		return handlerData.routeHandlerClass().getConstructor(HandlerData.class).newInstance(handlerData);
-	}
+  /**
+   * Prepare handler.
+   *
+   * @param handlerData
+   *          the handler data
+   * @return the handler
+   */
+  @SneakyThrows({ InstantiationException.class, IllegalAccessException.class, IllegalArgumentException.class,
+      InvocationTargetException.class, NoSuchMethodException.class })
+  private Handler<RoutingContext> prepareHandler(HandlerData handlerData) {
+    return handlerData.routeHandlerClass().getConstructor(HandlerData.class).newInstance(handlerData);
+  }
 
-	/**
-	 * Prepare sock js handler.
-	 *
-	 * @param handlerData the handler data
-	 * @return the handler
-	 */
-	private Handler<RoutingContext> prepareSockJsHandler(HandlerData handlerData) {
+  /**
+   * Prepare sock js handler.
+   *
+   * @param handlerData
+   *          the handler data
+   * @return the handler
+   */
+  private Handler<RoutingContext> prepareSockJsHandler(HandlerData handlerData) {
 
-		return handlerData.sockJSHandler().socketHandler(e -> DefaultSockJSHandler.socketHandler(handlerData, e));
-	}
+    return handlerData.sockJSHandler().socketHandler(e -> DefaultSockJSHandler.socketHandler(handlerData, e));
+  }
 }

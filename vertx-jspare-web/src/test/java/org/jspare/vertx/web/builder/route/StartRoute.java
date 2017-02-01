@@ -27,23 +27,23 @@ import org.jspare.vertx.web.handler.APIHandler;
 @Get("/start")
 public class StartRoute extends APIHandler {
 
-	/**
-	 * Route 1.
-	 */
-	@Handler
-	public void route1() {
+  /**
+   * Route 1.
+   */
+  @Handler
+  public void route1() {
 
-		res.write("route 1\n");
-		context.next();
-	}
+    res.write("route 1\n");
+    context.next();
+  }
 
-	/**
-	 * Route 2.
-	 */
-	@Handler
-	public void route2() {
+  /**
+   * Route 2.
+   */
+  @Handler
+  public void route2() {
 
-		res.write("route 2\n");
-		res.end();
-	}
+    res.write("route 2\n");
+    res.end();
+  }
 }

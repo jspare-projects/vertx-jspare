@@ -30,44 +30,50 @@ import io.vertx.core.VertxOptions;
  */
 public class VertxJspareLauncher extends Launcher implements Runner {
 
-	/**
-	 * Main entry point.
-	 *
-	 * @param args
-	 *            the user command line arguments.
-	 */
-	public static void main(String[] args) {
-		new VertxJspareLauncher().dispatch(args);
-	}
+  /**
+   * Main entry point.
+   *
+   * @param args
+   *          the user command line arguments.
+   */
+  public static void main(String[] args) {
+    new VertxJspareLauncher().dispatch(args);
+  }
 
-	/* (non-Javadoc)
-	 * @see io.vertx.core.Launcher#afterStartingVertx(io.vertx.core.Vertx)
-	 */
-	@Override
-	public void afterStartingVertx(Vertx vertx) {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see io.vertx.core.Launcher#afterStartingVertx(io.vertx.core.Vertx)
+   */
+  @Override
+  public void afterStartingVertx(Vertx vertx) {
 
-		registryResource(new VertxHolder().vertx(vertx));
+    registryResource(new VertxHolder().vertx(vertx));
 
-		run();
-	}
+    run();
+  }
 
-	/* (non-Javadoc)
-	 * @see io.vertx.core.Launcher#beforeStartingVertx(io.vertx.core.VertxOptions)
-	 */
-	@Override
-	public void beforeStartingVertx(VertxOptions options) {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see io.vertx.core.Launcher#beforeStartingVertx(io.vertx.core.VertxOptions)
+   */
+  @Override
+  public void beforeStartingVertx(VertxOptions options) {
 
-		setup();
+    setup();
 
-		mySupport();
-	}
+    mySupport();
+  }
 
-	/* (non-Javadoc)
-	 * @see org.jspare.core.bootstrap.Runner#setup()
-	 */
-	@Override
-	public void setup() {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.jspare.core.bootstrap.Runner#setup()
+   */
+  @Override
+  public void setup() {
 
-		EnvironmentUtils.register();
-	}
+    EnvironmentUtils.register();
+  }
 }

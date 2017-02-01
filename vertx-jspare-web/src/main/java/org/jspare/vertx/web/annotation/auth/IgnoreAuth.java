@@ -23,6 +23,8 @@ import java.lang.annotation.Target;
 /**
  * The Annotation Security Exception. <br>
  * It is a exception defined annotation for methods non authenticated
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })

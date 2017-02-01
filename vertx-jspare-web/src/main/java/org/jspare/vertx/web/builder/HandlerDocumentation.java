@@ -34,7 +34,9 @@ import lombok.experimental.Accessors;
  */
 @Data
 
-/* (non-Javadoc)
+/*
+ * (non-Javadoc)
+ * 
  * @see java.lang.Object#hashCode()
  */
 @EqualsAndHashCode
@@ -48,133 +50,148 @@ import lombok.experimental.Accessors;
 /**
  * Instantiates a new handler documentation.
  *
- * @param description the description
- * @param status the status
- * @param queryParameters the query parameters
- * @param requestSchema the request schema
- * @param responseSchema the response schema
+ * @param description
+ *          the description
+ * @param status
+ *          the status
+ * @param queryParameters
+ *          the query parameters
+ * @param requestSchema
+ *          the request schema
+ * @param responseSchema
+ *          the response schema
  */
 @AllArgsConstructor
 public class HandlerDocumentation {
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Data
-	public static class QueryParameter {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#toString()
+   */
+  @Data
+  public static class QueryParameter {
 
-		/** The key. */
-		private String key;
+    /** The key. */
+    private String key;
 
-		/** The description. */
-		private String description;
+    /** The description. */
+    private String description;
 
-		/**
-		 * Instantiates a new query parameter.
-		 *
-		 * @param aQueryParameter the a query parameter
-		 */
-		public QueryParameter(org.jspare.vertx.web.annotation.documentation.QueryParameter aQueryParameter) {
-			key = aQueryParameter.key();
-			description = aQueryParameter.description();
-		}
-	}
+    /**
+     * Instantiates a new query parameter.
+     *
+     * @param aQueryParameter
+     *          the a query parameter
+     */
+    public QueryParameter(org.jspare.vertx.web.annotation.documentation.QueryParameter aQueryParameter) {
+      key = aQueryParameter.key();
+      description = aQueryParameter.description();
+    }
+  }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Data
-	
-	/**
-	 * Instantiates a new response status.
-	 *
-	 * @param code the code
-	 * @param description the description
-	 */
-	@AllArgsConstructor
-	public static class ResponseStatus {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Object#toString()
+   */
+  @Data
 
-		/** The code. */
-		private int code;
+  /**
+   * Instantiates a new response status.
+   *
+   * @param code
+   *          the code
+   * @param description
+   *          the description
+   */
+  @AllArgsConstructor
+  public static class ResponseStatus {
 
-		/** The description. */
-		private String description;
+    /** The code. */
+    private int code;
 
-		/**
-		 * Instantiates a new response status.
-		 *
-		 * @param status the status
-		 */
-		public ResponseStatus(Status status) {
-			code = status.code();
-			description = status.description();
-		}
-	}
+    /** The description. */
+    private String description;
 
-	/** The description. */
-	private String description;
+    /**
+     * Instantiates a new response status.
+     *
+     * @param status
+     *          the status
+     */
+    public ResponseStatus(Status status) {
+      code = status.code();
+      description = status.description();
+    }
+  }
 
-	/** The status. */
-	private List<ResponseStatus> status;
+  /** The description. */
+  private String description;
 
-	/** The query parameters. */
-	private List<QueryParameter> queryParameters;
+  /** The status. */
+  private List<ResponseStatus> status;
 
-	/** The request schema. */
-	private Map<String, String> requestSchema;
+  /** The query parameters. */
+  private List<QueryParameter> queryParameters;
 
-	/** The response schema. */
-	private Map<String, String> responseSchema;
+  /** The request schema. */
+  private Map<String, String> requestSchema;
 
-	/**
-	 * Request schema.
-	 *
-	 * @param clazz
-	 *            the clazz
-	 */
-	public void requestSchema(Class<?> clazz) {
-		requestSchema = buildSchema(clazz);
-	}
+  /** The response schema. */
+  private Map<String, String> responseSchema;
 
-	/**
-	 * Response schema.
-	 *
-	 * @param clazz
-	 *            the clazz
-	 */
-	public void responseSchema(Class<?> clazz) {
-		responseSchema = buildSchema(clazz);
-	}
+  /**
+   * Request schema.
+   *
+   * @param clazz
+   *          the clazz
+   */
+  public void requestSchema(Class<?> clazz) {
+    requestSchema = buildSchema(clazz);
+  }
 
-	/**
-	 * Builds the schema.
-	 *
-	 * @param clazz
-	 *            the clazz
-	 * @return the map
-	 */
-	private Map<String, String> buildSchema(Class<?> clazz) {
-		Map<String, String> schema = new HashMap<>();
-		extractFields(clazz, schema);
-		if (clazz.getSuperclass() != null) {
+  /**
+   * Response schema.
+   *
+   * @param clazz
+   *          the clazz
+   */
+  public void responseSchema(Class<?> clazz) {
+    responseSchema = buildSchema(clazz);
+  }
 
-			extractFields(clazz.getSuperclass(), schema);
-		}
-		return schema;
-	}
+  /**
+   * Builds the schema.
+   *
+   * @param clazz
+   *          the clazz
+   * @return the map
+   */
+  private Map<String, String> buildSchema(Class<?> clazz) {
+    Map<String, String> schema = new HashMap<>();
+    extractFields(clazz, schema);
+    if (clazz.getSuperclass() != null) {
 
-	/**
-	 * Extract fields.
-	 *
-	 * @param clazz the clazz
-	 * @param schema the schema
-	 */
-	protected void extractFields(Class<?> clazz, Map<String, String> schema) {
-		for (Field f : clazz.getDeclaredFields()) {
-			if (!Modifier.isTransient(f.getModifiers())) {
+      extractFields(clazz.getSuperclass(), schema);
+    }
+    return schema;
+  }
 
-				schema.put(f.getName(), f.getType().getSimpleName());
-			}
-		}
-	}
+  /**
+   * Extract fields.
+   *
+   * @param clazz
+   *          the clazz
+   * @param schema
+   *          the schema
+   */
+  protected void extractFields(Class<?> clazz, Map<String, String> schema) {
+    for (Field f : clazz.getDeclaredFields()) {
+      if (!Modifier.isTransient(f.getModifiers())) {
+
+        schema.put(f.getName(), f.getType().getSimpleName());
+      }
+    }
+  }
 }

@@ -23,17 +23,17 @@ import java.lang.annotation.Target;
 /**
  * The Interface Parameter.
  *
- * @author pflima
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  * @since 09/05/2016
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 public @interface Consumes {
 
-	/**
-	 * Value.
-	 *
-	 * @return the string
-	 */
-	String value();
+  /**
+   * Value.
+   *
+   * @return the string
+   */
+  String value();
 }

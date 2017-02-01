@@ -29,10 +29,10 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 public @interface RegisterProxyService {
 
-	/**
-	 * Value.
-	 *
-	 * @return the string
-	 */
-	String value();
+  /**
+   * Value.
+   *
+   * @return the string
+   */
+  String value();
 }

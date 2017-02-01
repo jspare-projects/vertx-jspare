@@ -30,52 +30,52 @@ import org.junit.Test;
  */
 public class HandlerCollectorTest extends AbstractCollectorTest {
 
-	/**
-	 * Collect route set test.
-	 */
-	@Test
-	public void collectRouteSetTest() {
+  /**
+   * Collect route set test.
+   */
+  @Test
+  public void collectRouteSetTest() {
 
-		List<HandlerData> handlers = collect(MultiRoutes.class);
+    List<HandlerData> handlers = collect(MultiRoutes.class);
 
-		Assert.assertEquals(2, handlers.size());
+    Assert.assertEquals(2, handlers.size());
 
-		HandlerData handler1 = handlers.get(0);
-		HandlerData handler2 = handlers.get(1);
+    HandlerData handler1 = handlers.get(0);
+    HandlerData handler2 = handlers.get(1);
 
-		Assert.assertEquals(MultiRoutes.class, handler1.clazz());
-		Assert.assertEquals("handler1", handler1.method().getName());
-		Assert.assertEquals("/multiRoutes/1", handler1.path());
-		Assert.assertEquals("GET", handler1.httpMethod());
-		Assert.assertEquals(HandlerType.HANDLER, handler1.handlerType());
-		Assert.assertEquals(Integer.MIN_VALUE, handler1.order());
+    Assert.assertEquals(MultiRoutes.class, handler1.clazz());
+    Assert.assertEquals("handler1", handler1.method().getName());
+    Assert.assertEquals("/multiRoutes/1", handler1.path());
+    Assert.assertEquals("GET", handler1.httpMethod());
+    Assert.assertEquals(HandlerType.HANDLER, handler1.handlerType());
+    Assert.assertEquals(Integer.MIN_VALUE, handler1.order());
 
-		Assert.assertEquals("/multiRoutes/2", handler2.path());
-		Assert.assertEquals(HandlerType.BLOCKING_HANDLER, handler2.handlerType());
-		Assert.assertEquals("handler2", handler2.method().getName());
-		Assert.assertEquals(1, handler2.order());
-		Assert.assertTrue(handler2.pathRegex());
-		Assert.assertEquals("*/*", handler2.consumes());
-		Assert.assertEquals("text/plain", handler2.produces());
-	}
+    Assert.assertEquals("/multiRoutes/2", handler2.path());
+    Assert.assertEquals(HandlerType.BLOCKING_HANDLER, handler2.handlerType());
+    Assert.assertEquals("handler2", handler2.method().getName());
+    Assert.assertEquals(1, handler2.order());
+    Assert.assertTrue(handler2.pathRegex());
+    Assert.assertEquals("*/*", handler2.consumes());
+    Assert.assertEquals("text/plain", handler2.produces());
+  }
 
-	/**
-	 * Multi handlers test.
-	 */
-	@Test
-	public void multiHandlersTest() {
+  /**
+   * Multi handlers test.
+   */
+  @Test
+  public void multiHandlersTest() {
 
-		List<HandlerData> handlers = collect(MultiHandlers.class);
-		Assert.assertEquals(3, handlers.size());
-	}
+    List<HandlerData> handlers = collect(MultiHandlers.class);
+    Assert.assertEquals(3, handlers.size());
+  }
 
-	/**
-	 * Multi http methods test.
-	 */
-	@Test
-	public void multiHttpMethodsTest() {
+  /**
+   * Multi http methods test.
+   */
+  @Test
+  public void multiHttpMethodsTest() {
 
-		List<HandlerData> handlers = collect(MultiHttpMethods.class);
-		Assert.assertEquals(HttpMethodType.values().length * 2, handlers.size());
-	}
+    List<HandlerData> handlers = collect(MultiHttpMethods.class);
+    Assert.assertEquals(HttpMethodType.values().length * 2, handlers.size());
+  }
 }

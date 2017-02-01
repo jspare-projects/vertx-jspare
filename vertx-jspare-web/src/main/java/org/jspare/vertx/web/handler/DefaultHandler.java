@@ -48,229 +48,231 @@ import lombok.extern.slf4j.Slf4j;
  * Instantiates a new default handler.
  *
  * @param handlerData
- *            the handler data
+ *          the handler data
  */
 
 /**
  * Instantiates a new default handler.
  *
- * @param handlerData the handler data
+ * @param handlerData
+ *          the handler data
  */
 @AllArgsConstructor
 public class DefaultHandler implements Handler<RoutingContext> {
 
-	/** The handler data. */
-	protected final HandlerData handlerData;
+  /** The handler data. */
+  protected final HandlerData handlerData;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see io.vertx.core.Handler#handle(java.lang.Object)
-	 */
-	@Override
-	public void handle(RoutingContext context) {
+  /*
+   * (non-Javadoc)
+   *
+   * @see io.vertx.core.Handler#handle(java.lang.Object)
+   */
+  @Override
+  public void handle(RoutingContext context) {
 
-		try {
+    try {
 
-			// Handle unhandled excetion
-			context.vertx().exceptionHandler(t -> {
+      // Handle unhandled excetion
+      context.vertx().exceptionHandler(t -> {
 
-				context.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
-						.end(ExceptionUtils.getStackTrace(t));
-			});
+        context.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
+            .end(ExceptionUtils.getStackTrace(t));
+      });
 
-			Object newInstance = instantiateHandler();
+      Object newInstance = instantiateHandler();
 
-			setHandlingParameters(context, newInstance);
+      setHandlingParameters(context, newInstance);
 
-			// Wrap bodyEndHandler to share routingContext
-			handlerData.bodyEndHandler().forEach(h -> context.addBodyEndHandler(event -> {
+      // Wrap bodyEndHandler to share routingContext
+      handlerData.bodyEndHandler().forEach(h -> context.addBodyEndHandler(event -> {
 
-				h.handle(context);
-			}));
+        h.handle(context);
+      }));
 
-			Object[] parameters = collectParameters(context);
+      Object[] parameters = collectParameters(context);
 
-			// Call method of handler data
-			handlerData.method().invoke(newInstance, parameters);
+      // Call method of handler data
+      handlerData.method().invoke(newInstance, parameters);
 
-		} catch (Throwable t) {
+    } catch (Throwable t) {
 
-			catchInvoke(context, t);
-		}
-	}
+      catchInvoke(context, t);
+    }
+  }
 
-	/**
-	 * Catch invoke.
-	 *
-	 * @param routingContext
-	 *            the routing context
-	 * @param t
-	 *            the t
-	 */
-	protected void catchInvoke(RoutingContext routingContext, Throwable t) {
-		// Any server error return internal server error
-		while (t.getCause() != null) {
+  /**
+   * Catch invoke.
+   *
+   * @param routingContext
+   *          the routing context
+   * @param t
+   *          the t
+   */
+  protected void catchInvoke(RoutingContext routingContext, Throwable t) {
+    // Any server error return internal server error
+    while (t.getCause() != null) {
 
-			t = t.getCause();
-		}
-		log.info("Error: {}", handlerData.toStringLine());
-		log.error(t.getMessage(), t);
-		routingContext.response().setStatusCode(500).end(t.toString());
-	}
+      t = t.getCause();
+    }
+    log.info("Error: {}", handlerData.toStringLine());
+    log.error(t.getMessage(), t);
+    routingContext.response().setStatusCode(500).end(t.toString());
+  }
 
-	/**
-	 * Collect parameters. This method is responsible to collect all parameters
-	 * to send on handler method, resolving parameters and dependencies.
-	 *
-	 * @param routingContext
-	 *            the routing context
-	 * @return the object[]
-	 */
-	protected Object[] collectParameters(RoutingContext routingContext) {
-		// Prepare parameters to call method of route
-		Object[] parameters = new Object[handlerData.method().getParameterCount()];
-		int i = 0;
-		for (Parameter parameter : handlerData.method().getParameters()) {
+  /**
+   * Collect parameters. This method is responsible to collect all parameters to
+   * send on handler method, resolving parameters and dependencies.
+   *
+   * @param routingContext
+   *          the routing context
+   * @return the object[]
+   */
+  protected Object[] collectParameters(RoutingContext routingContext) {
+    // Prepare parameters to call method of route
+    Object[] parameters = new Object[handlerData.method().getParameterCount()];
+    int i = 0;
+    for (Parameter parameter : handlerData.method().getParameters()) {
 
-			parameters[i] = resolveParameter(parameter, routingContext);
-			i++;
-		}
-		return parameters;
-	}
+      parameters[i] = resolveParameter(parameter, routingContext);
+      i++;
+    }
+    return parameters;
+  }
 
-	/**
-	 * Instantiate handler.
-	 *
-	 * @return the object
-	 */
-	@SneakyThrows
-	protected Object instantiateHandler() {
-		// Inject Request and Response if is Available
-		Object newInstance = handlerData.clazz().newInstance();
-		ContainerUtils.processInjection(newInstance);
-		return newInstance;
-	}
+  /**
+   * Instantiate handler.
+   *
+   * @return the object
+   */
+  @SneakyThrows
+  protected Object instantiateHandler() {
+    // Inject Request and Response if is Available
+    Object newInstance = handlerData.clazz().newInstance();
+    ContainerUtils.processInjection(newInstance);
+    return newInstance;
+  }
 
-	/**
-	 * Resolve parameter.
-	 *
-	 * @param parameter
-	 *            the parameter
-	 * @param routingContext
-	 *            the routing context
-	 * @return the object
-	 */
-	protected Object resolveParameter(Parameter parameter, RoutingContext routingContext) {
+  /**
+   * Resolve parameter.
+   *
+   * @param parameter
+   *          the parameter
+   * @param routingContext
+   *          the routing context
+   * @return the object
+   */
+  protected Object resolveParameter(Parameter parameter, RoutingContext routingContext) {
 
-		if (parameter.getType().equals(RoutingContext.class)) {
+    if (parameter.getType().equals(RoutingContext.class)) {
 
-			return routingContext;
-		}
-		if (parameter.getType().equals(HttpServerRequest.class)) {
+      return routingContext;
+    }
+    if (parameter.getType().equals(HttpServerRequest.class)) {
 
-			return routingContext.request();
-		}
+      return routingContext.request();
+    }
 
-		if (parameter.getType().equals(HttpServerResponse.class)) {
+    if (parameter.getType().equals(HttpServerResponse.class)) {
 
-			return routingContext.response();
-		}
-		if (parameter.getType().equals(JsonObject.class)) {
-			if (StringUtils.isEmpty(routingContext.getBody().toString())) {
-				return null;
-			}
-			return routingContext.getBodyAsJson();
-		}
-		if (StringUtils.isNotEmpty(routingContext.request().getParam(parameter.getName()))) {
+      return routingContext.response();
+    }
+    if (parameter.getType().equals(JsonObject.class)) {
+      if (StringUtils.isEmpty(routingContext.getBody().toString())) {
+        return null;
+      }
+      return routingContext.getBodyAsJson();
+    }
+    if (StringUtils.isNotEmpty(routingContext.request().getParam(parameter.getName()))) {
 
-			return routingContext.request().getParam(parameter.getName());
-		}
+      return routingContext.request().getParam(parameter.getName());
+    }
 
-		if (parameter.isAnnotationPresent(ArrayModel.class)) {
+    if (parameter.isAnnotationPresent(ArrayModel.class)) {
 
-			ArrayModel am = parameter.getAnnotation(ArrayModel.class);
-			Class<?> clazz = am.value();
-			return ArrayModelParser.toList(routingContext.getBody().toString(), clazz);
-		}
+      ArrayModel am = parameter.getAnnotation(ArrayModel.class);
+      Class<?> clazz = am.value();
+      return ArrayModelParser.toList(routingContext.getBody().toString(), clazz);
+    }
 
-		if (parameter.isAnnotationPresent(MapModel.class)) {
+    if (parameter.isAnnotationPresent(MapModel.class)) {
 
-			MapModel mm = parameter.getAnnotation(MapModel.class);
-			Class<?> value = mm.value();
-			return MapModelParser.toMap(routingContext.getBody().toString(), value);
-		}
+      MapModel mm = parameter.getAnnotation(MapModel.class);
+      Class<?> value = mm.value();
+      return MapModelParser.toMap(routingContext.getBody().toString(), value);
+    }
 
-		if (parameter.getType().getPackage().getName().endsWith(".model")
-				|| parameter.getType().isAnnotationPresent(Model.class) || parameter.isAnnotationPresent(Model.class)) {
+    if (parameter.getType().getPackage().getName().endsWith(".model")
+        || parameter.getType().isAnnotationPresent(Model.class) || parameter.isAnnotationPresent(Model.class)) {
 
-			try {
-				if (routingContext.getBody() == null) {
+      try {
+        if (routingContext.getBody() == null) {
 
-					return null;
-				}
+          return null;
+        }
 
-				return Json.decodeValue(routingContext.getBody().toString(), parameter.getType());
-			} catch (SerializationException e) {
+        return Json.decodeValue(routingContext.getBody().toString(), parameter.getType());
+      } catch (SerializationException e) {
 
-				log.debug("Invalid content of body for class [{}] on parameter [{}]", parameter.getClass(),
-						parameter.getName());
-				return null;
-			}
-		}
-		if (parameter.isAnnotationPresent(org.jspare.vertx.web.annotation.handling.Parameter.class)) {
+        log.debug("Invalid content of body for class [{}] on parameter [{}]", parameter.getClass(),
+            parameter.getName());
+        return null;
+      }
+    }
+    if (parameter.isAnnotationPresent(org.jspare.vertx.web.annotation.handling.Parameter.class)) {
 
-			String parameterName = parameter.getAnnotation(org.jspare.vertx.web.annotation.handling.Parameter.class)
-					.value();
-			// Test types
-			Type typeOfParameter = parameter.getType();
-			if (typeOfParameter.equals(Integer.class)) {
-				return Integer.parseInt(routingContext.request().getParam(parameterName));
-			}
-			if (typeOfParameter.equals(Double.class)) {
-				return Double.parseDouble(routingContext.request().getParam(parameterName));
-			}
-			if (typeOfParameter.equals(Long.class)) {
-				return Long.parseLong(routingContext.request().getParam(parameterName));
-			}
-			return routingContext.request().getParam(parameterName);
-		}
-		if (parameter.isAnnotationPresent(Header.class)) {
+      String parameterName = parameter.getAnnotation(org.jspare.vertx.web.annotation.handling.Parameter.class).value();
+      // Test types
+      Type typeOfParameter = parameter.getType();
+      if (typeOfParameter.equals(Integer.class)) {
+        return Integer.parseInt(routingContext.request().getParam(parameterName));
+      }
+      if (typeOfParameter.equals(Double.class)) {
+        return Double.parseDouble(routingContext.request().getParam(parameterName));
+      }
+      if (typeOfParameter.equals(Long.class)) {
+        return Long.parseLong(routingContext.request().getParam(parameterName));
+      }
+      return routingContext.request().getParam(parameterName);
+    }
+    if (parameter.isAnnotationPresent(Header.class)) {
 
-			String headerName = parameter.getAnnotation(Header.class).value();
-			return routingContext.request().getHeader(headerName);
-		}
+      String headerName = parameter.getAnnotation(Header.class).value();
+      return routingContext.request().getHeader(headerName);
+    }
 
-		return null;
-	}
+    return null;
+  }
 
-	/**
-	 * Send status.
-	 *
-	 * @param routingContext
-	 *            the routing context
-	 * @param status
-	 *            the status
-	 */
-	protected void sendStatus(RoutingContext routingContext, HttpResponseStatus status) {
-		routingContext.response().setStatusCode(status.code()).setStatusMessage(status.reasonPhrase())
-				.end(status.reasonPhrase());
-	}
+  /**
+   * Send status.
+   *
+   * @param routingContext
+   *          the routing context
+   * @param status
+   *          the status
+   */
+  protected void sendStatus(RoutingContext routingContext, HttpResponseStatus status) {
+    routingContext.response().setStatusCode(status.code()).setStatusMessage(status.reasonPhrase())
+        .end(status.reasonPhrase());
+  }
 
-	/**
-	 * Sets the handling parameters.
-	 *
-	 * @param routingContext the routing context
-	 * @param newInstance the new instance
-	 */
-	protected void setHandlingParameters(RoutingContext routingContext, Object newInstance) {
-		// If Route is handling by abstract Handling inject some resources
-		if (newInstance instanceof APIHandler) {
+  /**
+   * Sets the handling parameters.
+   *
+   * @param routingContext
+   *          the routing context
+   * @param newInstance
+   *          the new instance
+   */
+  protected void setHandlingParameters(RoutingContext routingContext, Object newInstance) {
+    // If Route is handling by abstract Handling inject some resources
+    if (newInstance instanceof APIHandler) {
 
-			((APIHandler) newInstance).setVertx(routingContext.vertx());
-			((APIHandler) newInstance).setReq(routingContext.request());
-			((APIHandler) newInstance).setRes(routingContext.response());
-			((APIHandler) newInstance).setContext(routingContext);
-		}
-	}
+      ((APIHandler) newInstance).setVertx(routingContext.vertx());
+      ((APIHandler) newInstance).setReq(routingContext.request());
+      ((APIHandler) newInstance).setRes(routingContext.response());
+      ((APIHandler) newInstance).setContext(routingContext);
+    }
+  }
 }

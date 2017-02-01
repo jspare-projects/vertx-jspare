@@ -23,49 +23,56 @@ import lombok.experimental.UtilityClass;
 
 /**
  * Instantiates a new proxy service utils.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @UtilityClass
 public class ProxyServiceUtils {
 
-	/**
-	 * Gets the address.
-	 *
-	 * @param vertxProxyInject the vertx proxy inject
-	 * @param serviceType the service type
-	 * @return the address
-	 */
-	public String getAddress(VertxProxyInject vertxProxyInject, Class<?> serviceType) {
-		String address = vertxProxyInject.value();
-		if (StringUtils.isEmpty(address)) {
+  /**
+   * Gets the address.
+   *
+   * @param vertxProxyInject
+   *          the vertx proxy inject
+   * @param serviceType
+   *          the service type
+   * @return the address
+   */
+  public String getAddress(VertxProxyInject vertxProxyInject, Class<?> serviceType) {
+    String address = vertxProxyInject.value();
+    if (StringUtils.isEmpty(address)) {
 
-			address = defaultAddress(serviceType);
-		}
-		return address;
-	}
+      address = defaultAddress(serviceType);
+    }
+    return address;
+  }
 
-	/**
-	 * Gets the address.
-	 *
-	 * @param registerProxyService the register proxy service
-	 * @param serviceType the service type
-	 * @return the address
-	 */
-	public String getAddress(RegisterProxyService registerProxyService, Class<?> serviceType) {
-		String address = registerProxyService.value();
-		if (StringUtils.isEmpty(address)) {
+  /**
+   * Gets the address.
+   *
+   * @param registerProxyService
+   *          the register proxy service
+   * @param serviceType
+   *          the service type
+   * @return the address
+   */
+  public String getAddress(RegisterProxyService registerProxyService, Class<?> serviceType) {
+    String address = registerProxyService.value();
+    if (StringUtils.isEmpty(address)) {
 
-			address = defaultAddress(serviceType);
-		}
-		return address;
-	}
+      address = defaultAddress(serviceType);
+    }
+    return address;
+  }
 
-	/**
-	 * Default address.
-	 *
-	 * @param clazz the clazz
-	 * @return the string
-	 */
-	public String defaultAddress(Class<?> clazz) {
-		return "service." + clazz.getSimpleName().toLowerCase();
-	}
+  /**
+   * Default address.
+   *
+   * @param clazz
+   *          the clazz
+   * @return the string
+   */
+  public String defaultAddress(Class<?> clazz) {
+    return "service." + clazz.getSimpleName().toLowerCase();
+  }
 }

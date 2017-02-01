@@ -31,10 +31,10 @@ import org.apache.commons.lang.StringUtils;
 @Target({ ElementType.FIELD })
 public @interface VertxInject {
 
-	/**
-	 * Vertx options.
-	 *
-	 * @return the string
-	 */
-	String vertxOptions() default StringUtils.EMPTY;
+  /**
+   * Vertx options.
+   *
+   * @return the string
+   */
+  String vertxOptions() default StringUtils.EMPTY;
 }

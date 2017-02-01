@@ -22,15 +22,17 @@ import java.lang.annotation.Target;
 
 /**
  * The Interface BodyEndHandler.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 public @interface BodyEndHandler {
 
-	/**
-	 * Value.
-	 *
-	 * @return the class
-	 */
-	Class<? extends org.jspare.vertx.web.handler.BodyEndHandler>[] value();
+  /**
+   * Value.
+   *
+   * @return the class
+   */
+  Class<? extends org.jspare.vertx.web.handler.BodyEndHandler>[] value();
 }

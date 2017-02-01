@@ -40,105 +40,117 @@ import lombok.SneakyThrows;
 @Resource
 public class JsonObjectLoader {
 
-	/** The Constant CONVERTER_PATTERN. */
-	private static final String CONVERTER_PATTERN = "%sConverter";
+  /** The Constant CONVERTER_PATTERN. */
+  private static final String CONVERTER_PATTERN = "%sConverter";
 
-	/**
-	 * Sets the default charset.
-	 *
-	 * @param defaultCharset the new default charset
-	 */
-	@Setter
-	
-	/**
-	 * Gets the default charset.
-	 *
-	 * @return the default charset
-	 */
-	@Getter
-	private Charset defaultCharset = StandardCharsets.UTF_8;
+  /**
+   * Sets the default charset.
+   *
+   * @param defaultCharset
+   *          the new default charset
+   */
+  @Setter
 
-	/**
-	 * Sets the default root path.
-	 *
-	 * @param defaultRootPath the new default root path
-	 */
-	@Setter
-	
-	/**
-	 * Gets the default root path.
-	 *
-	 * @return the default root path
-	 */
-	@Getter
-	private String defaultRootPath = "vertx";
+  /**
+   * Gets the default charset.
+   *
+   * @return the default charset
+   */
+  @Getter
+  private Charset defaultCharset = StandardCharsets.UTF_8;
 
-	/**
-	 * Load options.
-	 *
-	 * @param filename the filename
-	 * @return the json object
-	 */
-	public JsonObject loadOptions(String filename) {
+  /**
+   * Sets the default root path.
+   *
+   * @param defaultRootPath
+   *          the new default root path
+   */
+  @Setter
 
-		return loadOptions(defaultRootPath, filename);
-	}
+  /**
+   * Gets the default root path.
+   *
+   * @return the default root path
+   */
+  @Getter
+  private String defaultRootPath = "vertx";
 
-	/**
-	 * Load options.
-	 *
-	 * @param <T> the generic type
-	 * @param filename the filename
-	 * @param optionClazz the option clazz
-	 * @return the t
-	 */
-	@SneakyThrows
-	public <T> T loadOptions(String filename, Class<T> optionClazz) {
+  /**
+   * Load options.
+   *
+   * @param filename
+   *          the filename
+   * @return the json object
+   */
+  public JsonObject loadOptions(String filename) {
 
-		return loadOptions(defaultRootPath, filename, optionClazz);
-	}
+    return loadOptions(defaultRootPath, filename);
+  }
 
-	/**
-	 * Load options.
-	 *
-	 * @param defaultRootPath the default root path
-	 * @param filename the filename
-	 * @return the json object
-	 */
-	@SneakyThrows(IOException.class)
-	public JsonObject loadOptions(String defaultRootPath, String filename) {
+  /**
+   * Load options.
+   *
+   * @param <T>
+   *          the generic type
+   * @param filename
+   *          the filename
+   * @param optionClazz
+   *          the option clazz
+   * @return the t
+   */
+  @SneakyThrows
+  public <T> T loadOptions(String filename, Class<T> optionClazz) {
 
-		String json = null;
-		Path path = Paths.get(defaultRootPath, filename);
-		File file = path.toFile();
-		if (file.exists()) {
+    return loadOptions(defaultRootPath, filename, optionClazz);
+  }
 
-			json = FileUtils.readFileToString(path.toFile(), defaultCharset);
-		} else {
+  /**
+   * Load options.
+   *
+   * @param defaultRootPath
+   *          the default root path
+   * @param filename
+   *          the filename
+   * @return the json object
+   */
+  @SneakyThrows(IOException.class)
+  public JsonObject loadOptions(String defaultRootPath, String filename) {
 
-			json = IOUtils.toString(this.getClass().getResourceAsStream(String.format("/%s", path.toString())),
-					getDefaultCharset());
-		}
+    String json = null;
+    Path path = Paths.get(defaultRootPath, filename);
+    File file = path.toFile();
+    if (file.exists()) {
 
-		return new JsonObject(json);
-	}
+      json = FileUtils.readFileToString(path.toFile(), defaultCharset);
+    } else {
 
-	/**
-	 * Load options.
-	 *
-	 * @param <T> the generic type
-	 * @param defaultRootPath the default root path
-	 * @param filename the filename
-	 * @param optionClazz the option clazz
-	 * @return the t
-	 */
-	@SneakyThrows
-	public <T> T loadOptions(String defaultRootPath, String filename, Class<T> optionClazz) {
+      json = IOUtils.toString(this.getClass().getResourceAsStream(String.format("/%s", path.toString())),
+          getDefaultCharset());
+    }
 
-		String optionClassName = String.format(CONVERTER_PATTERN, optionClazz.getName());
-		Method method = Class.forName(optionClassName).getDeclaredMethod("fromJson", JsonObject.class, optionClazz);
-		T instance = optionClazz.newInstance();
-		method.invoke(null, loadOptions(defaultRootPath, filename), instance);
-		return instance;
-	}
+    return new JsonObject(json);
+  }
+
+  /**
+   * Load options.
+   *
+   * @param <T>
+   *          the generic type
+   * @param defaultRootPath
+   *          the default root path
+   * @param filename
+   *          the filename
+   * @param optionClazz
+   *          the option clazz
+   * @return the t
+   */
+  @SneakyThrows
+  public <T> T loadOptions(String defaultRootPath, String filename, Class<T> optionClazz) {
+
+    String optionClassName = String.format(CONVERTER_PATTERN, optionClazz.getName());
+    Method method = Class.forName(optionClassName).getDeclaredMethod("fromJson", JsonObject.class, optionClazz);
+    T instance = optionClazz.newInstance();
+    method.invoke(null, loadOptions(defaultRootPath, filename), instance);
+    return instance;
+  }
 }

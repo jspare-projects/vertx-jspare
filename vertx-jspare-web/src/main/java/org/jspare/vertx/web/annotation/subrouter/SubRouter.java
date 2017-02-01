@@ -39,17 +39,17 @@ import io.vertx.ext.web.Router;
  * users/</b>
  * </p>
  *
- * @author pflima
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  * @since 30/03/2016
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 public @interface SubRouter {
 
-	/**
-	 * Value.
-	 *
-	 * @return the string
-	 */
-	String value();
+  /**
+   * Value.
+   *
+   * @return the string
+   */
+  String value();
 }

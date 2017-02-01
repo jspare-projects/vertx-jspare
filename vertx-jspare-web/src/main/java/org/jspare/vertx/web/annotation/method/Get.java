@@ -24,22 +24,24 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * The Interface Get.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface Get {
 
-	/**
-	 * Regex.
-	 *
-	 * @return true, if successful
-	 */
-	boolean regex() default false;
+  /**
+   * Regex.
+   *
+   * @return true, if successful
+   */
+  boolean regex() default false;
 
-	/**
-	 * Value.
-	 *
-	 * @return the string
-	 */
-	String value() default StringUtils.EMPTY;
+  /**
+   * Value.
+   *
+   * @return the string
+   */
+  String value() default StringUtils.EMPTY;
 }

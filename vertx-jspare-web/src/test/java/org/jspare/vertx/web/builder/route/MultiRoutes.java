@@ -29,27 +29,27 @@ import org.jspare.vertx.web.handler.APIHandler;
  */
 public class MultiRoutes extends APIHandler {
 
-	/**
-	 * Handler 1.
-	 */
-	@Handler
-	@Get("/multiRoutes/1")
-	public void handler1() {
+  /**
+   * Handler 1.
+   */
+  @Handler
+  @Get("/multiRoutes/1")
+  public void handler1() {
 
-		res.write("multiRoutes 1\n");
-		context.next();
-	}
+    res.write("multiRoutes 1\n");
+    context.next();
+  }
 
-	/**
-	 * Handler 2.
-	 */
-	@Consumes("*/*")
-	@Produces("text/plain")
-	@BlockingHandler(order = 1)
-	@Get(value = "/multiRoutes/2", regex = true)
-	public void handler2() {
+  /**
+   * Handler 2.
+   */
+  @Consumes("*/*")
+  @Produces("text/plain")
+  @BlockingHandler(order = 1)
+  @Get(value = "/multiRoutes/2", regex = true)
+  public void handler2() {
 
-		res.write("multiRoutes 2\n");
-		res.end();
-	}
+    res.write("multiRoutes 2\n");
+    res.end();
+  }
 }

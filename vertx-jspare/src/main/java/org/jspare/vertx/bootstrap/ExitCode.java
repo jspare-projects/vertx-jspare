@@ -23,58 +23,60 @@ package org.jspare.vertx.bootstrap;
  * and launcher exit code</a> specification, and can be extendend implement the
  * codes above follow Vertx Launcher specification, and can be extended
  * implementing this interface.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  *
  */
 public interface ExitCode {
 
-	/**
-	 * The smoothly.
-	 * <p>
-	 * 0 if the process ends smoothly, or if an uncaught error is thrown
-	 * </p>
-	 */
-	int SMOOTHLY = 0;
+  /**
+   * The smoothly.
+   * <p>
+   * 0 if the process ends smoothly, or if an uncaught error is thrown
+   * </p>
+   */
+  int SMOOTHLY = 0;
 
-	/**
-	 * The general error.
-	 * <p>
-	 * 1 for general purpose error
-	 * <p>
-	 * /
-	 */
-	int GENERAL_ERROR = 1;
+  /**
+   * The general error.
+   * <p>
+   * 1 for general purpose error
+   * <p>
+   * /
+   */
+  int GENERAL_ERROR = 1;
 
-	/**
-	 * The vertx cannot be initialized.
-	 * <p>
-	 * 11 if Vert.x cannot be initialized
-	 * <p>
-	 */
-	int VERTX_CANNOT_BE_INITIALIZED = 11;
+  /**
+   * The vertx cannot be initialized.
+   * <p>
+   * 11 if Vert.x cannot be initialized
+   * <p>
+   */
+  int VERTX_CANNOT_BE_INITIALIZED = 11;
 
-	/**
-	 * The spawn process error.
-	 * <p>
-	 * 12 if a spawn process cannot be started, found or stopped. This error
-	 * code is used by the start and stop command
-	 * <p>
-	 */
-	int SPAWN_PROCESS_ERROR = 12;
+  /**
+   * The spawn process error.
+   * <p>
+   * 12 if a spawn process cannot be started, found or stopped. This error code
+   * is used by the start and stop command
+   * <p>
+   */
+  int SPAWN_PROCESS_ERROR = 12;
 
-	/**
-	 * The system configuration error.
-	 * <p>
-	 * 14 if the system configuration is not meeting the system requirement (shc
-	 * as java not found)
-	 * <p>
-	 */
-	int SYSTEM_CONFIGURATION_ERROR = 14;
+  /**
+   * The system configuration error.
+   * <p>
+   * 14 if the system configuration is not meeting the system requirement (shc
+   * as java not found)
+   * <p>
+   */
+  int SYSTEM_CONFIGURATION_ERROR = 14;
 
-	/**
-	 * The main verticle error.
-	 * <p>
-	 * 15 if the main verticle cannot be deployed
-	 * <p>
-	 */
-	int MAIN_VERTICLE_ERROR = 15;
+  /**
+   * The main verticle error.
+   * <p>
+   * 15 if the main verticle cannot be deployed
+   * <p>
+   */
+  int MAIN_VERTICLE_ERROR = 15;
 }

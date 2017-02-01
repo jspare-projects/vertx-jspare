@@ -36,144 +36,153 @@ import lombok.experimental.Accessors;
  */
 @Accessors(fluent = true)
 
-/* (non-Javadoc)
+/*
+ * (non-Javadoc)
+ * 
  * @see java.lang.Object#hashCode()
  */
 @EqualsAndHashCode(callSuper = false)
 public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 
-	/**
-	 * Creates the.
-	 *
-	 * @return the vertx builder
-	 */
-	public static VertxBuilder create() {
+  /**
+   * Creates the.
+   *
+   * @return the vertx builder
+   */
+  public static VertxBuilder create() {
 
-		return new VertxBuilder();
-	}
+    return new VertxBuilder();
+  }
 
-	/**
-	 * Creates the.
-	 *
-	 * @param vertxOptions the vertx options
-	 * @return the vertx builder
-	 */
-	public static VertxBuilder create(VertxOptions vertxOptions) {
+  /**
+   * Creates the.
+   *
+   * @param vertxOptions
+   *          the vertx options
+   * @return the vertx builder
+   */
+  public static VertxBuilder create(VertxOptions vertxOptions) {
 
-		return new VertxBuilder().options(vertxOptions);
-	}
+    return new VertxBuilder().options(vertxOptions);
+  }
 
-	/**
-	 * Name.
-	 *
-	 * @return the string
-	 */
-	@Getter
-	
-	/**
-	 * Name.
-	 *
-	 * @param name the name
-	 * @return the vertx builder
-	 */
-	@Setter
-	private String name;
+  /**
+   * Name.
+   *
+   * @return the string
+   */
+  @Getter
 
-	/**
-	 * Vertx.
-	 *
-	 * @return the vertx
-	 */
-	@Getter
-	
-	/**
-	 * Vertx.
-	 *
-	 * @param vertx the vertx
-	 * @return the vertx builder
-	 */
-	@Setter
-	private Vertx vertx;
+  /**
+   * Name.
+   *
+   * @param name
+   *          the name
+   * @return the vertx builder
+   */
+  @Setter
+  private String name;
 
-	/**
-	 * Options.
-	 *
-	 * @return the vertx options
-	 */
-	@Getter
-	
-	/**
-	 * Options.
-	 *
-	 * @param options the options
-	 * @return the vertx builder
-	 */
-	@Setter
-	private VertxOptions options;
+  /**
+   * Vertx.
+   *
+   * @return the vertx
+   */
+  @Getter
 
-	/**
-	 * Instantiates a new vertx builder.
-	 */
-	private VertxBuilder() {
-	}
+  /**
+   * Vertx.
+   *
+   * @param vertx
+   *          the vertx
+   * @return the vertx builder
+   */
+  @Setter
+  private Vertx vertx;
 
-	/* (non-Javadoc)
-	 * @see org.jspare.vertx.builder.AbstractBuilder#build()
-	 */
-	@Override
-	public Future<Vertx> build() {
+  /**
+   * Options.
+   *
+   * @return the vertx options
+   */
+  @Getter
 
-		Future<Vertx> future = Future.future();
+  /**
+   * Options.
+   *
+   * @param options
+   *          the options
+   * @return the vertx builder
+   */
+  @Setter
+  private VertxOptions options;
 
-		// Load vertx instance
-		Consumer<Vertx> runner = vertx -> {
+  /**
+   * Instantiates a new vertx builder.
+   */
+  private VertxBuilder() {
+  }
 
-			// Registry vertx
-			this.vertx = vertx;
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.jspare.vertx.builder.AbstractBuilder#build()
+   */
+  @Override
+  public Future<Vertx> build() {
 
-			future.complete(vertx);
-		};
+    Future<Vertx> future = Future.future();
 
-		if (vertx != null) {
+    // Load vertx instance
+    Consumer<Vertx> runner = vertx -> {
 
-			runner.accept(vertx);
-		} else {
+      // Registry vertx
+      this.vertx = vertx;
 
-			createVertx(runner);
-		}
+      future.complete(vertx);
+    };
 
-		// Register vertx on VertxHolder. This interaction allow that the Vertx
-		// can be accessed internally by application.
-		registryResource(new VertxHolder().vertx(vertx));
+    if (vertx != null) {
 
-		return future;
-	}
+      runner.accept(vertx);
+    } else {
 
-	/**
-	 * Creates the vertx.
-	 *
-	 * @param runner the runner
-	 */
-	protected void createVertx(Consumer<Vertx> runner) {
+      createVertx(runner);
+    }
 
-		if (options == null) {
+    // Register vertx on VertxHolder. This interaction allow that the Vertx
+    // can be accessed internally by application.
+    registryResource(new VertxHolder().vertx(vertx));
 
-			options = new VertxOptions();
-		}
+    return future;
+  }
 
-		if (options.isClustered()) {
+  /**
+   * Creates the vertx.
+   *
+   * @param runner
+   *          the runner
+   */
+  protected void createVertx(Consumer<Vertx> runner) {
 
-			Vertx.clusteredVertx(options, res -> {
-				if (res.succeeded()) {
-					Vertx vertx = res.result();
-					runner.accept(vertx);
-				} else {
-					res.cause().printStackTrace();
-				}
-			});
-		} else {
+    if (options == null) {
 
-			runner.accept(Vertx.vertx(options));
-		}
-	}
+      options = new VertxOptions();
+    }
+
+    if (options.isClustered()) {
+
+      Vertx.clusteredVertx(options, res -> {
+        if (res.succeeded()) {
+          Vertx vertx = res.result();
+          runner.accept(vertx);
+        } else {
+          res.cause().printStackTrace();
+        }
+      });
+    } else {
+
+      runner.accept(Vertx.vertx(options));
+    }
+  }
 }

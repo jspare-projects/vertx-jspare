@@ -29,10 +29,10 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface SockJsHandler {
 
-	/**
-	 * Value.
-	 *
-	 * @return the string
-	 */
-	String value() default "/sockJs/*";
+  /**
+   * Value.
+   *
+   * @return the string
+   */
+  String value() default "/sockJs/*";
 }

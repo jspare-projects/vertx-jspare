@@ -22,15 +22,17 @@ import java.lang.annotation.Target;
 
 /**
  * The Interface FailureHandler.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 public @interface FailureHandler {
 
-	/**
-	 * Order.
-	 *
-	 * @return the int
-	 */
-	int order() default 0;
+  /**
+   * Order.
+   *
+   * @return the int
+   */
+  int order() default 0;
 }

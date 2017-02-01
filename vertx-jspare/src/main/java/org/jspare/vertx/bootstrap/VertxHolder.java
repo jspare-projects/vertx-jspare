@@ -23,12 +23,14 @@ import lombok.experimental.Accessors;
 
 /**
  * Instantiates a new vertx holder.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Data
 @Accessors(fluent = true)
 @Resource
 public class VertxHolder {
 
-	/** The vertx. */
-	private Vertx vertx;
+  /** The vertx. */
+  private Vertx vertx;
 }

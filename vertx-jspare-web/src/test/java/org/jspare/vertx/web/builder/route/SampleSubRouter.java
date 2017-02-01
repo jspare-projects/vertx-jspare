@@ -30,43 +30,46 @@ import io.vertx.ext.web.RoutingContext;
 @SubRouter("/subRouter")
 public class SampleSubRouter {
 
-	/**
-	 * Sub 1.
-	 *
-	 * @param routingContext the routing context
-	 */
-	@Handler
-	@Get("/sub/1")
-	public void sub1(RoutingContext routingContext) {
+  /**
+   * Sub 1.
+   *
+   * @param routingContext
+   *          the routing context
+   */
+  @Handler
+  @Get("/sub/1")
+  public void sub1(RoutingContext routingContext) {
 
-		routingContext.response().write("/subRouter/sub/1");
-		routingContext.response().end();
-	}
+    routingContext.response().write("/subRouter/sub/1");
+    routingContext.response().end();
+  }
 
-	/**
-	 * Sub 2.
-	 *
-	 * @param routingContext the routing context
-	 */
-	@Handler
-	@Get("/sub/2")
-	public void sub2(RoutingContext routingContext) {
+  /**
+   * Sub 2.
+   *
+   * @param routingContext
+   *          the routing context
+   */
+  @Handler
+  @Get("/sub/2")
+  public void sub2(RoutingContext routingContext) {
 
-		routingContext.response().write("/subRouter/sub/2");
-		routingContext.response().end();
-	}
+    routingContext.response().write("/subRouter/sub/2");
+    routingContext.response().end();
+  }
 
-	/**
-	 * Sub 3.
-	 *
-	 * @param routingContext the routing context
-	 */
-	@IgnoreSubRouter
-	@Handler
-	@Get("/sub/3")
-	public void sub3(RoutingContext routingContext) {
+  /**
+   * Sub 3.
+   *
+   * @param routingContext
+   *          the routing context
+   */
+  @IgnoreSubRouter
+  @Handler
+  @Get("/sub/3")
+  public void sub3(RoutingContext routingContext) {
 
-		routingContext.response().write("sub/3");
-		routingContext.response().end();
-	}
+    routingContext.response().write("sub/3");
+    routingContext.response().end();
+  }
 }

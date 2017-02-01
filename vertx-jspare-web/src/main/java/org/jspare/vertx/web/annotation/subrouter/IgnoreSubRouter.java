@@ -22,6 +22,8 @@ import java.lang.annotation.Target;
 
 /**
  * The Interface IgnoreSubRouter.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })

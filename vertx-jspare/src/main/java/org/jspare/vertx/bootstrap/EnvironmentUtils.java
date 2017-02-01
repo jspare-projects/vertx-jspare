@@ -33,24 +33,25 @@ import lombok.experimental.UtilityClass;
 
 /**
  * Instantiates a new environment utils.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @UtilityClass
 public class EnvironmentUtils {
 
-	/**
-	 * Register.
-	 */
-	protected void register() {
+  /**
+   * Register.
+   */
+  protected void register() {
 
-		// Prepare Environment with VertxInject
-		EnvironmentBuilder.create().addInjector(VertxInject.class, new VertxInjectStrategy()).build();
-		EnvironmentBuilder.create().addInjector(VertxProxyInject.class, new VertxProxyInjectStrategy()).build();
+    // Prepare Environment with VertxInject
+    EnvironmentBuilder.create().addInjector(VertxInject.class, new VertxInjectStrategy()).build();
+    EnvironmentBuilder.create().addInjector(VertxProxyInject.class, new VertxProxyInjectStrategy()).build();
 
-		// Set default Json Mapper options
-		Json.mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector())
-				.setVisibility(PropertyAccessor.ALL, Visibility.ANY).setSerializationInclusion(Include.NON_NULL)
-				.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-				.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).findAndRegisterModules();
-	}
+    // Set default Json Mapper options
+    Json.mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector())
+        .setVisibility(PropertyAccessor.ALL, Visibility.ANY).setSerializationInclusion(Include.NON_NULL)
+        .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).findAndRegisterModules();
+  }
 }

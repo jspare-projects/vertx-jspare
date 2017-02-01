@@ -33,35 +33,42 @@ import lombok.Getter;
 /**
  * Instantiates a new http method type.
  *
- * @param httpMethodClass the http method class
+ * @param httpMethodClass
+ *          the http method class
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @AllArgsConstructor
 public enum HttpMethodType {
 
-	/** The all. */
-	ALL(All.class), /** The connect. */
- CONNECT(Connect.class), /** The delete. */
- DELETE(Delete.class), /** The get. */
- GET(Get.class), /** The head. */
- HEAD(Head.class), /** The options. */
- OPTIONS(
-			Options.class), 
- /** The other. */
- OTHER(Other.class), 
- /** The path. */
- PATH(Path.class), 
- /** The post. */
- POST(Post.class), 
- /** The put. */
- PUT(Put.class), 
- /** The trace. */
- TRACE(Trace.class);
+  /** The all. */
+  ALL(All.class),
+  /** The connect. */
+  CONNECT(Connect.class),
+  /** The delete. */
+  DELETE(Delete.class),
+  /** The get. */
+  GET(Get.class),
+  /** The head. */
+  HEAD(Head.class),
+  /** The options. */
+  OPTIONS(Options.class),
+  /** The other. */
+  OTHER(Other.class),
+  /** The path. */
+  PATH(Path.class),
+  /** The post. */
+  POST(Post.class),
+  /** The put. */
+  PUT(Put.class),
+  /** The trace. */
+  TRACE(Trace.class);
 
-	/**
-	 * Gets the http method class.
-	 *
-	 * @return the http method class
-	 */
-	@Getter
-	private Class<?> httpMethodClass;
+  /**
+   * Gets the http method class.
+   *
+   * @return the http method class
+   */
+  @Getter
+  private Class<?> httpMethodClass;
 }

@@ -22,22 +22,24 @@ import java.lang.annotation.Target;
 
 /**
  * The Interface Status.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.TYPE })
 public @interface Status {
 
-	/**
-	 * Code.
-	 *
-	 * @return the int
-	 */
-	int code();
+  /**
+   * Code.
+   *
+   * @return the int
+   */
+  int code();
 
-	/**
-	 * Description.
-	 *
-	 * @return the string
-	 */
-	String description();
+  /**
+   * Description.
+   *
+   * @return the string
+   */
+  String description();
 }

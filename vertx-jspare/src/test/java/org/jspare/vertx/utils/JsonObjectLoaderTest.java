@@ -31,19 +31,19 @@ import io.vertx.core.json.JsonObject;
  */
 public class JsonObjectLoaderTest extends AbstractVertxApplicationTest {
 
-	/**
-	 * Load test.
-	 */
-	@Test
-	public void loadTest() {
+  /**
+   * Load test.
+   */
+  @Test
+  public void loadTest() {
 
-		JsonObject jsonObject = my(JsonObjectLoader.class).loadOptions("VertxOptions.json");
-		Assert.assertNotNull(jsonObject);
-		Assert.assertTrue(jsonObject.getBoolean("clustered"));
+    JsonObject jsonObject = my(JsonObjectLoader.class).loadOptions("VertxOptions.json");
+    Assert.assertNotNull(jsonObject);
+    Assert.assertTrue(jsonObject.getBoolean("clustered"));
 
-		VertxOptions vertxOptions = my(JsonObjectLoader.class).loadOptions("VertxOptions.json", VertxOptions.class);
-		Assert.assertNotNull(vertxOptions);
-		Assert.assertTrue(vertxOptions.isClustered());
-	}
+    VertxOptions vertxOptions = my(JsonObjectLoader.class).loadOptions("VertxOptions.json", VertxOptions.class);
+    Assert.assertNotNull(vertxOptions);
+    Assert.assertTrue(vertxOptions.isClustered());
+  }
 
 }

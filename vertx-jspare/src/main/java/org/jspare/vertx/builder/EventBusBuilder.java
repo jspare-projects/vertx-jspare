@@ -35,127 +35,136 @@ import lombok.experimental.Accessors;
  */
 @Accessors(fluent = true)
 
-/* (non-Javadoc)
+/*
+ * (non-Javadoc)
+ * 
  * @see java.lang.Object#hashCode()
  */
 @EqualsAndHashCode(callSuper = false)
 public class EventBusBuilder extends AbstractBuilder<Void> {
 
-	/** The Constant NUMBER_CLASSPATH_SCANNER_THREADS. */
-	private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
+  /** The Constant NUMBER_CLASSPATH_SCANNER_THREADS. */
+  private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
 
-	/**
-	 * Creates the.
-	 *
-	 * @param vertx the vertx
-	 * @return the event bus builder
-	 */
-	public static EventBusBuilder create(Vertx vertx) {
+  /**
+   * Creates the.
+   *
+   * @param vertx
+   *          the vertx
+   * @return the event bus builder
+   */
+  public static EventBusBuilder create(Vertx vertx) {
 
-		return new EventBusBuilder(vertx);
-	}
+    return new EventBusBuilder(vertx);
+  }
 
-	/**
-	 * Vertx.
-	 *
-	 * @return the vertx
-	 */
-	@Getter
-	private final Vertx vertx;
+  /**
+   * Vertx.
+   *
+   * @return the vertx
+   */
+  @Getter
+  private final Vertx vertx;
 
-	/**
-	 * Scan classpath.
-	 *
-	 * @return true, if successful
-	 */
-	@Getter
-	
-	/**
-	 * Scan classpath.
-	 *
-	 * @param scanClasspath the scan classpath
-	 * @return the event bus builder
-	 */
-	@Setter
-	private boolean scanClasspath;
+  /**
+   * Scan classpath.
+   *
+   * @return true, if successful
+   */
+  @Getter
 
-	/**
-	 * Classes.
-	 *
-	 * @return the list
-	 */
-	@Getter
-	
-	/**
-	 * Classes.
-	 *
-	 * @param classes the classes
-	 * @return the event bus builder
-	 */
-	@Setter
-	private List<Class<?>> classes;
+  /**
+   * Scan classpath.
+   *
+   * @param scanClasspath
+   *          the scan classpath
+   * @return the event bus builder
+   */
+  @Setter
+  private boolean scanClasspath;
 
-	/**
-	 * Scan specs.
-	 *
-	 * @return the list
-	 */
-	@Getter
-	
-	/**
-	 * Scan specs.
-	 *
-	 * @param scanSpecs the scan specs
-	 * @return the event bus builder
-	 */
-	@Setter
-	private List<String> scanSpecs;
+  /**
+   * Classes.
+   *
+   * @return the list
+   */
+  @Getter
 
-	/**
-	 * Instantiates a new event bus builder.
-	 *
-	 * @param vertx the vertx
-	 */
-	private EventBusBuilder(Vertx vertx) {
+  /**
+   * Classes.
+   *
+   * @param classes
+   *          the classes
+   * @return the event bus builder
+   */
+  @Setter
+  private List<Class<?>> classes;
 
-		this.vertx = vertx;
-		scanClasspath = false;
-		classes = new ArrayList<>();
-		scanSpecs = new ArrayList<>();
-	}
+  /**
+   * Scan specs.
+   *
+   * @return the list
+   */
+  @Getter
 
-	/* (non-Javadoc)
-	 * @see org.jspare.vertx.builder.AbstractBuilder#build()
-	 */
-	@Override
-	public Void build() {
+  /**
+   * Scan specs.
+   *
+   * @param scanSpecs
+   *          the scan specs
+   * @return the event bus builder
+   */
+  @Setter
+  private List<String> scanSpecs;
 
-		if (scanClasspath) {
-			scanSpecs.clear();
-			scanSpecs.add(".*");
-		}
+  /**
+   * Instantiates a new event bus builder.
+   *
+   * @param vertx
+   *          the vertx
+   */
+  private EventBusBuilder(Vertx vertx) {
 
-		// Iterate eventBusPackages scannig and adding classes to
-		// eventBusClasses
+    this.vertx = vertx;
+    scanClasspath = false;
+    classes = new ArrayList<>();
+    scanSpecs = new ArrayList<>();
+  }
 
-		MethodAnnotationMatchProcessor processor = (c, m) -> classes.add(c);
-		scanSpecs.forEach(scanSpec -> {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.jspare.vertx.builder.AbstractBuilder#build()
+   */
+  @Override
+  public Void build() {
 
-			ClasspathScannerUtils.scanner(scanSpec)
-					.matchClassesWithMethodAnnotation(org.jspare.vertx.annotation.Consumer.class, processor)
-					.scan(NUMBER_CLASSPATH_SCANNER_THREADS);
-		});
+    if (scanClasspath) {
+      scanSpecs.clear();
+      scanSpecs.add(".*");
+    }
 
-		List<EventBusData> consumers = new ArrayList<>();
+    // Iterate eventBusPackages scannig and adding classes to
+    // eventBusClasses
 
-		// Iterate eventBusClasses and add consumers to will process
-		classes.forEach(c -> consumers.addAll(my(EventBusCollector.class).collect(c)));
+    MethodAnnotationMatchProcessor processor = (c, m) -> classes.add(c);
+    scanSpecs.forEach(scanSpec -> {
 
-		// Process consumers
-		EventBus eventBus = vertx.eventBus();
-		consumers.forEach(md -> eventBus.consumer(md.name(), md.wrap()));
+      ClasspathScannerUtils.scanner(scanSpec)
+          .matchClassesWithMethodAnnotation(org.jspare.vertx.annotation.Consumer.class, processor)
+          .scan(NUMBER_CLASSPATH_SCANNER_THREADS);
+    });
 
-		return null;
-	}
+    List<EventBusData> consumers = new ArrayList<>();
+
+    // Iterate eventBusClasses and add consumers to will process
+    classes.forEach(c -> consumers.addAll(my(EventBusCollector.class).collect(c)));
+
+    // Process consumers
+    EventBus eventBus = vertx.eventBus();
+    consumers.forEach(md -> eventBus.consumer(md.name(), md.wrap()));
+
+    return null;
+  }
 
 }

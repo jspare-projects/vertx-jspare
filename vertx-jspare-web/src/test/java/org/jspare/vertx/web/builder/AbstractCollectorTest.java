@@ -30,20 +30,21 @@ import io.vertx.core.Vertx;
  */
 public class AbstractCollectorTest {
 
-	/** The builder. */
-	protected RouterBuilder builder = RouterBuilder.create(Vertx.vertx());
+  /** The builder. */
+  protected RouterBuilder builder = RouterBuilder.create(Vertx.vertx());
 
-	/**
-	 * Collect.
-	 *
-	 * @param clazz the clazz
-	 * @return the list
-	 */
-	protected List<HandlerData> collect(Class<?> clazz) {
+  /**
+   * Collect.
+   *
+   * @param clazz
+   *          the clazz
+   * @return the list
+   */
+  protected List<HandlerData> collect(Class<?> clazz) {
 
-		List<HandlerData> handlers = new ArrayList<>(
-				my(RouteCollector.class).collect(clazz, RouterBuilder.create(Vertx.vertx())));
-		Collections.sort(handlers, (o1, o2) -> o1.path().compareTo(o2.path()));
-		return handlers;
-	}
+    List<HandlerData> handlers = new ArrayList<>(
+        my(RouteCollector.class).collect(clazz, RouterBuilder.create(Vertx.vertx())));
+    Collections.sort(handlers, (o1, o2) -> o1.path().compareTo(o2.path()));
+    return handlers;
+  }
 }

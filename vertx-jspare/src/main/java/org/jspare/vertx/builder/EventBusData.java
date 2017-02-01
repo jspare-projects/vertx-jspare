@@ -33,45 +33,49 @@ import lombok.experimental.Accessors;
 /**
  * Instantiates a new event bus data.
  *
- * @param controller the controller
- * @param method the method
- * @param name the name
+ * @param controller
+ *          the controller
+ * @param method
+ *          the method
+ * @param name
+ *          the name
  */
 @AllArgsConstructor
 public class EventBusData {
 
-	/** The controller. */
-	private Object controller;
+  /** The controller. */
+  private Object controller;
 
-	/** The method. */
-	private Method method;
+  /** The method. */
+  private Method method;
 
-	/** The name. */
-	private String name;
+  /** The name. */
+  private String name;
 
-	/**
-	 * Wrap.
-	 *
-	 * @param <T> the generic type
-	 * @return the handler
-	 */
-	public <T> Handler<Message<T>> wrap() {
+  /**
+   * Wrap.
+   *
+   * @param <T>
+   *          the generic type
+   * @return the handler
+   */
+  public <T> Handler<Message<T>> wrap() {
 
-		return new Handler<Message<T>>() {
+    return new Handler<Message<T>>() {
 
-			@Override
-			@SneakyThrows
-			public void handle(Message<T> event) {
+      @Override
+      @SneakyThrows
+      public void handle(Message<T> event) {
 
-				if (method.getParameterCount() == 1) {
+        if (method.getParameterCount() == 1) {
 
-					method().invoke(controller, event);
-				} else {
+          method().invoke(controller, event);
+        } else {
 
-					method.invoke(controller);
-				}
-			}
-		};
-	}
+          method.invoke(controller);
+        }
+      }
+    };
+  }
 
 }

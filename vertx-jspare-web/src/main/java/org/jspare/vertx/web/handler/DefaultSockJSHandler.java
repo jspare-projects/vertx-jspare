@@ -33,94 +33,102 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class DefaultSockJSHandler {
 
-	/**
-	 * Socket handler.
-	 *
-	 * @param handlerData the handler data
-	 * @param event the event
-	 */
-	@SneakyThrows
-	public void socketHandler(HandlerData handlerData, SockJSSocket event) {
+  /**
+   * Socket handler.
+   *
+   * @param handlerData
+   *          the handler data
+   * @param event
+   *          the event
+   */
+  @SneakyThrows
+  public void socketHandler(HandlerData handlerData, SockJSSocket event) {
 
-		Object instance = handlerData.clazz().newInstance();
+    Object instance = handlerData.clazz().newInstance();
 
-		setHandlingParameters(event, instance);
+    setHandlingParameters(event, instance);
 
-		Object[] parameters = collectParameters(handlerData, event);
+    Object[] parameters = collectParameters(handlerData, event);
 
-		// Call method of handler data
-		handlerData.method().invoke(instance, parameters);
-	}
+    // Call method of handler data
+    handlerData.method().invoke(instance, parameters);
+  }
 
-	/**
-	 * Collect parameters.
-	 *
-	 * @param handlerData the handler data
-	 * @param event the event
-	 * @return the object[]
-	 */
-	@SneakyThrows
-	private Object[] collectParameters(HandlerData handlerData, SockJSSocket event) {
+  /**
+   * Collect parameters.
+   *
+   * @param handlerData
+   *          the handler data
+   * @param event
+   *          the event
+   * @return the object[]
+   */
+  @SneakyThrows
+  private Object[] collectParameters(HandlerData handlerData, SockJSSocket event) {
 
-		// Prepare parameters to call method of route
-		Object[] parameters = new Object[handlerData.method().getParameterCount()];
-		int i = 0;
-		for (Parameter parameter : handlerData.method().getParameters()) {
+    // Prepare parameters to call method of route
+    Object[] parameters = new Object[handlerData.method().getParameterCount()];
+    int i = 0;
+    for (Parameter parameter : handlerData.method().getParameters()) {
 
-			parameters[i] = resolveParameter(parameter, event);
-			i++;
-		}
-		return parameters;
-	}
+      parameters[i] = resolveParameter(parameter, event);
+      i++;
+    }
+    return parameters;
+  }
 
-	/**
-	 * Resolve parameter.
-	 *
-	 * @param parameter the parameter
-	 * @param event the event
-	 * @return the object
-	 */
-	protected Object resolveParameter(Parameter parameter, SockJSSocket event) {
+  /**
+   * Resolve parameter.
+   *
+   * @param parameter
+   *          the parameter
+   * @param event
+   *          the event
+   * @return the object
+   */
+  protected Object resolveParameter(Parameter parameter, SockJSSocket event) {
 
-		if (parameter.getType().equals(SockJSSocket.class)) {
+    if (parameter.getType().equals(SockJSSocket.class)) {
 
-			return event;
-		}
+      return event;
+    }
 
-		if (parameter.isAnnotationPresent(Header.class)) {
+    if (parameter.isAnnotationPresent(Header.class)) {
 
-			String headerName = parameter.getAnnotation(Header.class).value();
-			return event.headers().get(headerName);
-		}
+      String headerName = parameter.getAnnotation(Header.class).value();
+      return event.headers().get(headerName);
+    }
 
-		if (parameter.getType().equals(SocketAddress.class)) {
+    if (parameter.getType().equals(SocketAddress.class)) {
 
-			return event.localAddress();
-		}
+      return event.localAddress();
+    }
 
-		if (parameter.getType().equals(Session.class)) {
+    if (parameter.getType().equals(Session.class)) {
 
-			return event.webSession();
-		}
+      return event.webSession();
+    }
 
-		if (parameter.getType().equals(User.class)) {
+    if (parameter.getType().equals(User.class)) {
 
-			return event.webUser();
-		}
-		return null;
-	}
+      return event.webUser();
+    }
+    return null;
+  }
 
-	/**
-	 * Sets the handling parameters.
-	 *
-	 * @param event the event
-	 * @param newInstance the new instance
-	 */
-	protected void setHandlingParameters(SockJSSocket event, Object newInstance) {
-		// If Route is handling by abstract Handling inject some resources
-		if (newInstance instanceof APIHandler) {
+  /**
+   * Sets the handling parameters.
+   *
+   * @param event
+   *          the event
+   * @param newInstance
+   *          the new instance
+   */
+  protected void setHandlingParameters(SockJSSocket event, Object newInstance) {
+    // If Route is handling by abstract Handling inject some resources
+    if (newInstance instanceof APIHandler) {
 
-			((APIHandler) newInstance).setSockJSEvent(event);
-		}
-	}
+      ((APIHandler) newInstance).setSockJSEvent(event);
+    }
+  }
 }

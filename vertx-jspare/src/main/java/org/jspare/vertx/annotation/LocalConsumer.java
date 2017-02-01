@@ -29,10 +29,10 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 public @interface LocalConsumer {
 
-	/**
-	 * Value.
-	 *
-	 * @return the string
-	 */
-	String value();
+  /**
+   * Value.
+   *
+   * @return the string
+   */
+  String value();
 }

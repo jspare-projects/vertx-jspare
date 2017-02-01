@@ -22,22 +22,24 @@ import java.lang.annotation.Target;
 
 /**
  * The Interface QueryParameter.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.TYPE })
 public @interface QueryParameter {
 
-	/**
-	 * Description.
-	 *
-	 * @return the string
-	 */
-	String description();
+  /**
+   * Description.
+   *
+   * @return the string
+   */
+  String description();
 
-	/**
-	 * Key.
-	 *
-	 * @return the string
-	 */
-	String key();
+  /**
+   * Key.
+   *
+   * @return the string
+   */
+  String key();
 }

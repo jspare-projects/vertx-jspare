@@ -22,15 +22,17 @@ import java.lang.annotation.Target;
 
 /**
  * The Interface BlockingHandler.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 public @interface BlockingHandler {
 
-	/**
-	 * Order.
-	 *
-	 * @return the int
-	 */
-	int order() default 0;
+  /**
+   * Order.
+   *
+   * @return the int
+   */
+  int order() default 0;
 }

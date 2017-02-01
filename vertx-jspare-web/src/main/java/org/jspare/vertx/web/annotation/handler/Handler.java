@@ -22,15 +22,17 @@ import java.lang.annotation.Target;
 
 /**
  * The Interface Handler.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 public @interface Handler {
 
-	/**
-	 * Order.
-	 *
-	 * @return the int
-	 */
-	int order() default Integer.MIN_VALUE;
+  /**
+   * Order.
+   *
+   * @return the int
+   */
+  int order() default Integer.MIN_VALUE;
 }

@@ -22,15 +22,17 @@ import java.lang.annotation.Target;
 
 /**
  * The Interface MapModel.
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.PARAMETER, ElementType.FIELD })
 public @interface MapModel {
 
-	/**
-	 * Value.
-	 *
-	 * @return the class
-	 */
-	Class<?> value();
+  /**
+   * Value.
+   *
+   * @return the class
+   */
+  Class<?> value();
 }

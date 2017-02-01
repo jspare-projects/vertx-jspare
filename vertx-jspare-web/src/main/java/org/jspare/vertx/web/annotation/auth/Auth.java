@@ -26,30 +26,32 @@ import org.jspare.vertx.web.builder.RouterBuilder;
 /**
  * The Annotation Security. <br>
  * It is defined annotation that is the route to be safe and protected for Token
+ * 
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.TYPE })
 public @interface Auth {
 
-	/**
-	 * Auth handler.
-	 *
-	 * @return the string
-	 */
-	String authHandler() default RouterBuilder.DEFAULT_AUTH_HANDLER_KEY;
+  /**
+   * Auth handler.
+   *
+   * @return the string
+   */
+  String authHandler() default RouterBuilder.DEFAULT_AUTH_HANDLER_KEY;
 
-	/**
-	 * The Skip roles attribute allows any user who is authenticated to access
-	 * the handler.
-	 *
-	 * @return true, if selected
-	 */
-	boolean skipAuthorities() default false;
+  /**
+   * The Skip roles attribute allows any user who is authenticated to access the
+   * handler.
+   *
+   * @return true, if selected
+   */
+  boolean skipAuthorities() default false;
 
-	/**
-	 * Define the authority of route for user authentication.
-	 *
-	 * @return the string
-	 */
-	String[] value() default StringUtils.EMPTY;
+  /**
+   * Define the authority of route for user authentication.
+   *
+   * @return the string
+   */
+  String[] value() default StringUtils.EMPTY;
 }

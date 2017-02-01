@@ -31,24 +31,24 @@ import org.apache.commons.lang.StringUtils;
 @Target({ ElementType.FIELD })
 public @interface SharedWorkerExecutor {
 
-	/**
-	 * Max execute time.
-	 *
-	 * @return the long
-	 */
-	long maxExecuteTime() default 60000l;
+  /**
+   * Max execute time.
+   *
+   * @return the long
+   */
+  long maxExecuteTime() default 60000l;
 
-	/**
-	 * Name.
-	 *
-	 * @return the string
-	 */
-	String name() default StringUtils.EMPTY;
+  /**
+   * Name.
+   *
+   * @return the string
+   */
+  String name() default StringUtils.EMPTY;
 
-	/**
-	 * Pool size.
-	 *
-	 * @return the int
-	 */
-	int poolSize() default 20;
+  /**
+   * Pool size.
+   *
+   * @return the int
+   */
+  int poolSize() default 20;
 }

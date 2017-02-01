@@ -27,30 +27,37 @@ import io.vertx.core.Vertx;
 import io.vertx.serviceproxy.ProxyHelper;
 import lombok.extern.slf4j.Slf4j;
 
-/** The Constant log. */
+/**
+ * The Class VertxProxyInjectStrategy.
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ */
 @Slf4j
 public class VertxProxyInjectStrategy extends MySupport implements InjectorStrategy {
 
-	/** The vertx. */
-	@VertxInject
-	private Vertx vertx;
+  /** The vertx. */
+  @VertxInject
+  private Vertx vertx;
 
-	/* (non-Javadoc)
-	 * @see org.jspare.core.container.InjectorStrategy#inject(java.lang.Object, java.lang.reflect.Field)
-	 */
-	@Override
-	public void inject(Object obj, Field field) {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.jspare.core.container.InjectorStrategy#inject(java.lang.Object,
+   * java.lang.reflect.Field)
+   */
+  @Override
+  public void inject(Object obj, Field field) {
 
-		try {
+    try {
 
-			VertxProxyInject proxyHandler = field.getAnnotation(VertxProxyInject.class);
-			String address = ProxyServiceUtils.getAddress(proxyHandler, field.getType());
-			Object value = ProxyHelper.createProxy(field.getType(), vertx, address);
-			field.setAccessible(true);
-			field.set(obj, value);
-		} catch (IllegalArgumentException | IllegalAccessException | IllegalStateException e) {
+      VertxProxyInject proxyHandler = field.getAnnotation(VertxProxyInject.class);
+      String address = ProxyServiceUtils.getAddress(proxyHandler, field.getType());
+      Object value = ProxyHelper.createProxy(field.getType(), vertx, address);
+      field.setAccessible(true);
+      field.set(obj, value);
+    } catch (IllegalArgumentException | IllegalAccessException | IllegalStateException e) {
 
-			log.error("Cannot create proxy to {}", field.getName(), e);
-		}
-	}
+      log.error("Cannot create proxy to {}", field.getName(), e);
+    }
+  }
 }

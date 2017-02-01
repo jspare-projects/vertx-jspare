@@ -26,24 +26,26 @@ import lombok.Getter;
 /**
  * Instantiates a new handler type.
  *
- * @param handlerClass the handler class
+ * @param handlerClass
+ *          the handler class
  */
 @AllArgsConstructor
 public enum HandlerType {
 
-	/** The handler. */
-	HANDLER(Handler.class), /** The blocking handler. */
- BLOCKING_HANDLER(BlockingHandler.class), /** The failure handler. */
- FAILURE_HANDLER(
-			FailureHandler.class), 
- /** The socketjs handler. */
- SOCKETJS_HANDLER(SockJsHandler.class);
+  /** The handler. */
+  HANDLER(Handler.class),
+  /** The blocking handler. */
+  BLOCKING_HANDLER(BlockingHandler.class),
+  /** The failure handler. */
+  FAILURE_HANDLER(FailureHandler.class),
+  /** The socketjs handler. */
+  SOCKETJS_HANDLER(SockJsHandler.class);
 
-	/**
-	 * Gets the handler class.
-	 *
-	 * @return the handler class
-	 */
-	@Getter
-	private Class<?> handlerClass;
+  /**
+   * Gets the handler class.
+   *
+   * @return the handler class
+   */
+  @Getter
+  private Class<?> handlerClass;
 }
