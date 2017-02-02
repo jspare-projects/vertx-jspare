@@ -1,6 +1,7 @@
 # JSpare Vert.x
 
 [![Build Status](https://travis-ci.org/jspare-projects/vertx-jspare.svg?branch=master)](https://travis-ci.org/jspare-projects/vertx-jspare)
+[![Javadocs](http://www.javadoc.io/badge/org.jspare.vertx/vertx-jspare.svg)](http://www.javadoc.io/doc/org.jspare.vertx/vertx-jspare)
 [![License](https://img.shields.io/badge/license-Apache%20License%202.0-yellow.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 Improve your Vert.x experience with Jspare Framework
