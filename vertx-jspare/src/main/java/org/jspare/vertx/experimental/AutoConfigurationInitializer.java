@@ -51,7 +51,7 @@ public class AutoConfigurationInitializer {
    */
   public void initialize(Verticle verticle) {
 
-    if (verticle == null || !verticle.getClass().isAnnotationPresent(AutoConfiguration.class)) {
+    if (verticle == null || verticle.getVertx() == null || !verticle.getClass().isAnnotationPresent(AutoConfiguration.class)) {
 
       return;
     }

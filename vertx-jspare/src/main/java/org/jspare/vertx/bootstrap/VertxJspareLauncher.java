@@ -15,9 +15,10 @@
  */
 package org.jspare.vertx.bootstrap;
 
-import static org.jspare.core.container.Environment.registryResource;
+import static org.jspare.core.container.Environment.my;
 
 import org.jspare.core.bootstrap.Runner;
+import org.jspare.core.container.Context;
 
 import io.vertx.core.Launcher;
 import io.vertx.core.Vertx;
@@ -48,7 +49,7 @@ public class VertxJspareLauncher extends Launcher implements Runner {
   @Override
   public void afterStartingVertx(Vertx vertx) {
 
-    registryResource(new VertxHolder().vertx(vertx));
+    my(Context.class).put(EnvironmentUtils.VERTX_HOLDER, vertx);
 
     run();
   }

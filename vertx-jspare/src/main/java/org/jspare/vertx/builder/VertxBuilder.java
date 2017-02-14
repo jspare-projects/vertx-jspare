@@ -15,11 +15,12 @@
  */
 package org.jspare.vertx.builder;
 
-import static org.jspare.core.container.Environment.registryResource;
+import static org.jspare.core.container.Environment.my;
 
 import java.util.function.Consumer;
 
-import org.jspare.vertx.bootstrap.VertxHolder;
+import org.jspare.core.container.Context;
+import org.jspare.vertx.bootstrap.EnvironmentUtils;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -152,7 +153,7 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 
     // Register vertx on VertxHolder. This interaction allow that the Vertx
     // can be accessed internally by application.
-    registryResource(new VertxHolder().vertx(vertx));
+    my(Context.class).put(EnvironmentUtils.VERTX_HOLDER, vertx);
 
     return future;
   }

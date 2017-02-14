@@ -15,6 +15,7 @@
  */
 package org.jspare.vertx.injector;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import org.jspare.core.container.InjectorStrategy;
@@ -59,5 +60,10 @@ public class VertxProxyInjectStrategy extends MySupport implements InjectorStrat
 
       log.error("Cannot create proxy to {}", field.getName(), e);
     }
+  }
+
+  @Override
+  public Class<? extends Annotation> annotationType() {
+    return VertxProxyInject.class;
   }
 }

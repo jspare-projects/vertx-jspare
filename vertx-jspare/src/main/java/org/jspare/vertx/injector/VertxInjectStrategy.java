@@ -17,18 +17,19 @@ package org.jspare.vertx.injector;
 
 import static org.jspare.core.container.Environment.my;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
-import org.jspare.core.annotation.Inject;
+import org.jspare.core.container.Context;
 import org.jspare.core.container.InjectorStrategy;
 import org.jspare.core.container.MySupport;
 import org.jspare.core.exception.EnvironmentException;
 import org.jspare.core.exception.Errors;
 import org.jspare.vertx.annotation.SharedWorkerExecutor;
 import org.jspare.vertx.annotation.VertxInject;
-import org.jspare.vertx.bootstrap.VertxHolder;
+import org.jspare.vertx.bootstrap.EnvironmentUtils;
 import org.jspare.vertx.utils.JsonObjectLoader;
 
 import io.vertx.core.Vertx;
@@ -64,10 +65,6 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
     return String.format(VERTX_PATTERN, instanceRef);
   }
 
-  /** The vertx holder. */
-  @Inject
-  private VertxHolder vertxHolder;
-
   /*
    * (non-Javadoc)
    * 
@@ -77,12 +74,12 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
   @Override
   public void inject(Object result, Field field) {
 
-    Vertx vertx = null;
+    Vertx vertx = my(Context.class).getAs(EnvironmentUtils.VERTX_HOLDER);
 
     try {
 
       VertxInject inject = field.getAnnotation(VertxInject.class);
-      Optional<Vertx> oVertx = Optional.ofNullable(vertxHolder.vertx());
+      Optional<Vertx> oVertx = Optional.ofNullable(vertx);
       if (oVertx.isPresent()) {
 
         vertx = oVertx.get();
@@ -156,5 +153,10 @@ public class VertxInjectStrategy extends MySupport implements InjectorStrategy {
 
       field.set(result, vertx.sharedData());
     }
+  }
+
+  @Override
+  public Class<? extends Annotation> annotationType() {
+    return VertxInject.class;
   }
 }

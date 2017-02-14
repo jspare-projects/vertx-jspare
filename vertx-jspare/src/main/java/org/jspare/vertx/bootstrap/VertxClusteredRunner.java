@@ -15,27 +15,16 @@
  */
 package org.jspare.vertx.bootstrap;
 
-import static org.jspare.core.container.Environment.registryResource;
+import static org.jspare.core.container.Environment.my;
 
-import org.jspare.core.bootstrap.EnvironmentBuilder;
 import org.jspare.core.bootstrap.Runner;
-import org.jspare.vertx.annotation.VertxInject;
-import org.jspare.vertx.annotation.VertxProxyInject;
+import org.jspare.core.container.Context;
 import org.jspare.vertx.builder.VertxBuilder;
-import org.jspare.vertx.injector.VertxInjectStrategy;
-import org.jspare.vertx.injector.VertxProxyInjectStrategy;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.xebia.jacksonlombok.JacksonLombokAnnotationIntrospector;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
-import io.vertx.core.json.Json;
 import io.vertx.core.spi.cluster.ClusterManager;
 
 /**
@@ -61,7 +50,7 @@ public abstract class VertxClusteredRunner extends AbstractVerticle implements R
 
       if (res.succeeded()) {
 
-        registryResource(new VertxHolder().vertx(vertx));
+        my(Context.class).put(EnvironmentUtils.VERTX_HOLDER, vertx);
       } else {
 
         throw new RuntimeException("Failed to create Vert.x instance");
@@ -77,15 +66,7 @@ public abstract class VertxClusteredRunner extends AbstractVerticle implements R
   @Override
   public void setup() {
 
-    // Prepare Environment with VertxInject
-    EnvironmentBuilder.create().addInjector(VertxInject.class, new VertxInjectStrategy()).build();
-    EnvironmentBuilder.create().addInjector(VertxProxyInject.class, new VertxProxyInjectStrategy()).build();
-
-    // Set default Json Mapper options
-    Json.mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector())
-        .setVisibility(PropertyAccessor.ALL, Visibility.ANY).disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).findAndRegisterModules();
+    EnvironmentUtils.register();
   }
 
   /**
