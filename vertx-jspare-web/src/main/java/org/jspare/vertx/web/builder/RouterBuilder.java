@@ -19,10 +19,8 @@ import static org.jspare.core.container.Environment.my;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -146,7 +144,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
    * @return the router builder
    */
   @Setter
-  private Set<Handler<RoutingContext>> handlers;
+  private List<Handler<RoutingContext>> handlers;
 
   /**
    * Handler class.
@@ -211,7 +209,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
    * @return the router builder
    */
   @Setter
-  private Set<Class<?>> routes;
+  private List<Class<?>> routes;
 
   /**
    * Skip routes.
@@ -228,7 +226,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
    * @return the router builder
    */
   @Setter
-  private Set<Class<?>> skipRoutes;
+  private List<Class<?>> skipRoutes;
 
   /**
    * Route packages.
@@ -245,7 +243,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
    * @return the router builder
    */
   @Setter
-  private Set<String> routePackages;
+  private List<String> routePackages;
 
   /**
    * Instantiates a new router builder.
@@ -259,11 +257,11 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 
     this.vertx = vertx;
     this.router = router;
-    handlers = new HashSet<>();
+    handlers = new ArrayList<>();
     scanClasspath = false;
-    routePackages = new HashSet<>();
-    routes = new HashSet<>();
-    skipRoutes = new HashSet<>();
+    routePackages = new ArrayList<>();
+    routes = new ArrayList<>();
+    skipRoutes = new ArrayList<>();
     handlerClass = DefaultHandler.class;
     sockJSHandlerOptions = new SockJSHandlerOptions();
     authHandlerMap = new HashMap<>();
