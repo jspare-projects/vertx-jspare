@@ -51,12 +51,6 @@ import lombok.extern.slf4j.Slf4j;
  *          the handler data
  */
 
-/**
- * Instantiates a new default handler.
- *
- * @param handlerData
- *          the handler data
- */
 @AllArgsConstructor
 public class DefaultHandler implements Handler<RoutingContext> {
 
@@ -75,9 +69,12 @@ public class DefaultHandler implements Handler<RoutingContext> {
 
       // Handle unhandled excetion
       context.vertx().exceptionHandler(t -> {
+        
+        if(!context.response().ended()){
 
-        context.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
-            .end(ExceptionUtils.getStackTrace(t));
+          context.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
+          .end(ExceptionUtils.getStackTrace(t));
+        }
       });
 
       Object newInstance = instantiateHandler();
