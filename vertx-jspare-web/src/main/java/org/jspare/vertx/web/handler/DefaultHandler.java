@@ -27,7 +27,6 @@ import org.jspare.vertx.web.annotation.handling.ArrayModelParser;
 import org.jspare.vertx.web.annotation.handling.Header;
 import org.jspare.vertx.web.annotation.handling.MapModel;
 import org.jspare.vertx.web.annotation.handling.MapModelParser;
-import org.jspare.vertx.web.annotation.handling.Model;
 import org.jspare.vertx.web.builder.HandlerData;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -35,6 +34,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import lombok.AllArgsConstructor;
@@ -72,20 +72,13 @@ public class DefaultHandler implements Handler<RoutingContext> {
         
         if(!context.response().ended()){
 
-          context.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
-          .end(ExceptionUtils.getStackTrace(t));
+          context.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()).end(ExceptionUtils.getStackTrace(t));
         }
       });
 
       Object newInstance = instantiateHandler();
 
       setHandlingParameters(context, newInstance);
-
-      // Wrap bodyEndHandler to share routingContext
-      handlerData.bodyEndHandler().forEach(h -> context.addBodyEndHandler(event -> {
-
-        h.handle(context);
-      }));
 
       Object[] parameters = collectParameters(context);
 
@@ -112,7 +105,7 @@ public class DefaultHandler implements Handler<RoutingContext> {
 
       t = t.getCause();
     }
-    log.info("Error: {}", handlerData.toStringLine());
+    log.debug("Error: {}", handlerData.toStringLine());
     log.error(t.getMessage(), t);
     routingContext.response().setStatusCode(500).end(t.toString());
   }
@@ -169,7 +162,6 @@ public class DefaultHandler implements Handler<RoutingContext> {
 
       return routingContext.request();
     }
-
     if (parameter.getType().equals(HttpServerResponse.class)) {
 
       return routingContext.response();
@@ -180,41 +172,27 @@ public class DefaultHandler implements Handler<RoutingContext> {
       }
       return routingContext.getBodyAsJson();
     }
+    if (parameter.getType().equals(JsonArray.class)) {
+      if (StringUtils.isEmpty(routingContext.getBody().toString())) {
+        return null;
+      }
+      return routingContext.getBodyAsJsonArray();
+    }
     if (StringUtils.isNotEmpty(routingContext.request().getParam(parameter.getName()))) {
 
       return routingContext.request().getParam(parameter.getName());
     }
-
     if (parameter.isAnnotationPresent(ArrayModel.class)) {
 
       ArrayModel am = parameter.getAnnotation(ArrayModel.class);
       Class<?> clazz = am.value();
       return ArrayModelParser.toList(routingContext.getBody().toString(), clazz);
     }
-
     if (parameter.isAnnotationPresent(MapModel.class)) {
 
       MapModel mm = parameter.getAnnotation(MapModel.class);
       Class<?> value = mm.value();
       return MapModelParser.toMap(routingContext.getBody().toString(), value);
-    }
-
-    if (parameter.getType().getPackage().getName().endsWith(".model")
-        || parameter.getType().isAnnotationPresent(Model.class) || parameter.isAnnotationPresent(Model.class)) {
-
-      try {
-        if (routingContext.getBody() == null) {
-
-          return null;
-        }
-
-        return Json.decodeValue(routingContext.getBody().toString(), parameter.getType());
-      } catch (SerializationException e) {
-
-        log.debug("Invalid content of body for class [{}] on parameter [{}]", parameter.getClass(),
-            parameter.getName());
-        return null;
-      }
     }
     if (parameter.isAnnotationPresent(org.jspare.vertx.web.annotation.handling.Parameter.class)) {
 
@@ -238,7 +216,19 @@ public class DefaultHandler implements Handler<RoutingContext> {
       return routingContext.request().getHeader(headerName);
     }
 
-    return null;
+    try {
+      if (routingContext.getBody() == null) {
+
+        return null;
+      }
+
+      return Json.decodeValue(routingContext.getBody().toString(), parameter.getType());
+    } catch (SerializationException e) {
+
+      log.debug("Invalid content of body for class [{}] on parameter [{}]", parameter.getClass(),
+          parameter.getName());
+      return null;
+    }
   }
 
   /**

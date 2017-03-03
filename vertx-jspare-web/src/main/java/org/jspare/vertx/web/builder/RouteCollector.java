@@ -40,7 +40,6 @@ import org.jspare.vertx.web.annotation.handler.SockJsHandler;
 import org.jspare.vertx.web.annotation.method.All;
 import org.jspare.vertx.web.annotation.subrouter.IgnoreSubRouter;
 import org.jspare.vertx.web.annotation.subrouter.SubRouter;
-import org.jspare.vertx.web.handler.BodyEndHandler;
 
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
@@ -95,8 +94,6 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
           : StringUtils.EMPTY;
       String produces = method.isAnnotationPresent(Produces.class) ? method.getAnnotation(Produces.class).value()
           : StringUtils.EMPTY;
-      List<BodyEndHandler> bodyEndHandler = collectBodyEndHandlers(method);
-
 
       AuthHandler authHandler = null;
 
@@ -123,7 +120,7 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
       }
 
       HandlerData defaultHandlerData = new HandlerData().clazz(clazz).method(method).consumes(consumes)
-          .produces(produces).bodyEndHandler(bodyEndHandler).authHandler(authHandler)
+          .produces(produces).authHandler(authHandler)
           .routeHandlerClass(routeHandlerClass);
 
       if (hasHttpMethodsPresents(method)) {
@@ -211,31 +208,6 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
       SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     Method method = annotation.annotationType().getMethod(methodRef);
     return (T) method.invoke(annotation);
-  }
-
-  /**
-   * Collect body end handlers.
-   *
-   * @param method
-   *          the method
-   * @return the list
-   */
-  private List<BodyEndHandler> collectBodyEndHandlers(Method method) {
-
-    List<BodyEndHandler> handlers = new ArrayList<>();
-    if (method.isAnnotationPresent(org.jspare.vertx.web.annotation.handler.BodyEndHandler.class)) {
-
-      Arrays.asList(method.getAnnotation(org.jspare.vertx.web.annotation.handler.BodyEndHandler.class).value())
-          .forEach(c -> {
-            try {
-              handlers.add(c.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
-
-              log.error("Cannot add bodyEndHandler [{}] to route instead of [{}]", c.getName(), method.getName());
-            }
-          });
-    }
-    return handlers;
   }
 
   /**

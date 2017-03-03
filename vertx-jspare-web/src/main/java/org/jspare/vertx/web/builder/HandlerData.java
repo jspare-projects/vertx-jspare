@@ -16,10 +16,8 @@
 package org.jspare.vertx.web.builder;
 
 import java.lang.reflect.Method;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.jspare.vertx.web.handler.BodyEndHandler;
 
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
@@ -67,8 +65,6 @@ import lombok.experimental.Accessors;
  *          the consumes
  * @param produces
  *          the produces
- * @param bodyEndHandler
- *          the body end handler
  * @param authHandler
  *          the auth handler
  * @param documentation
@@ -116,9 +112,6 @@ public class HandlerData implements Cloneable {
 
   /** The produces. */
   private String produces;
-
-  /** The body end handler. */
-  private List<BodyEndHandler> bodyEndHandler;
 
   /** The auth handler. */
   private AuthHandler authHandler;

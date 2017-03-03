@@ -42,7 +42,7 @@ import io.vertx.ext.web.handler.sockjs.SockJSSocket;
 import lombok.Setter;
 
 /**
- * The Class APIHandler.
+ * Use as helper to handle one Route invocation.
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
