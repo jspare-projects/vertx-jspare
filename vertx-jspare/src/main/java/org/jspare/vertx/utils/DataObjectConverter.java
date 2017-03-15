@@ -15,8 +15,6 @@
  */
 package org.jspare.vertx.utils;
 
-import java.util.Arrays;
-
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
@@ -34,10 +32,8 @@ public class DataObjectConverter {
    * entries of the other JSON object into this object.
    * </p>
    *
-   * @param obj
-   *          the obj
-   * @param json
-   *          the json
+   * @param obj  the obj
+   * @param json the json
    * @return the json object
    */
   public JsonObject toJson(Object obj, JsonObject json) {
@@ -48,8 +44,7 @@ public class DataObjectConverter {
   /**
    * Serialize Object to JsonObject
    *
-   * @param obj
-   *          the obj
+   * @param obj the obj
    * @return the json object
    */
   public JsonObject toJson(Object obj) {
@@ -63,40 +58,26 @@ public class DataObjectConverter {
   /**
    * From json.
    *
-   * @param <T> the generic type
-   * @param obj the obj
+   * @param <T>  the generic type
+   * @param obj  the obj
    * @param json the json
    * @return the t
    */
   public <T> T fromJson(JsonObject json, T obj) {
 
-    String encode = json.encode();
-    @SuppressWarnings("unchecked")
-    T t = (T) Json.decodeValue(encode, obj.getClass());
-    
-    Arrays.asList(obj.getClass().getDeclaredFields()).forEach(field -> {
-      try {
-
-        field.setAccessible(true);
-        Object value = field.get(t);
-        field.set(obj, value);
-      } catch (IllegalArgumentException | IllegalAccessException e) {
-        log.warn("Ignoring field {} because has follow error: {}", field.getName(), e.getMessage());
-        log.error(e.getMessage(), e);
-      }
-    });
+    obj = Json.decodeValue(json.encode(), (Class<T>) obj.getClass());
     return obj;
   }
-  
+
   /**
    * From json.
    *
-   * @param <T> the generic type
-   * @param json the json
+   * @param <T>   the generic type
+   * @param json  the json
    * @param clazz the clazz
    * @return the t
    */
-  public <T> T fromJson(JsonObject json, Class<T> clazz){
+  public <T> T fromJson(JsonObject json, Class<T> clazz) {
     String encode = json.encode();
     return Json.decodeValue(encode, clazz);
   }

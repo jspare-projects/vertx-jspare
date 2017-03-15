@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jspare.vertx</groupId>
@@ -57,7 +57,7 @@
     <logback.version>1.1.6</logback.version>
     <junit.version>4.12</junit.version>
     <jspare.core.version>2.1.0</jspare.core.version>
-    <vertx.version>3.3.3</vertx.version>
+    <vertx.version>3.4.0</vertx.version>
   </properties>
 
   <build>
@@ -102,13 +102,11 @@
         <artifactId>cobertura-maven-plugin</artifactId>
         <version>${cobertura.version}</version>
         <configuration>
-          <configuration>
-            <formats>
-              <format>xml</format>
-            </formats>
-            <maxmem>256m</maxmem>
-            <aggregate>true</aggregate>
-          </configuration>
+          <formats>
+            <format>xml</format>
+          </formats>
+          <maxmem>256m</maxmem>
+          <aggregate>true</aggregate>
         </configuration>
         <executions>
           <execution>
@@ -125,11 +123,6 @@
 
   <reporting>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.5</version>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
