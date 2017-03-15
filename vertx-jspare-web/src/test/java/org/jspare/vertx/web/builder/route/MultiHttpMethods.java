@@ -16,17 +16,8 @@
 package org.jspare.vertx.web.builder.route;
 
 import org.jspare.vertx.web.annotation.handler.Handler;
-import org.jspare.vertx.web.annotation.method.All;
-import org.jspare.vertx.web.annotation.method.Connect;
-import org.jspare.vertx.web.annotation.method.Delete;
-import org.jspare.vertx.web.annotation.method.Get;
-import org.jspare.vertx.web.annotation.method.Head;
-import org.jspare.vertx.web.annotation.method.Options;
-import org.jspare.vertx.web.annotation.method.Other;
-import org.jspare.vertx.web.annotation.method.Path;
-import org.jspare.vertx.web.annotation.method.Post;
-import org.jspare.vertx.web.annotation.method.Put;
-import org.jspare.vertx.web.annotation.method.Trace;
+import org.jspare.vertx.web.annotation.method.*;
+import org.jspare.vertx.web.annotation.method.Patch;
 import org.jspare.vertx.web.handler.APIHandler;
 
 /**
@@ -47,7 +38,7 @@ public class MultiHttpMethods extends APIHandler {
   @Head
   @Options
   @Other
-  @Path
+  @Patch
   @Put
   @Trace
   @Handler
@@ -65,7 +56,7 @@ public class MultiHttpMethods extends APIHandler {
   @Head
   @Options
   @Other
-  @Path
+  @Patch
   @Put
   @Trace
   @Handler

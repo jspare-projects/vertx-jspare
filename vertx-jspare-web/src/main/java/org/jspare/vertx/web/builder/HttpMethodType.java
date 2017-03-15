@@ -22,7 +22,7 @@ import org.jspare.vertx.web.annotation.method.Get;
 import org.jspare.vertx.web.annotation.method.Head;
 import org.jspare.vertx.web.annotation.method.Options;
 import org.jspare.vertx.web.annotation.method.Other;
-import org.jspare.vertx.web.annotation.method.Path;
+import org.jspare.vertx.web.annotation.method.Patch;
 import org.jspare.vertx.web.annotation.method.Post;
 import org.jspare.vertx.web.annotation.method.Put;
 import org.jspare.vertx.web.annotation.method.Trace;
@@ -53,7 +53,7 @@ public enum HttpMethodType {
   /** The other. */
   OTHER(Other.class),
   /** The path. */
-  PATH(Path.class),
+  PATH(Patch.class),
   /** The post. */
   POST(Post.class),
   /** The put. */
