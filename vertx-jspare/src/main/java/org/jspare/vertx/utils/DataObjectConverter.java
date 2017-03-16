@@ -15,11 +15,15 @@
  */
 package org.jspare.vertx.utils;
 
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.ObjectUtils;
 
 @Slf4j
 @UtilityClass
@@ -63,9 +67,9 @@ public class DataObjectConverter {
    * @param json the json
    * @return the t
    */
+  @SneakyThrows
   public <T> T fromJson(JsonObject json, T obj) {
-
-    obj = Json.decodeValue(json.encode(), (Class<T>) obj.getClass());
+    BeanUtils.copyProperties(obj, Json.decodeValue(json.encode(), (Class<T>) obj.getClass()));
     return obj;
   }
 
