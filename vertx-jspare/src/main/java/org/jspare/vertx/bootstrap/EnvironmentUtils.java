@@ -15,6 +15,9 @@
  */
 package org.jspare.vertx.bootstrap;
 
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.jspare.core.container.Environment;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -53,7 +56,9 @@ public class EnvironmentUtils {
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         //Safe register VertxJsonModule on Mapper
-        .registerModule(new VertxJsonModule())
-        .findAndRegisterModules();
+        .registerModule(new Jdk8Module())
+        .registerModule(new JavaTimeModule())
+        .registerModule(new ParameterNamesModule())
+        .registerModule(new VertxJsonModule());
   }
 }
