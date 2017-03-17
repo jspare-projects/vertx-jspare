@@ -20,12 +20,7 @@ public class VertxJsonModuleTest {
   public void testJsonModule() {
 
     Json.mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector())
-      .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY).setSerializationInclusion(JsonInclude.Include.NON_NULL)
-      .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-      .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-      .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-      .registerModule(new VertxJsonModule())
-      .findAndRegisterModules();
+      .registerModule(new VertxJsonModule());
 
     String jsonAsString = "{ \"value\" : { \"value\" : \"teste\" } }";
     Value value = Json.decodeValue(jsonAsString, Value.class);

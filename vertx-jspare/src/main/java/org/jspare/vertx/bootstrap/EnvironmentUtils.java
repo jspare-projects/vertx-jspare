@@ -26,16 +26,17 @@ import com.xebia.jacksonlombok.JacksonLombokAnnotationIntrospector;
 
 import io.vertx.core.json.Json;
 import lombok.experimental.UtilityClass;
+import org.jspare.vertx.ext.jackson.datatype.VertxJsonModule;
 
 /**
  * Instantiates a new environment utils.
- * 
+ *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @UtilityClass
 public class EnvironmentUtils {
-  
-  public final String VERTX_HOLDER = "__vertxHolder"; 
+
+  public final String VERTX_HOLDER = "__vertxHolder";
 
   /**
    * Register.
@@ -51,6 +52,8 @@ public class EnvironmentUtils {
         .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        //Safe register VertxJsonModule on Mapper
+        .registerModule(new VertxJsonModule())
         .findAndRegisterModules();
   }
 }
