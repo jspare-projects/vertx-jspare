@@ -39,6 +39,17 @@ import lombok.SneakyThrows;
  * <p>
  * Used for load {@link HttpServer } and endpoints to simple rest api.
  * </p>
+ * <p><This module use follow Handler by default on {@link io.vertx.ext.web.Route}</p>
+ *
+ *  <ul>
+ *      <li>{@link SessionHandler} with {@link LocalSessionStore}</li>
+ *      <li>{@link CookieHandler}</li>
+ *      <li>{@link BodyHandler} with FileUploads directory setted to UPLOAD_DIRECTORY</li>
+ *      <li>{@link ResponseTimeHandler}</li>
+ *      <li>{@link LoggerHandler}</li>
+ *  </ul>
+ *
+ *  <p>Also is possible set CORS annotating the {@link org.jspare.vertx.experimental.AutoConfiguration} class with {@link Cors} annotation.</p>
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
@@ -47,6 +58,7 @@ public class HttpServerModule implements Configurable {
 
   /** The Constant NAME. */
   public static final String NAME = "httpServer";
+  public static final String UPLOAD_DIRECTORY = "file-uploads";
 
   private Verticle verticle    ;
 
@@ -124,10 +136,10 @@ public class HttpServerModule implements Configurable {
     RouterBuilder.create(verticle.getVertx(), router)
         .addHandler(SessionHandler.create(LocalSessionStore.create(verticle.getVertx())))
         .addHandler(CookieHandler.create())
-        .addHandler(BodyHandler.create())
+        .addHandler(BodyHandler.create(UPLOAD_DIRECTORY).setDeleteUploadedFilesOnEnd(true))
         .addHandler(ResponseTimeHandler.create())
+        .addHandler(LoggerHandler.create())
         .scanClasspath(true)
         .build();
   }
-
 }
