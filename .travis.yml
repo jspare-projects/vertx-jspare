@@ -6,6 +6,7 @@ addons:
     packages:
     - oracle-java8-installer
 script: mvn test
+before_install:
+ - chmod +x after_success.sh
 after_success:
-- mvn clean cobertura:cobertura coveralls:report
-- ./after_success.sh
+- mvn clean deploy:deploy -q --settings settings.xml
