@@ -39,7 +39,7 @@ import lombok.SneakyThrows;
  * <p>
  * Used for load {@link HttpServer } and endpoints to simple rest api.
  * </p>
- * <p><This module use follow Handler by default on {@link io.vertx.ext.web.Route}</p>
+ * <p>This module use follow Handler by default on {@link io.vertx.ext.web.Route}.</p>
  *
  *  <ul>
  *      <li>{@link SessionHandler} with {@link LocalSessionStore}</li>

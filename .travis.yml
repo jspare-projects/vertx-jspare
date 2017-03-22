@@ -9,4 +9,4 @@ script: mvn test
 before_install:
  - chmod +x after_success.sh
 after_success:
-- mvn clean deploy:deploy -q --settings settings.xml
+- ./after_success.sh

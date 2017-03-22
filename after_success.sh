@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mvn clean deploy:deploy -q --settings settings.xml
+mvn clean install deploy:deploy -q --settings settings.xml
