@@ -15,20 +15,6 @@
  */
 package org.jspare.vertx.web.handler;
 
-import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
-
-import org.apache.commons.lang.SerializationException;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.jspare.core.container.ContainerUtils;
-import org.jspare.vertx.web.annotation.handling.ArrayModel;
-import org.jspare.vertx.web.annotation.handling.ArrayModelParser;
-import org.jspare.vertx.web.annotation.handling.Header;
-import org.jspare.vertx.web.annotation.handling.MapModel;
-import org.jspare.vertx.web.annotation.handling.MapModelParser;
-import org.jspare.vertx.web.builder.HandlerData;
-
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerRequest;
@@ -40,12 +26,25 @@ import io.vertx.ext.web.RoutingContext;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.SerializationException;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.jspare.core.container.ContainerUtils;
+import org.jspare.vertx.web.annotation.handling.*;
+import org.jspare.vertx.web.builder.HandlerData;
 
-/** The Constant log. */
+import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
+
+/**
+ * The Constant log.
+ */
 @Slf4j
 
 /**
  * Instantiates a new default handler.
+ *
+ * <p>This {@link Handler} are responsible to route one mapped by Vertx Jspare Framework. Every request is stateless on Handler controller.</p>
  *
  * @param handlerData
  *          the handler data
@@ -54,7 +53,11 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class DefaultHandler implements Handler<RoutingContext> {
 
-  /** The handler data. */
+  public static final String HANDLER_DATA = "__HANDLER_DATA_CTX";
+
+  /**
+   * The handler data.
+   */
   protected final HandlerData handlerData;
 
   /*
@@ -67,15 +70,19 @@ public class DefaultHandler implements Handler<RoutingContext> {
 
     try {
 
+      // Put handler data on RoutingContext for future handlers
+      context.put(HANDLER_DATA, handlerData);
+
       // Handle unhandled excetion
       context.vertx().exceptionHandler(t -> {
-        
-        if(!context.response().ended()){
+
+        if (!context.response().ended()) {
 
           context.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()).end(ExceptionUtils.getStackTrace(t));
         }
       });
 
+      // Instantiate Handler Class
       Object newInstance = instantiateHandler();
 
       setHandlingParameters(context, newInstance);
@@ -94,10 +101,8 @@ public class DefaultHandler implements Handler<RoutingContext> {
   /**
    * Catch invoke.
    *
-   * @param routingContext
-   *          the routing context
-   * @param t
-   *          the t
+   * @param routingContext the routing context
+   * @param t              the t
    */
   protected void catchInvoke(RoutingContext routingContext, Throwable t) {
     // Any server error return internal server error
@@ -114,8 +119,7 @@ public class DefaultHandler implements Handler<RoutingContext> {
    * Collect parameters. This method is responsible to collect all parameters to
    * send on handler method, resolving parameters and dependencies.
    *
-   * @param routingContext
-   *          the routing context
+   * @param routingContext the routing context
    * @return the object[]
    */
   protected Object[] collectParameters(RoutingContext routingContext) {
@@ -146,10 +150,8 @@ public class DefaultHandler implements Handler<RoutingContext> {
   /**
    * Resolve parameter.
    *
-   * @param parameter
-   *          the parameter
-   * @param routingContext
-   *          the routing context
+   * @param parameter      the parameter
+   * @param routingContext the routing context
    * @return the object
    */
   protected Object resolveParameter(Parameter parameter, RoutingContext routingContext) {
@@ -226,7 +228,7 @@ public class DefaultHandler implements Handler<RoutingContext> {
     } catch (SerializationException e) {
 
       log.debug("Invalid content of body for class [{}] on parameter [{}]", parameter.getClass(),
-          parameter.getName());
+        parameter.getName());
       return null;
     }
   }
@@ -234,23 +236,19 @@ public class DefaultHandler implements Handler<RoutingContext> {
   /**
    * Send status.
    *
-   * @param routingContext
-   *          the routing context
-   * @param status
-   *          the status
+   * @param routingContext the routing context
+   * @param status         the status
    */
   protected void sendStatus(RoutingContext routingContext, HttpResponseStatus status) {
     routingContext.response().setStatusCode(status.code()).setStatusMessage(status.reasonPhrase())
-        .end(status.reasonPhrase());
+      .end(status.reasonPhrase());
   }
 
   /**
    * Sets the handling parameters.
    *
-   * @param routingContext
-   *          the routing context
-   * @param newInstance
-   *          the new instance
+   * @param routingContext the routing context
+   * @param newInstance    the new instance
    */
   protected void setHandlingParameters(RoutingContext routingContext, Object newInstance) {
     // If Route is handling by abstract Handling inject some resources

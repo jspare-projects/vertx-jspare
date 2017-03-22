@@ -29,10 +29,10 @@ import io.vertx.ext.web.Router;
  *
  * <p>
  * The namespace annotation is used for mapping one namespace of one
- * {@link APIHandler}. When one type are annotatedwith this annotation and
+ * {@link APIHandler}. When one type are annotated with this annotation and
  * registered on {@link Router} when your HttpServer will be started your
  * mappings will be registered with prefix defined on value field, if your field
- * are empty the convetion that follow will be used:
+ * are empty the convention that follow will be used:
  *
  * <br>
  * [Prefix]Controller: [prefix]/[your mapping] <b>e.g: UsersController:
