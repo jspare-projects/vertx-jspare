@@ -28,7 +28,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.jspare.core.annotation.Resource;
 import org.jspare.vertx.builder.Collector;
 import org.jspare.vertx.web.annotation.auth.Auth;
 import org.jspare.vertx.web.annotation.auth.IgnoreAuth;
@@ -50,12 +49,11 @@ import lombok.extern.slf4j.Slf4j;
 
 /** The Constant log. */
 @Slf4j
-@Resource
 public class RouteCollector implements Collector<Collection<HandlerData>> {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.jspare.vertx.builder.Collector#collect(java.lang.Class,
    * java.lang.Object[])
    */

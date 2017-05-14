@@ -25,7 +25,6 @@ import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.jspare.core.annotation.Resource;
 
 import io.vertx.core.json.JsonObject;
 import lombok.Getter;
@@ -37,7 +36,6 @@ import lombok.SneakyThrows;
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-@Resource
 public class JsonObjectLoader {
 
   /** The Constant CONVERTER_PATTERN. */

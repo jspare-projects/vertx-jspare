@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jspare.vertx</groupId>
   <artifactId>vertx-jspare-parent</artifactId>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>JSpare Vert.x Parent</name>
@@ -56,7 +56,7 @@
     <lombok.version>1.16.8</lombok.version>
     <logback.version>1.1.6</logback.version>
     <junit.version>4.12</junit.version>
-    <jspare.core.version>2.1.0</jspare.core.version>
+    <jspare.core.version>3.0.0-SNAPSHOT</jspare.core.version>
     <vertx.version>3.4.1</vertx.version>
   </properties>
 

@@ -15,55 +15,45 @@
  */
 package org.jspare.vertx.injector;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-
-import org.jspare.core.container.InjectorStrategy;
-import org.jspare.core.container.MySupport;
-import org.jspare.vertx.annotation.VertxInject;
+import io.vertx.core.Vertx;
+import io.vertx.serviceproxy.ProxyHelper;
+import org.jspare.core.InjectorAdapter;
+import org.jspare.core.MySupport;
 import org.jspare.vertx.annotation.VertxProxyInject;
 import org.jspare.vertx.builder.ProxyServiceUtils;
 
-import io.vertx.core.Vertx;
-import io.vertx.serviceproxy.ProxyHelper;
-import lombok.extern.slf4j.Slf4j;
+import javax.inject.Inject;
+import java.lang.reflect.Field;
 
 /**
  * The Class VertxProxyInjectStrategy.
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-@Slf4j
-public class VertxProxyInjectStrategy extends MySupport implements InjectorStrategy {
+public class VertxProxyInjectStrategy extends MySupport implements InjectorAdapter {
 
-  /** The vertx. */
-  @VertxInject
+  /**
+   * The vertx.
+   */
+  @Inject
   private Vertx vertx;
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.jspare.core.container.InjectorStrategy#inject(java.lang.Object,
-   * java.lang.reflect.Field)
-   */
   @Override
-  public void inject(Object obj, Field field) {
+  public boolean isInjectable(Field field) {
+    return field.isAnnotationPresent(VertxProxyInject.class);
+  }
+
+  @Override
+  public void inject(Object instance, Field field) {
 
     try {
-
       VertxProxyInject proxyHandler = field.getAnnotation(VertxProxyInject.class);
       String address = ProxyServiceUtils.getAddress(proxyHandler, field.getType());
       Object value = ProxyHelper.createProxy(field.getType(), vertx, address);
       field.setAccessible(true);
-      field.set(obj, value);
-    } catch (IllegalArgumentException | IllegalAccessException | IllegalStateException e) {
-
-      log.error("Cannot create proxy to {}", field.getName(), e);
+      field.set(instance, value);
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
     }
-  }
-
-  @Override
-  public Class<? extends Annotation> annotationType() {
-    return VertxProxyInject.class;
   }
 }

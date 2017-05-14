@@ -13,26 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.web.experimental;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import io.vertx.ext.web.handler.*;
-import org.jspare.vertx.experimental.Configurable;
-import org.jspare.vertx.experimental.Module;
-import org.jspare.vertx.web.builder.HttpServerBuilder;
-import org.jspare.vertx.web.builder.RouterBuilder;
+package org.jspare.vertx.web.module;
 
 import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.*;
 import io.vertx.ext.web.sstore.LocalSessionStore;
 import lombok.SneakyThrows;
+import org.jspare.vertx.autoconfiguration.Configurable;
+import org.jspare.vertx.web.builder.HttpServerBuilder;
+import org.jspare.vertx.web.builder.RouterBuilder;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The Class HttpServerModule.
@@ -49,11 +47,8 @@ import lombok.SneakyThrows;
  *      <li>{@link LoggerHandler}</li>
  *  </ul>
  *
- *  <p>Also is possible set CORS annotating the {@link org.jspare.vertx.experimental.AutoConfiguration} class with {@link Cors} annotation.</p>
- *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-@Module(HttpServerModule.NAME)
 public class HttpServerModule implements Configurable {
 
   /** The Constant NAME. */
@@ -66,7 +61,7 @@ public class HttpServerModule implements Configurable {
    * (non-Javadoc)
    *
    * @see
-   * org.jspare.vertx.experimental.Configurable#execute(io.vertx.core.Verticle,
+   * Configurable#execute(io.vertx.core.Verticle,
    * java.lang.String[])
    */
   @Override

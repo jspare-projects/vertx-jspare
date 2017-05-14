@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 JSpare.org.
+ * Copyright 2017 JSpare.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,11 +15,6 @@
  */
 package org.jspare.vertx.bootstrap;
 
-import static org.jspare.core.container.Environment.my;
-
-import org.jspare.core.bootstrap.Runner;
-import org.jspare.core.container.Context;
-
 import io.vertx.core.Launcher;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -29,13 +24,12 @@ import io.vertx.core.VertxOptions;
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-public class VertxJspareLauncher extends Launcher implements Runner {
+public class VertxJspareLauncher extends Launcher {
 
   /**
    * Main entry point.
    *
-   * @param args
-   *          the user command line arguments.
+   * @param args the user command line arguments.
    */
   public static void main(String[] args) {
     new VertxJspareLauncher().dispatch(args);
@@ -43,38 +37,21 @@ public class VertxJspareLauncher extends Launcher implements Runner {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see io.vertx.core.Launcher#afterStartingVertx(io.vertx.core.Vertx)
    */
   @Override
   public void afterStartingVertx(Vertx vertx) {
-
-    my(Context.class).put(EnvironmentUtils.VERTX_HOLDER, vertx);
-
-    run();
+    EnvironmentUtils.bindInterfaces(vertx);
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see io.vertx.core.Launcher#beforeStartingVertx(io.vertx.core.VertxOptions)
    */
   @Override
   public void beforeStartingVertx(VertxOptions options) {
-
-    setup();
-
-    mySupport();
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.jspare.core.bootstrap.Runner#setup()
-   */
-  @Override
-  public void setup() {
-
-    EnvironmentUtils.register();
+    EnvironmentUtils.setup();
   }
 }

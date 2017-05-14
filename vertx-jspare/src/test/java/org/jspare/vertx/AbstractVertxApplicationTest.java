@@ -15,6 +15,9 @@
  */
 package org.jspare.vertx;
 
+import io.vertx.core.Vertx;
+import org.jspare.core.Environment;
+import org.jspare.vertx.bootstrap.EnvironmentUtils;
 import org.jspare.vertx.bootstrap.VertxRunner;
 import org.junit.Before;
 
@@ -23,23 +26,16 @@ import org.junit.Before;
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-public class AbstractVertxApplicationTest extends VertxRunner {
+public class AbstractVertxApplicationTest  {
 
   /**
    * Load.
    */
   @Before
   public void load() {
-
-    run();
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see io.vertx.core.AbstractVerticle#start()
-   */
-  @Override
-  public void start() {
+    Environment.create();
+    Vertx vertx = Vertx.vertx();
+    EnvironmentUtils.bindInterfaces(vertx);
+    Environment.inject(this);
   }
 }

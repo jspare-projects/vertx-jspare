@@ -23,7 +23,7 @@ import lombok.experimental.UtilityClass;
 
 /**
  * Instantiates a new proxy service utils.
- * 
+ *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @UtilityClass
@@ -33,7 +33,7 @@ public class ProxyServiceUtils {
    * Gets the address.
    *
    * @param vertxProxyInject
-   *          the vertx proxy inject
+   *          the vertx proxy my
    * @param serviceType
    *          the service type
    * @return the address

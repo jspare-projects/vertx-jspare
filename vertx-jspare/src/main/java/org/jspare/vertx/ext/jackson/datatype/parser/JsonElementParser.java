@@ -403,6 +403,6 @@ public class JsonElementParser extends ParserMinimalBase {
 
     @Override
     protected void _handleEOF() throws JsonParseException {
-        _throwInternal(); // should never get called
+        _throwInternal(); // should never inject called
     }
 }

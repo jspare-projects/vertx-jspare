@@ -15,11 +15,6 @@
  */
 package org.jspare.vertx.builder;
 
-import static org.jspare.core.container.Environment.my;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import io.github.lukehutch.fastclasspathscanner.matchprocessor.MethodAnnotationMatchProcessor;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
@@ -27,6 +22,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.jspare.core.Environment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class EventBusBuilder.
@@ -37,7 +36,7 @@ import lombok.experimental.Accessors;
 
 /*
  * (non-Javadoc)
- * 
+ *
  * @see java.lang.Object#hashCode()
  */
 @EqualsAndHashCode(callSuper = false)
@@ -133,7 +132,7 @@ public class EventBusBuilder extends AbstractBuilder<Void> {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.jspare.vertx.builder.AbstractBuilder#build()
    */
   @Override
@@ -158,7 +157,7 @@ public class EventBusBuilder extends AbstractBuilder<Void> {
     List<EventBusData> consumers = new ArrayList<>();
 
     // Iterate eventBusClasses and add consumers to will process
-    classes.forEach(c -> consumers.addAll(my(EventBusCollector.class).collect(c)));
+    classes.forEach(c -> consumers.addAll(Environment.my(EventBusCollector.class).collect(c)));
 
     // Process consumers
     EventBus eventBus = vertx.eventBus();

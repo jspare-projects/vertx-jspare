@@ -15,20 +15,6 @@
  */
 package org.jspare.vertx.web.builder;
 
-import static org.jspare.core.container.Environment.my;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import org.jspare.vertx.builder.AbstractBuilder;
-import org.jspare.vertx.builder.ClasspathScannerUtils;
-import org.jspare.vertx.web.handler.DefaultHandler;
-
 import io.github.lukehutch.fastclasspathscanner.matchprocessor.MethodAnnotationMatchProcessor;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -42,6 +28,18 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.jspare.core.Environment;
+import org.jspare.vertx.builder.AbstractBuilder;
+import org.jspare.vertx.builder.ClasspathScannerUtils;
+import org.jspare.vertx.web.handler.DefaultHandler;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /** The Constant log. */
 @Slf4j
@@ -49,7 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /*
  * (non-Javadoc)
- * 
+ *
  * @see java.lang.Object#hashCode()
  */
 @EqualsAndHashCode(callSuper = false)
@@ -334,7 +332,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.jspare.vertx.builder.AbstractBuilder#build()
    */
   @Override
@@ -351,13 +349,13 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 
     List<HandlerData> handlerDataList = new ArrayList<>();
     routes.stream().filter(c -> !skipRoutes.contains(c)).collect(Collectors.toSet())
-        .forEach(c -> handlerDataList.addAll(my(RouteCollector.class).collect(c, this)));
+        .forEach(c -> handlerDataList.addAll(Environment.my(RouteCollector.class).collect(c, this)));
 
     handlerDataList.forEach(hd -> {
       log.debug("Routing handler {}", hd.toStringLine());
       HandlerWrapper.prepareHandler(router, hd);
     });
-    
+
     return router;
   }
 

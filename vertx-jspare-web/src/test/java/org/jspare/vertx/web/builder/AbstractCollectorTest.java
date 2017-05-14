@@ -15,13 +15,14 @@
  */
 package org.jspare.vertx.web.builder;
 
-import static org.jspare.core.container.Environment.my;
+import io.vertx.core.Vertx;
+import org.jspare.core.Environment;
+import org.jspare.vertx.bootstrap.EnvironmentUtils;
+import org.junit.Before;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import io.vertx.core.Vertx;
 
 /**
  * The Class AbstractCollectorTest.
@@ -34,6 +35,17 @@ public class AbstractCollectorTest {
   protected RouterBuilder builder = RouterBuilder.create(Vertx.vertx());
 
   /**
+   * Load.
+   */
+  @Before
+  public void load() {
+    Environment.create();
+    Vertx vertx = Vertx.vertx();
+    EnvironmentUtils.bindInterfaces(vertx);
+    Environment.inject(this);
+  }
+
+  /**
    * Collect.
    *
    * @param clazz
@@ -43,7 +55,7 @@ public class AbstractCollectorTest {
   protected List<HandlerData> collect(Class<?> clazz) {
 
     List<HandlerData> handlers = new ArrayList<>(
-        my(RouteCollector.class).collect(clazz, RouterBuilder.create(Vertx.vertx())));
+      Environment.my(RouteCollector.class).collect(clazz, RouterBuilder.create(Vertx.vertx())));
     Collections.sort(handlers, (o1, o2) -> o1.path().compareTo(o2.path()));
     return handlers;
   }

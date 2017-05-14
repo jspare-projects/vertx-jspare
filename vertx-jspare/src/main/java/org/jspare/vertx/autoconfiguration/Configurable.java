@@ -13,28 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.annotation;
+package org.jspare.vertx.autoconfiguration;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import org.apache.commons.lang.StringUtils;
+import io.vertx.core.Verticle;
 
 /**
- * The Interface VertxInject.
+ * An interface able to aggregate for auto boot when used
+ * {@link AutoConfiguration } feature.
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD })
-public @interface VertxInject {
+@FunctionalInterface
+public interface Configurable {
 
   /**
-   * Vertx options.
+   * Execute process.
    *
-   * @return the string
+   * @param verticle
+   *          the verticle
+   * @param args
+   *          the args
    */
-  String vertxOptions() default StringUtils.EMPTY;
+  void execute(Verticle verticle, String[] args);
 }

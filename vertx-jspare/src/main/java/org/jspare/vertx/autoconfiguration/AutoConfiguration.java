@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.experimental;
+package org.jspare.vertx.autoconfiguration;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,14 +28,14 @@ import org.jspare.vertx.bootstrap.VerticleInitializer;
  * modules descripted by value field.
  *
  * <code>
- *  &#64;AutoConfiguration(@Module("eventbus"))
+ *  &#64;AutoConfiguration(@Resource("eventbus"))
  *  public class SampleVerticle extends AutoConfigurationVerticle
  *  </code>
- * 
+ *
  * <b>Note</b>: This class is still considered experimental because we did not
  * perform all the tests or arrived at a stable version, but we understand that
  * the use of this will be advantageous.
- * 
+ *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  * @since 1.0.0
  */
@@ -48,5 +48,5 @@ public @interface AutoConfiguration {
    *
    * @return the module[]
    */
-  Module[] value();
+  Resource[] value();
 }
