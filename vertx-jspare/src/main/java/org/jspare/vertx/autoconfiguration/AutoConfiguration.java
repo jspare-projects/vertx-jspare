@@ -32,7 +32,7 @@ import org.jspare.vertx.bootstrap.VerticleInitializer;
  *  public class SampleVerticle extends AutoConfigurationVerticle
  *  </code>
  *
- * <b>Note</b>: This class is still considered experimental because we did not
+ * <b>Note</b>: This class is still considered autoconfiguration because we did not
  * perform all the tests or arrived at a stable version, but we understand that
  * the use of this will be advantageous.
  *
