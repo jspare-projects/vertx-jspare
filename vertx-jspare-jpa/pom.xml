@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+		<groupId>org.jspare.vertx</groupId>
+		<artifactId>vertx-jspare-parent</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+      <relativePath>../</relativePath>
+	</parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jspare.vertx.jpa</groupId>
+    <artifactId>vertx-jspare-jpa</artifactId>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.jspare.vertx</groupId>
+            <artifactId>vertx-jspare</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jspare.jpa</groupId>
+            <artifactId>jspare-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Enable Vertx Codegen -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-codegen</artifactId>
+            <version>${vertx.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>
