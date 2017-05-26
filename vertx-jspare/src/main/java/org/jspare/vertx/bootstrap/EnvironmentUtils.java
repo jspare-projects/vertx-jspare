@@ -18,7 +18,6 @@ package org.jspare.vertx.bootstrap;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import org.jspare.core.container.Environment;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -27,8 +26,18 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.xebia.jacksonlombok.JacksonLombokAnnotationIntrospector;
 
+import io.vertx.core.Context;
+import io.vertx.core.Vertx;
+import io.vertx.core.WorkerExecutor;
+import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.file.FileSystem;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.shareddata.SharedData;
 import lombok.experimental.UtilityClass;
+import org.jspare.core.Environment;
+import org.jspare.core.internal.Bind;
+import org.jspare.vertx.annotation.SharedWorkerExecutor;
 import org.jspare.vertx.ext.jackson.datatype.VertxJsonModule;
 
 /**
@@ -44,10 +53,10 @@ public class EnvironmentUtils {
   /**
    * Register.
    */
-  protected void register() {
+  public void setup() {
 
     // Prepare Environment with VertxInject
-    Environment.load();
+    Environment.create();
 
     // Set default Json Mapper options
     Json.mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector())
@@ -60,5 +69,15 @@ public class EnvironmentUtils {
         .registerModule(new JavaTimeModule())
         .registerModule(new ParameterNamesModule())
         .registerModule(new VertxJsonModule());
+  }
+
+  public void bindInterfaces(Vertx vertx){
+    Environment.registry(Bind.bind(Vertx.class), vertx);
+    Environment.registry(Bind.bind(Context.class), vertx.getOrCreateContext());
+    Environment.registry(Bind.bind(JsonObject.class).name("config"), vertx.getOrCreateContext().config());
+    Environment.registry(Bind.bind(EventBus.class), vertx.eventBus());
+    Environment.registry(Bind.bind(EventBus.class), vertx.eventBus());
+    Environment.registry(Bind.bind(FileSystem.class), vertx.fileSystem());
+    Environment.registry(Bind.bind(SharedData.class), vertx.sharedData());
   }
 }

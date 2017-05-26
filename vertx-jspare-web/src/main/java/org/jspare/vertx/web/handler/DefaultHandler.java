@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.jspare.core.container.ContainerUtils;
+import org.jspare.core.Environment;
 import org.jspare.vertx.web.annotation.handling.*;
 import org.jspare.vertx.web.builder.HandlerData;
 
@@ -143,7 +143,7 @@ public class DefaultHandler implements Handler<RoutingContext> {
   protected Object instantiateHandler() {
     // Inject Request and Response if is Available
     Object newInstance = handlerData.clazz().newInstance();
-    ContainerUtils.processInjection(newInstance);
+    Environment.inject(newInstance);
     return newInstance;
   }
 
@@ -251,7 +251,7 @@ public class DefaultHandler implements Handler<RoutingContext> {
    * @param newInstance    the new instance
    */
   protected void setHandlingParameters(RoutingContext routingContext, Object newInstance) {
-    // If Route is handling by abstract Handling inject some resources
+    // If Route is handling by abstract Handling my some resources
     if (newInstance instanceof APIHandler) {
 
       ((APIHandler) newInstance).setVertx(routingContext.vertx());

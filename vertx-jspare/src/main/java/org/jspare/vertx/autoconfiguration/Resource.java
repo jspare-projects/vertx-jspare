@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.experimental;
+package org.jspare.vertx.autoconfiguration;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,14 +21,14 @@ import java.lang.annotation.RetentionPolicy;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * 
+ *
  * An annotation responsible for indicating to {@link AutoConfiguration } the
  * modules reached to be initialized by {@link AutoConfigurationVerticle }.
- * 
+ *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Module {
+public @interface Resource {
 
   /**
    * Config.
@@ -37,10 +37,5 @@ public @interface Module {
    */
   String[] config() default StringUtils.EMPTY;
 
-  /**
-   * Value.
-   *
-   * @return the string
-   */
-  String value();
+  Class<? extends Configurable> value();
 }

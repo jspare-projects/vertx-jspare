@@ -15,15 +15,13 @@
  */
 package org.jspare.vertx.bootstrap;
 
-import static org.jspare.core.container.Environment.my;
 
-import org.jspare.core.bootstrap.Runner;
-import org.jspare.core.container.Context;
-import org.jspare.vertx.builder.VertxBuilder;
+import org.jspare.core.Runner;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import org.jspare.vertx.builder.VertxBuilder;
 
 /**
  * The Class VertxRunner.
@@ -34,7 +32,7 @@ public abstract class VertxRunner extends AbstractVerticle implements Runner {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.jspare.core.bootstrap.Runner#run()
    */
   @Override
@@ -42,13 +40,14 @@ public abstract class VertxRunner extends AbstractVerticle implements Runner {
 
     setup();
 
-    mySupport();
-
     vertx().setHandler(res -> {
 
       if (res.succeeded()) {
 
-        my(Context.class).put(EnvironmentUtils.VERTX_HOLDER, vertx);
+        EnvironmentUtils.bindInterfaces(vertx);
+
+        mySupport();
+
       } else {
 
         throw new RuntimeException("Failed to create Vert.x instance");
@@ -58,13 +57,12 @@ public abstract class VertxRunner extends AbstractVerticle implements Runner {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.jspare.core.bootstrap.Runner#setup()
    */
   @Override
   public void setup() {
-
-    EnvironmentUtils.register();
+    EnvironmentUtils.setup();
   }
 
   /**

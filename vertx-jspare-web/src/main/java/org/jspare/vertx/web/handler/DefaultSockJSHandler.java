@@ -125,7 +125,7 @@ public class DefaultSockJSHandler {
    *          the new instance
    */
   protected void setHandlingParameters(SockJSSocket event, Object newInstance) {
-    // If Route is handling by abstract Handling inject some resources
+    // If Route is handling by abstract Handling my some resources
     if (newInstance instanceof APIHandler) {
 
       ((APIHandler) newInstance).setSockJSEvent(event);

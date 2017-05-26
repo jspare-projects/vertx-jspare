@@ -1,4 +1,4 @@
-package org.jspare.vertx.web.experimental;
+package org.jspare.vertx.web.module;
 
 import io.vertx.core.http.HttpMethod;
 

@@ -15,44 +15,26 @@
  */
 package org.jspare.vertx.builder;
 
+import org.jspare.core.Environment;
+import org.jspare.vertx.annotation.Consumer;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.jspare.core.annotation.Resource;
-import org.jspare.core.container.ContainerUtils;
-import org.jspare.vertx.annotation.Consumer;
-import org.jspare.vertx.annotation.EventBusController;
-
-import lombok.SneakyThrows;
 
 /**
  * The Class EventBusCollector.
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-@Resource
 public class EventBusCollector implements Collector<Collection<EventBusData>> {
-
-  /** The controllers. */
-  private Map<Class<?>, Object> controllers;
-
-  /**
-   * Instantiates a new event bus collector.
-   */
-  public EventBusCollector() {
-
-    controllers = new HashMap<>();
-  }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.jspare.vertx.builder.Collector#collect(java.lang.Class,
    * java.lang.Object[])
    */
@@ -90,40 +72,6 @@ public class EventBusCollector implements Collector<Collection<EventBusData>> {
    * @return single instance of EventBusCollector
    */
   private Object getInstance(Class<?> clazz) {
-
-    if (!clazz.isAnnotationPresent(EventBusController.class)) {
-
-      return instantiate(clazz);
-    }
-
-    EventBusController anEventBusController = clazz.getAnnotation(EventBusController.class);
-    Object instance = controllers.get(clazz);
-    if (instance != null) {
-
-      return instance;
-    }
-
-    instance = instantiate(clazz);
-
-    if (anEventBusController.retention()) {
-
-      controllers.put(clazz, instance);
-    }
-    return instance;
-  }
-
-  /**
-   * Instantiate.
-   *
-   * @param clazz
-   *          the clazz
-   * @return the object
-   */
-  @SneakyThrows
-  private Object instantiate(Class<?> clazz) {
-
-    Object instance = clazz.newInstance();
-    ContainerUtils.processInjection(instance);
-    return instance;
+    return Environment.my(clazz);
   }
 }

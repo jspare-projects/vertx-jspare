@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 public @interface VertxProxyInject {
 
   /**
-   * Value.
+   * Define address value to create vertx proxy.
    *
    * @return the string
    */

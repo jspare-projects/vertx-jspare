@@ -15,12 +15,6 @@
  */
 package org.jspare.vertx.builder;
 
-import static org.jspare.core.container.Environment.my;
-
-import java.util.function.Consumer;
-
-import org.jspare.core.container.Context;
-import org.jspare.vertx.bootstrap.EnvironmentUtils;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -29,6 +23,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.jspare.vertx.bootstrap.EnvironmentUtils;
+
+import java.util.function.Consumer;
 
 /**
  * The Class VertxBuilder.
@@ -39,7 +36,7 @@ import lombok.experimental.Accessors;
 
 /*
  * (non-Javadoc)
- * 
+ *
  * @see java.lang.Object#hashCode()
  */
 @EqualsAndHashCode(callSuper = false)
@@ -126,7 +123,7 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.jspare.vertx.builder.AbstractBuilder#build()
    */
   @Override
@@ -153,7 +150,7 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 
     // Register vertx on VertxHolder. This interaction allow that the Vertx
     // can be accessed internally by application.
-    my(Context.class).put(EnvironmentUtils.VERTX_HOLDER, vertx);
+   EnvironmentUtils.bindInterfaces(vertx);
 
     return future;
   }

@@ -15,18 +15,15 @@
  */
 package org.jspare.vertx.bootstrap;
 
-import static org.jspare.core.container.Environment.my;
-
-import org.jspare.core.container.ContainerUtils;
-import org.jspare.vertx.experimental.AutoConfigurationInitializer;
-
 import io.vertx.core.Verticle;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.jspare.core.Environment;
+import org.jspare.vertx.autoconfiguration.AutoConfigurationInitializer;
 
 /**
  * Instantiates a new verticle initializer.
- * 
+ *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @UtilityClass
@@ -68,8 +65,8 @@ public class VerticleInitializer {
    */
   @SneakyThrows
   public Verticle initialize(Verticle verticle) {
-    ContainerUtils.processInjection(verticle);
-    my(AutoConfigurationInitializer.class).initialize(verticle);
+    Environment.inject(verticle);
+    Environment.my(AutoConfigurationInitializer.class).initialize(verticle);
     return verticle;
   }
 }

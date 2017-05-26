@@ -16,11 +16,12 @@
 package org.jspare.vertx.injector;
 
 import org.jspare.vertx.AbstractVertxApplicationTest;
-import org.jspare.vertx.annotation.VertxInject;
 import org.junit.Assert;
 import org.junit.Test;
 
 import io.vertx.core.Vertx;
+
+import javax.inject.Inject;
 
 /**
  * The Class VertxInjectTest.
@@ -30,16 +31,8 @@ import io.vertx.core.Vertx;
 public class VertxInjectTest extends AbstractVertxApplicationTest {
 
   /** The vertx. */
-  @VertxInject
+  @Inject
   private Vertx vertx;
-
-  /**
-   * Components creation test.
-   */
-  @Test
-  public void componentsCreationTest() {
-
-  }
 
   /**
    * Vertx test.

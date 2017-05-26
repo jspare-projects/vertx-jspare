@@ -13,8 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.experimental;
+package org.jspare.vertx.autoconfiguration;
 
+import org.jspare.core.Environment;
 import org.jspare.vertx.bootstrap.VerticleInitializer;
 
 import io.vertx.core.AbstractVerticle;
@@ -28,11 +29,15 @@ import io.vertx.core.Future;
  */
 public class AutoConfigurationVerticle extends AbstractVerticle {
 
+  public AutoConfigurationVerticle() {
+    Environment.inject(this);
+  }
+
   /*
-   * (non-Javadoc)
-   * 
-   * @see io.vertx.core.AbstractVerticle#start(io.vertx.core.Future)
-   */
+     * (non-Javadoc)
+     *
+     * @see io.vertx.core.AbstractVerticle#start(io.vertx.core.Future)
+     */
   @Override
   public void start(Future<Void> startFuture) throws Exception {
     VerticleInitializer.initialize(this);

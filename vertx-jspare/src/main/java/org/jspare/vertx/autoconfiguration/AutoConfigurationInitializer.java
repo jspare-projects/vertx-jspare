@@ -13,34 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.experimental;
+package org.jspare.vertx.autoconfiguration;
 
-import static org.jspare.vertx.builder.ClasspathScannerUtils.ALL_SCAN_QUOTE;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.jspare.core.annotation.Resource;
-import org.jspare.vertx.annotation.VertxInject;
-import org.jspare.vertx.builder.ClasspathScannerUtils;
-
-import io.github.lukehutch.fastclasspathscanner.matchprocessor.ClassAnnotationMatchProcessor;
 import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
+import org.jspare.core.MySupport;
+
+import javax.inject.Inject;
+import java.util.Arrays;
 
 /**
  * Responsible to init {@link AutoConfiguration} life cycle.
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-@Resource
 @Slf4j
-public class AutoConfigurationInitializer {
+public class AutoConfigurationInitializer extends MySupport {
 
   /** The vertx. */
-  @VertxInject
+  @Inject
   private Vertx vertx;
 
   /**
@@ -56,17 +48,11 @@ public class AutoConfigurationInitializer {
       return;
     }
     AutoConfiguration cfg = verticle.getClass().getAnnotation(AutoConfiguration.class);
-
-    Map<String, Class<?>> moduleClasses = new HashMap<>();
-    ClassAnnotationMatchProcessor processor = (c) -> moduleClasses.put(c.getAnnotation(Module.class).value(), c);
-    ClasspathScannerUtils.scanner(ALL_SCAN_QUOTE).matchClassesWithAnnotation(Module.class, processor).scan();
-
     Arrays.asList(cfg.value()).forEach(m -> {
 
       try {
 
-        Class<?> mclasse = moduleClasses.get(m.value());
-        Configurable mi = (Configurable) mclasse.newInstance();
+        Configurable mi = (Configurable) m.value().newInstance();
         if (mi != null) {
 
           mi.execute(verticle, m.config());

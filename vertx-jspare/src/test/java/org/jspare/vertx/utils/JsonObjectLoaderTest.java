@@ -15,21 +15,21 @@
  */
 package org.jspare.vertx.utils;
 
-import static org.jspare.core.container.Environment.my;
 
+import io.vertx.core.VertxOptions;
+import io.vertx.core.json.JsonObject;
 import org.jspare.vertx.AbstractVertxApplicationTest;
 import org.junit.Assert;
 import org.junit.Test;
 
-import io.vertx.core.VertxOptions;
-import io.vertx.core.json.JsonObject;
+import static org.jspare.core.Environment.my;
 
 /**
  * The Class JsonObjectLoaderTest.
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-public class JsonObjectLoaderTest extends AbstractVertxApplicationTest {
+public class JsonObjectLoaderTest {
 
   /**
    * Load test.
