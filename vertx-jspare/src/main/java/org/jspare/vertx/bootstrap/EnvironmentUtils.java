@@ -74,7 +74,6 @@ public class EnvironmentUtils {
   public void bindInterfaces(Vertx vertx){
     Environment.registry(Bind.bind(Vertx.class), vertx);
     Environment.registry(Bind.bind(Context.class), vertx.getOrCreateContext());
-    Environment.registry(Bind.bind(JsonObject.class).name("config"), vertx.getOrCreateContext().config());
     Environment.registry(Bind.bind(EventBus.class), vertx.eventBus());
     Environment.registry(Bind.bind(EventBus.class), vertx.eventBus());
     Environment.registry(Bind.bind(FileSystem.class), vertx.fileSystem());

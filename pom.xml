@@ -212,6 +212,8 @@
   <modules>
     <module>vertx-jspare</module>
     <module>vertx-jspare-web</module>
+    <module>vertx-jspare-jpa</module>
+    <module>vertx-jspare-ldap</module>
   </modules>
 
   <distributionManagement>

@@ -17,12 +17,11 @@ package org.jspare.vertx.injector;
 
 import io.vertx.core.Vertx;
 import io.vertx.serviceproxy.ProxyHelper;
+import org.jspare.core.Environment;
 import org.jspare.core.InjectorAdapter;
 import org.jspare.core.MySupport;
 import org.jspare.vertx.annotation.VertxProxyInject;
-import org.jspare.vertx.builder.ProxyServiceUtils;
 
-import javax.inject.Inject;
 import java.lang.reflect.Field;
 
 /**
@@ -31,12 +30,6 @@ import java.lang.reflect.Field;
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 public class VertxProxyInjectStrategy extends MySupport implements InjectorAdapter {
-
-  /**
-   * The vertx.
-   */
-  @Inject
-  private Vertx vertx;
 
   @Override
   public boolean isInjectable(Field field) {
@@ -48,8 +41,8 @@ public class VertxProxyInjectStrategy extends MySupport implements InjectorAdapt
 
     try {
       VertxProxyInject proxyHandler = field.getAnnotation(VertxProxyInject.class);
-      String address = ProxyServiceUtils.getAddress(proxyHandler, field.getType());
-      Object value = ProxyHelper.createProxy(field.getType(), vertx, address);
+      String address = proxyHandler.value();
+      Object value = ProxyHelper.createProxy(field.getType(), Environment.my(Vertx.class), address);
       field.setAccessible(true);
       field.set(instance, value);
     } catch (IllegalAccessException e) {
