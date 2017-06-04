@@ -95,7 +95,7 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
 
       AuthHandler authHandler = null;
 
-      // Validate if route has auth annotation
+      // Validate if route has auth module
       if (hasAuth(clazz, method) && !method.isAnnotationPresent(IgnoreAuth.class)) {
 
         // Retrieve auth metadata
@@ -104,7 +104,7 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
         // Retrieve auth identity
         String identity = auth.authHandler();
 
-        // Get authHandler from RouterBuilder
+        // Get authHandler from RouterBuilderAware
         Optional<Supplier<AuthHandler>> oAuthHandler = Optional.ofNullable(builder.authHandlerMap().get(identity));
 
         // Add authorities if is present on metadata
@@ -186,7 +186,7 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
    * @param <T>
    *          the generic type
    * @param annotation
-   *          the annotation
+   *          the module
    * @param methodRef
    *          the method ref
    * @return the t
@@ -344,13 +344,13 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
   }
 
   /**
-   * Checks if is handler annotation.
+   * Checks if is handler module.
    *
    * @param handlerType
    *          the handler type
    * @param element
    *          the element
-   * @return true, if is handler annotation
+   * @return true, if is handler module
    */
   protected boolean isHandlerAnnotation(Annotation handlerType, Class<?> element) {
     return handlerType.annotationType().equals(element);

@@ -28,8 +28,8 @@ import io.vertx.ext.web.Router;
  * The Namespace Annotation.
  *
  * <p>
- * The namespace annotation is used for mapping one namespace of one
- * {@link APIHandler}. When one type are annotated with this annotation and
+ * The namespace module is used for mapping one namespace of one
+ * {@link APIHandler}. When one type are annotated with this module and
  * registered on {@link Router} when your HttpServer will be started your
  * mappings will be registered with prefix defined on value field, if your field
  * are empty the convention that follow will be used:

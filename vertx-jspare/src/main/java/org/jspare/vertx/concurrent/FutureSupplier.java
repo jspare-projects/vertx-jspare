@@ -15,17 +15,17 @@
  */
 package org.jspare.vertx.concurrent;
 
-import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 import io.vertx.core.Future;
 import io.vertx.core.impl.CompositeFutureImpl;
 import lombok.experimental.UtilityClass;
 
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 /**
  * Instantiates a new future supplier.
- * 
+ *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @UtilityClass
@@ -41,25 +41,22 @@ public class FutureSupplier {
    * The returned future fails as soon as one of the futures in {@code futures}
    * fails. When the list is empty, the returned future will be already
    * completed.
-   *
+   * <p>
    * Useful for reducing many futures into a single @{link Future}.
    *
-   * @param futures
-   *          a list of {@link Future futures}
+   * @param futures a list of {@link Future futures}
    * @return the transformed future
    */
   public static <R> Future<List<R>> sequenceFuture(List<Future<R>> futures) {
     return CompositeFutureImpl.all(futures.toArray(new Future[futures.size()]))
-        .map(v -> futures.stream().map(Future::result).collect(Collectors.toList()));
+      .map(v -> futures.stream().map(Future::result).collect(Collectors.toList()));
   }
 
   /**
    * Supply.
    *
-   * @param <T>
-   *          the generic type
-   * @param event
-   *          the event
+   * @param <T>   the generic type
+   * @param event the event
    * @return the future
    */
   public <T> Future<T> supply(Supplier<T> event) {

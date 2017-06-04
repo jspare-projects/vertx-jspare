@@ -32,7 +32,7 @@ import org.apache.commons.lang.StringUtils;
 public @interface SharedWorkerExecutor {
 
   /**
-   * Max execute time.
+   * Max init time.
    *
    * @return the long
    */

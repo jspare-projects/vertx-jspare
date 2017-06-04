@@ -15,14 +15,17 @@
  */
 package org.jspare.vertx.jpa;
 
-import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Verticle;
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import lombok.SneakyThrows;
 import org.jspare.core.MySupport;
 import org.jspare.core.internal.ReflectionUtils;
 import org.jspare.jpa.PersistenceOptions;
 import org.jspare.jpa.PersistenceUnitProvider;
-import org.jspare.vertx.autoconfiguration.Configurable;
+import org.jspare.vertx.autoconfiguration.AutoConfigurationResource;
+import org.jspare.vertx.utils.DataObjectConverter;
 
 import javax.inject.Inject;
 import java.lang.reflect.Method;
@@ -36,65 +39,72 @@ import java.util.*;
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-public class PersistenceJpaModule extends MySupport implements Configurable {
+public class PersistenceJpaModule extends MySupport implements AutoConfigurationResource {
 
-    @Inject
-    private PersistenceUnitProvider provider;
+  @Inject
+  private PersistenceUnitProvider provider;
 
-    /**
-     * The Constant NAME.
-     */
-    public static final String NAME = "persistenceJpa";
+  private Map<String, PersistenceOptions> DATA_SOURCES = new HashMap<>();
+  private List<String> ANNOTATED_CLASSES = new ArrayList<>();
 
-    private Map<String, PersistenceOptions> DATA_SOURCES = new HashMap<>();
-    private List<String> ANNOTATED_CLASSES = new ArrayList<>();
-    private Verticle verticle;
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * org.jspare.vertx.experimental.AutoConfigurationResource#init(io.vertx.core.Verticle,
+   * java.lang.String[])
+   */
+  @Override
+  public Future<Void> init(Verticle verticle, JsonObject config) {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.jspare.vertx.experimental.Configurable#execute(io.vertx.core.Verticle,
-     * java.lang.String[])
-     */
-    @Override
-    public void execute(Verticle verticle, String[] args) {
+    Future<Void> loadFuture = Future.future();
+    final Vertx vertx = verticle.getVertx();
 
-        this.verticle = verticle;
+    vertx.executeBlocking(f -> {
+      try {
 
-        init();
+        load(verticle, config);
 
         DATA_SOURCES.entrySet().forEach(es -> {
-                    PersistenceOptions options = es.getValue();
-                    options.setAnnotatedClasses(ANNOTATED_CLASSES);
-                    provider.create(es.getKey(), options);
-                }
-        );
+          PersistenceOptions options = es.getValue();
+          options.setAnnotatedClasses(ANNOTATED_CLASSES);
+          provider.create(es.getKey(), options);
+        });
+        f.complete();
+      } catch (Throwable t) {
+
+        f.fail(t);
+      }
+
+    }, loadFuture.completer());
+    return loadFuture;
+  }
+
+  private void load(Verticle verticle, JsonObject config) {
+
+    if (verticle.getClass().isAnnotationPresent(AnnotatedClasses.class)) {
+      AnnotatedClasses ann = verticle.getClass().getAnnotation(AnnotatedClasses.class);
+      ANNOTATED_CLASSES.addAll(Arrays.asList(ann.value()));
     }
 
-    private void init() {
+    ReflectionUtils
+      .getMethodsWithAnnotation(verticle.getClass(), PersistenceUnitOptions.class)
+      .forEach(m -> setPersistenceOption(verticle, m));
 
-        if (verticle.getClass().isAnnotationPresent(AnnotatedClasses.class)) {
-            AnnotatedClasses ann = verticle.getClass().getAnnotation(AnnotatedClasses.class);
-            ANNOTATED_CLASSES.addAll(Arrays.asList(ann.value()));
-        }
+    if (DATA_SOURCES.isEmpty()) {
 
-        ReflectionUtils.getMethodsWithAnnotation(verticle.getClass(), PersistenceUnitOptions.class).forEach(this::setPersistenceOption);
-
-        if (DATA_SOURCES.isEmpty()) {
-            DATA_SOURCES.put(PersistenceUnitProvider.DEFAULT_DS, new PersistenceOptions());
-        }
+      JsonObject json = config.getJsonObject("persistence", new JsonObject());
+      PersistenceOptions persistenceOptions = DataObjectConverter.fromJson(json, PersistenceOptions.class);
+      DATA_SOURCES.put(PersistenceUnitProvider.DEFAULT_DS, persistenceOptions);
     }
+  }
 
-    @SneakyThrows
-    private void setPersistenceOption(Method method) {
+  @SneakyThrows
+  private void setPersistenceOption(Verticle verticle, Method method) {
 
-        method.setAccessible(true);
-        String dataSource = ReflectionUtils.getAnnotation(method, PersistenceUnitOptions.class).value();
-        PersistenceOptions options = (PersistenceOptions) method.invoke(verticle);
-        DATA_SOURCES.put(dataSource, options);
-    }
-
-    private void unhandled(AsyncResult<Void> ar) {
-    }
+    method.setAccessible(true);
+    String dataSource = ReflectionUtils.getAnnotation(method, PersistenceUnitOptions.class).value();
+    PersistenceOptions options = (PersistenceOptions) method.invoke(verticle);
+    DATA_SOURCES.put(dataSource, options);
+  }
 }

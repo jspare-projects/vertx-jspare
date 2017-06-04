@@ -15,7 +15,9 @@
  */
 package org.jspare.vertx.autoconfiguration;
 
+import io.vertx.core.Future;
 import io.vertx.core.Verticle;
+import io.vertx.core.json.JsonObject;
 
 /**
  * An interface able to aggregate for auto boot when used
@@ -23,16 +25,15 @@ import io.vertx.core.Verticle;
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-@FunctionalInterface
-public interface Configurable {
+public interface AutoConfigurationResource {
 
   /**
    * Execute process.
    *
    * @param verticle
    *          the verticle
-   * @param args
-   *          the args
+   * @param config
+   *          the configuration
    */
-  void execute(Verticle verticle, String[] args);
+  Future<Void> init(Verticle verticle, JsonObject config);
 }

@@ -15,13 +15,21 @@
  */
 package org.jspare.vertx.autoconfiguration;
 
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
 import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.jspare.core.MySupport;
+import org.jspare.vertx.concurrent.ReduceFuture;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Responsible to init {@link AutoConfiguration} life cycle.
@@ -31,36 +39,68 @@ import java.util.Arrays;
 @Slf4j
 public class AutoConfigurationInitializer extends MySupport {
 
-  /** The vertx. */
+  /**
+   * The vertx.
+   */
   @Inject
   private Vertx vertx;
 
   /**
    * Initialize.
    *
-   * @param verticle
-   *          the verticle
+   * @param verticle the verticle
    */
-  public void initialize(Verticle verticle) {
+  public Future<Void> initialize(Verticle verticle) {
+
+    Future<Void> initFuture = Future.future();
 
     if (verticle == null || verticle.getVertx() == null || !verticle.getClass().isAnnotationPresent(AutoConfiguration.class)) {
+      initFuture.complete();
+      return initFuture;
+    }
 
-      return;
+    if (log.isDebugEnabled()) {
+      log.debug("Initialize Auto Configuration");
     }
     AutoConfiguration cfg = verticle.getClass().getAnnotation(AutoConfiguration.class);
-    Arrays.asList(cfg.value()).forEach(m -> {
+    final JsonObject config = new JsonObject();
+    if (verticle instanceof AbstractVerticle) {
+      config.mergeIn(((AbstractVerticle) verticle).config());
+    }
 
+    if (log.isDebugEnabled()) {
+      log.debug("Verticle: {}", verticle.getClass().getName());
+      log.debug("Config: {}", config.encode());
+    }
+    final List<Supplier<Future>> futures = new ArrayList<>();
+    Arrays.asList(cfg.value()).forEach(m -> {
       try {
 
-        Configurable mi = (Configurable) m.value().newInstance();
-        if (mi != null) {
+        AutoConfigurationResource mi = (AutoConfigurationResource) m.value().newInstance();
+        synchronized (mi) {
 
-          mi.execute(verticle, m.config());
+          if (log.isDebugEnabled()) {
+            log.debug("Load Module: {}", m.value().getName());
+          }
+          if (mi != null) {
+            futures.add(() -> mi.init(verticle, config));
+          }
         }
       } catch (Exception e) {
 
-        log.error("Faile init autoconfig", e);
+        log.error("Failed to load {}", m.value().getName(), e);
       }
     });
+
+    ReduceFuture.create(futures).reduce().setHandler(ar -> {
+      if (ar.succeeded()) {
+
+        initFuture.complete();
+      } else {
+
+        initFuture.fail(ar.cause());
+      }
+    });
+    return initFuture;
   }
 }

@@ -1,6 +1,4 @@
-package org.jspare.vertx.web.module;
-
-import io.vertx.core.http.HttpMethod;
+package org.jspare.vertx.web.annotation.module;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,11 +10,13 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Cors {
+public @interface Routes {
 
-  String allowedOriginPattern();
+  boolean scanClasspath() default false;
 
-  String[] allowedHeaders() default "";
+  Class<?>[] routes() default {};
 
-  HttpMethod[] allowedMethods() default {HttpMethod.GET, HttpMethod.POST};
+  Class<?>[] skipRoutes() default {};
+
+  String[] scanPackages() default {};
 }

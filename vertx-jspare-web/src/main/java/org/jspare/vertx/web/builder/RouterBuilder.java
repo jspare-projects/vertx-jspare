@@ -94,14 +94,14 @@ public class RouterBuilder extends AbstractBuilder<Router> {
   private final Vertx vertx;
 
   /**
-   * Router.
+   * RouterBuilderAware.
    *
    * @return the router
    */
   @Getter
 
   /**
-   * Router.
+   * RouterBuilderAware.
    *
    * @param router
    *          the router
@@ -163,7 +163,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 
   /**
    * The sock JS handler options. </br>
-   * Used for all SockJsHandlers mapped by this RouterBuilder
+   * Used for all SockJsHandlers mapped by this RouterBuilderAware
    *
    */
 
@@ -338,7 +338,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
   @Override
   public Router build() {
 
-    log.debug("Building Router");
+    log.debug("Building RouterBuilderAware");
 
     handlers.forEach(h -> {
       log.debug("Routing handler [{}]", h.toString());

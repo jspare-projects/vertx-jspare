@@ -15,15 +15,15 @@
  */
 package org.jspare.vertx.autoconfiguration;
 
+import org.jspare.vertx.bootstrap.VerticleInitializer;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.jspare.vertx.bootstrap.VerticleInitializer;
-
 /**
- * The {@link AutoConfiguration } indicate to {@link AutoConfigurationVerticle}
+ * The {@link AutoConfiguration } indicate to {@link org.jspare.vertx.bootstrap.JspareVerticle}
  * that this verticle when initialized by {@link VerticleInitializer } load
  * modules descripted by value field.
  *

@@ -35,7 +35,7 @@ import lombok.experimental.Accessors;
 
 /*
  * (non-Javadoc)
- * 
+ *
  * @see java.lang.Object#hashCode()
  */
 @EqualsAndHashCode(callSuper = false)
@@ -55,7 +55,7 @@ public class HttpServerBuilder extends AbstractBuilder<HttpServer> {
 
   /** The vertx. */
   private final Vertx vertx;
-  
+
   /**
    * Http server.
    *
@@ -91,14 +91,14 @@ public class HttpServerBuilder extends AbstractBuilder<HttpServer> {
   private HttpServerOptions httpServerOptions;
 
   /**
-   * Router.
+   * RouterBuilderAware.
    *
    * @return the router
    */
   @Getter
 
   /**
-   * Router.
+   * RouterBuilderAware.
    *
    * @param router
    *          the router
@@ -120,7 +120,7 @@ public class HttpServerBuilder extends AbstractBuilder<HttpServer> {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see org.jspare.vertx.builder.AbstractBuilder#build()
    */
   @Override

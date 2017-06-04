@@ -18,24 +18,14 @@ package org.jspare.vertx.autoconfiguration;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  *
- * An annotation responsible for indicating to {@link AutoConfiguration } the
- * modules reached to be initialized by {@link AutoConfigurationVerticle }.
+ * An module responsible for indicating to {@link AutoConfiguration } the
+ * modules reached to be initialized by {@link org.jspare.vertx.bootstrap.JspareVerticle }.
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Resource {
-
-  /**
-   * Config.
-   *
-   * @return the string[]
-   */
-  String[] config() default StringUtils.EMPTY;
-
-  Class<? extends Configurable> value();
+  Class<? extends AutoConfigurationResource> value();
 }

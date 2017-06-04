@@ -25,8 +25,8 @@ import org.jspare.vertx.web.builder.RouterBuilder;
 
 /**
  * The Annotation Security. <br>
- * It is defined annotation that is the route to be safe and protected for Token
- * 
+ * It is defined module that is the route to be safe and protected for Token
+ *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
