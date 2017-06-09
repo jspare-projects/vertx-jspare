@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 
 /**
  * The Interface BlockingHandler.
- * 
+ *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -34,5 +34,5 @@ public @interface BlockingHandler {
    *
    * @return the int
    */
-  int order() default 0;
+  int order() default Integer.MIN_VALUE;
 }
