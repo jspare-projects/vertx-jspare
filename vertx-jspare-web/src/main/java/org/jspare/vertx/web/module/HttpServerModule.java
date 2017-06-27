@@ -15,10 +15,7 @@
  */
 package org.jspare.vertx.web.module;
 
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Verticle;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
@@ -27,14 +24,12 @@ import io.vertx.ext.web.RoutingContext;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jspare.vertx.autoconfiguration.AutoConfigurationResource;
-import org.jspare.vertx.web.annotation.module.HandlerAware;
-import org.jspare.vertx.web.annotation.module.ListenHandler;
-import org.jspare.vertx.web.annotation.module.RouterBuilderAware;
-import org.jspare.vertx.web.annotation.module.Routes;
+import org.jspare.vertx.web.annotation.module.*;
 import org.jspare.vertx.web.builder.HttpServerBuilder;
 import org.jspare.vertx.web.builder.RouterBuilder;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Optional;
@@ -80,6 +75,10 @@ public class HttpServerModule implements AutoConfigurationResource {
       if (ar.failed()) {
         loadFuture.fail(ar.cause());
         return;
+      }
+
+      if (log.isDebugEnabled()) {
+        log.debug("HttpServerModule started at port {}", ar.result().actualPort());
       }
 
       if (oMethod.isPresent()
@@ -134,6 +133,17 @@ public class HttpServerModule implements AutoConfigurationResource {
 
     getHandlerAwareAnnotations(verticle).forEach(a -> setHandlerAnnotation(verticle, builder, a));
 
+    buildMethodAware(verticle, builder);
+
+    buildAuthHandler(verticle, builder);
+
+    builderAnnAware(verticle, builder);
+
+    builder.build();
+  }
+
+  private void buildMethodAware(Verticle verticle, RouterBuilder builder) throws InvocationTargetException, IllegalAccessException {
+
     Optional<Method> oMethod = Arrays.asList(verticle.getClass().getDeclaredMethods())
       .stream()
       .filter(m -> m.isAnnotationPresent(RouterBuilderAware.class))
@@ -153,7 +163,6 @@ public class HttpServerModule implements AutoConfigurationResource {
       Arrays.asList(routes.skipRoutes()).forEach(builder::skipRoute);
       Arrays.asList(routes.scanPackages()).forEach(builder::addRoutePackage);
     }
-    builder.build();
   }
 
   private Stream<Annotation> getHandlerAwareAnnotations(Verticle verticle) {
@@ -177,6 +186,24 @@ public class HttpServerModule implements AutoConfigurationResource {
 
     if (log.isDebugEnabled()) {
       log.debug("Handler {} created and registered on RouterBuilder by AnnotationHandlerAware", handler.getClass().getName());
+    }
+  }
+
+  private void buildAuthHandler(Verticle verticle, RouterBuilder builder) throws IllegalAccessException, InstantiationException {
+
+    if (verticle.getClass().isAnnotationPresent(AuthHandler.class)) {
+      AuthHandler ann = verticle.getClass().getAnnotation(AuthHandler.class);
+      builder.authHandler(ann.value().newInstance());
+    }
+  }
+
+  private void builderAnnAware(Verticle verticle, RouterBuilder builder) throws IllegalAccessException, InstantiationException {
+
+    if (verticle.getClass().isAnnotationPresent(BuilderAware.class)) {
+      for (Class<? extends Handler<RouterBuilder>> clazz : verticle.getClass().getAnnotation(BuilderAware.class).value()) {
+        Handler<RouterBuilder> handler = clazz.newInstance();
+        handler.handle(builder);
+      }
     }
   }
 }

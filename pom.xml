@@ -57,7 +57,7 @@
     <logback.version>1.1.6</logback.version>
     <junit.version>4.12</junit.version>
     <jspare.core.version>3.0.0-SNAPSHOT</jspare.core.version>
-    <vertx.version>3.4.1</vertx.version>
+    <vertx.version>3.4.2</vertx.version>
   </properties>
 
   <build>
@@ -214,6 +214,7 @@
     <module>vertx-jspare-web</module>
     <module>vertx-jspare-jpa</module>
     <module>vertx-jspare-ldap</module>
+    <module>vertx-jspare-unit</module>
   </modules>
 
   <distributionManagement>

@@ -2916,14 +2916,14 @@ public abstract class APIHandler {
   }
 
   /**
-   * Request entity too large.
+   * Request model too large.
    */
   protected void requestEntityTooLarge() {
     status(HttpResponseStatus.REQUEST_ENTITY_TOO_LARGE).end();
   }
 
   /**
-   * Request entity too large.
+   * Request model too large.
    *
    * @param buffer
    *          the buffer
@@ -2933,7 +2933,7 @@ public abstract class APIHandler {
   }
 
   /**
-   * Request entity too large.
+   * Request model too large.
    *
    * @param object
    *          the object
@@ -2943,7 +2943,7 @@ public abstract class APIHandler {
   }
 
   /**
-   * Request entity too large.
+   * Request model too large.
    *
    * @param object
    *          the object
@@ -2958,7 +2958,7 @@ public abstract class APIHandler {
   }
 
   /**
-   * Request entity too large.
+   * Request model too large.
    *
    * @param content
    *          the content
@@ -2968,7 +2968,7 @@ public abstract class APIHandler {
   }
 
   /**
-   * Request entity too large.
+   * Request model too large.
    *
    * @param content
    *          the content
@@ -3921,14 +3921,14 @@ public abstract class APIHandler {
   }
 
   /**
-   * Unprocessable entity.
+   * Unprocessable model.
    */
   protected void unprocessableEntity() {
     status(HttpResponseStatus.UNPROCESSABLE_ENTITY).end();
   }
 
   /**
-   * Unprocessable entity.
+   * Unprocessable model.
    *
    * @param buffer
    *          the buffer
@@ -3938,7 +3938,7 @@ public abstract class APIHandler {
   }
 
   /**
-   * Unprocessable entity.
+   * Unprocessable model.
    *
    * @param object
    *          the object
@@ -3948,7 +3948,7 @@ public abstract class APIHandler {
   }
 
   /**
-   * Unprocessable entity.
+   * Unprocessable model.
    *
    * @param object
    *          the object
@@ -3963,7 +3963,7 @@ public abstract class APIHandler {
   }
 
   /**
-   * Unprocessable entity.
+   * Unprocessable model.
    *
    * @param content
    *          the content
@@ -3973,7 +3973,7 @@ public abstract class APIHandler {
   }
 
   /**
-   * Unprocessable entity.
+   * Unprocessable model.
    *
    * @param content
    *          the content

@@ -26,6 +26,12 @@ public @interface Cors {
 
   String[] allowedHeaders() default "";
 
+  String[] exposedHeaders() default "";
+
+  boolean allowCredentials() default false;
+
+  int maxAgeSeconds() default -1;
+
   HttpMethod[] allowedMethods() default {HttpMethod.GET, HttpMethod.POST};
 
   class CorsHandlerFactory implements AnnotationHandlerFactory<Cors> {
@@ -33,8 +39,11 @@ public @interface Cors {
     @Override
     public Handler<RoutingContext> factory(Cors cors, Verticle verticle) {
       return CorsHandler.create(cors.allowedOriginPattern())
+        .allowCredentials(cors.allowCredentials())
         .allowedHeaders(Arrays.asList(cors.allowedHeaders()).stream().collect(Collectors.toSet()))
-        .allowedMethods(Arrays.asList(cors.allowedMethods()).stream().collect(Collectors.toSet()));
+        .allowedMethods(Arrays.asList(cors.allowedMethods()).stream().collect(Collectors.toSet()))
+        .exposedHeaders(Arrays.asList(cors.exposedHeaders()).stream().collect(Collectors.toSet()))
+        .maxAgeSeconds(cors.maxAgeSeconds());
     }
   }
 }

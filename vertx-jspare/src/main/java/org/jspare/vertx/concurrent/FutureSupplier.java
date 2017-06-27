@@ -16,10 +16,12 @@
 package org.jspare.vertx.concurrent;
 
 import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.impl.CompositeFutureImpl;
 import lombok.experimental.UtilityClass;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -65,6 +67,26 @@ public class FutureSupplier {
     try {
 
       future.complete(event.get());
+    } catch (Throwable e) {
+
+      future.fail(e);
+    }
+    return future;
+  }
+
+  /**
+   * Supply.
+   *
+   * @param <T>   the generic type
+   * @param event the event
+   * @return the future
+   */
+  public <T> Future<T> supply(Handler<Void> event) {
+    Future<T> future = Future.future();
+    try {
+
+      event.handle(null);
+      future.complete();
     } catch (Throwable e) {
 
       future.fail(e);
