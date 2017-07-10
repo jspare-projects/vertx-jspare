@@ -13,14 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.builder;
+package org.jspare.vertx.utils;
 
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import lombok.experimental.UtilityClass;
 
 /**
  * Instantiates a new classpath scanner utils.
- * 
+ *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @UtilityClass

@@ -30,7 +30,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.jspare.core.Environment;
 import org.jspare.vertx.builder.AbstractBuilder;
-import org.jspare.vertx.builder.ClasspathScannerUtils;
+import org.jspare.vertx.utils.ClasspathScannerUtils;
 import org.jspare.vertx.web.handler.DefaultHandler;
 
 import java.util.ArrayList;

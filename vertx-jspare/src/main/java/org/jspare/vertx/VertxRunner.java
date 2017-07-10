@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 JSpare.org.
+ * Copyright 2017 JSpare.org.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,23 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.bootstrap;
+package org.jspare.vertx;
 
-import org.jspare.core.Runner;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
-import io.vertx.core.spi.cluster.ClusterManager;
+import org.jspare.core.Runner;
 import org.jspare.vertx.builder.VertxBuilder;
+import org.jspare.vertx.internal.VerticleInitializer;
+import org.jspare.vertx.utils.EnvironmentUtils;
 
 /**
- * The Class VertxClusteredRunner.
- *
- * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ * The Class VertxRunner.
+ * <p>Auxiliary class for booting and configuring a standalone application using the framework.</p>
+ *  @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-public abstract class VertxClusteredRunner extends AbstractVerticle implements Runner {
+public abstract class VertxRunner extends AbstractVerticle implements Runner {
 
   /*
    * (non-Javadoc)
@@ -41,13 +41,14 @@ public abstract class VertxClusteredRunner extends AbstractVerticle implements R
 
     setup();
 
-    mySupport();
-
     vertx().setHandler(res -> {
 
       if (res.succeeded()) {
 
-        EnvironmentUtils.bindInterfaces(res.result());
+        EnvironmentUtils.bindInterfaces(vertx);
+
+        mySupport();
+
       } else {
 
         throw new RuntimeException("Failed to create Vert.x instance");
@@ -62,16 +63,8 @@ public abstract class VertxClusteredRunner extends AbstractVerticle implements R
    */
   @Override
   public void setup() {
-
     EnvironmentUtils.setup();
   }
-
-  /**
-   * Cluster manager.
-   *
-   * @return the cluster manager
-   */
-  protected abstract ClusterManager clusterManager();
 
   /**
    * Vertx.
@@ -80,12 +73,9 @@ public abstract class VertxClusteredRunner extends AbstractVerticle implements R
    */
   protected Future<Vertx> vertx() {
 
-    VertxOptions options = new VertxOptions();
-    options.setClustered(true);
-    options.setClusterManager(clusterManager());
+    return VertxBuilder.create().build().compose(vertx -> {
 
-    return VertxBuilder.create().options(options).build().compose(vertx -> {
-      vertx.deployVerticle(this);
+      vertx.deployVerticle(VerticleInitializer.initialize(this));
     }, Future.succeededFuture());
   }
 }

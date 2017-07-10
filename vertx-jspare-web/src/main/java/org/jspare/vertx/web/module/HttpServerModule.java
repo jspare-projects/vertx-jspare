@@ -23,7 +23,8 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.jspare.vertx.autoconfiguration.AutoConfigurationResource;
+import org.jspare.core.Environment;
+import org.jspare.vertx.Module;
 import org.jspare.vertx.web.annotation.module.*;
 import org.jspare.vertx.web.builder.HttpServerBuilder;
 import org.jspare.vertx.web.builder.RouterBuilder;
@@ -33,6 +34,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -45,13 +47,13 @@ import java.util.stream.Stream;
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Slf4j
-public class HttpServerModule implements AutoConfigurationResource {
+public class HttpServerModule implements Module {
 
   /*
    * (non-Javadoc)
    *
    * @see
-   * AutoConfigurationResource#init(io.vertx.core.Verticle,
+   * Module#init(io.vertx.core.Verticle,
    * java.lang.String[])
    */
   @Override
@@ -193,7 +195,10 @@ public class HttpServerModule implements AutoConfigurationResource {
 
     if (verticle.getClass().isAnnotationPresent(AuthHandler.class)) {
       AuthHandler ann = verticle.getClass().getAnnotation(AuthHandler.class);
-      builder.authHandler(ann.value().newInstance());
+      Supplier<io.vertx.ext.web.handler.AuthHandler> supplier = () -> {
+        return Environment.provide(ann.value());
+      };
+      builder.authHandler(supplier);
     }
   }
 

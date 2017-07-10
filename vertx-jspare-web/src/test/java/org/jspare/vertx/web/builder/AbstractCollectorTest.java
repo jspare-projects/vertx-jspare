@@ -17,7 +17,7 @@ package org.jspare.vertx.web.builder;
 
 import io.vertx.core.Vertx;
 import org.jspare.core.Environment;
-import org.jspare.vertx.bootstrap.EnvironmentUtils;
+import org.jspare.vertx.utils.EnvironmentUtils;
 import org.junit.Before;
 
 import java.util.ArrayList;

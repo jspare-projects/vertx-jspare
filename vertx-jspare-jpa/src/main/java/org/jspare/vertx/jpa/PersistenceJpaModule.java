@@ -24,8 +24,8 @@ import org.jspare.core.MySupport;
 import org.jspare.core.internal.ReflectionUtils;
 import org.jspare.jpa.PersistenceOptions;
 import org.jspare.jpa.PersistenceUnitProvider;
-import org.jspare.vertx.autoconfiguration.AutoConfigurationResource;
-import org.jspare.vertx.utils.DataObjectConverter;
+import org.jspare.vertx.Module;
+import org.jspare.vertx.DataObjectConverter;
 
 import javax.inject.Inject;
 import java.lang.reflect.Method;
@@ -39,7 +39,7 @@ import java.util.*;
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-public class PersistenceJpaModule extends MySupport implements AutoConfigurationResource {
+public class PersistenceJpaModule extends MySupport implements Module {
 
   @Inject
   private PersistenceUnitProvider provider;
@@ -51,7 +51,7 @@ public class PersistenceJpaModule extends MySupport implements AutoConfiguration
    * (non-Javadoc)
    *
    * @see
-   * org.jspare.vertx.experimental.AutoConfigurationResource#init(io.vertx.core.Verticle,
+   * org.jspare.vertx.experimental.Module#init(io.vertx.core.Verticle,
    * java.lang.String[])
    */
   @Override

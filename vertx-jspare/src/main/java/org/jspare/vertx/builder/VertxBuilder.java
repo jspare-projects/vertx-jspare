@@ -23,7 +23,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.jspare.vertx.bootstrap.EnvironmentUtils;
+import org.jspare.vertx.utils.EnvironmentUtils;
 
 import java.util.function.Consumer;
 

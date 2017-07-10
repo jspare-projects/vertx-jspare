@@ -13,13 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.bootstrap;
+package org.jspare.vertx.internal;
 
 import io.vertx.core.Verticle;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.jspare.core.Environment;
-import org.jspare.vertx.autoconfiguration.AutoConfigurationInitializer;
+import org.jspare.vertx.internal.ModuleInitializer;
 
 /**
  * Instantiates a new verticle initializer.
@@ -66,7 +66,7 @@ public class VerticleInitializer {
   @SneakyThrows
   public Verticle initialize(Verticle verticle) {
     Environment.inject(verticle);
-    Environment.my(AutoConfigurationInitializer.class).initialize(verticle);
+    Environment.my(ModuleInitializer.class).initialize(verticle);
     return verticle;
   }
 }

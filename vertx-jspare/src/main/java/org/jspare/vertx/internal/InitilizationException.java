@@ -1,4 +1,4 @@
-package org.jspare.vertx.autoconfiguration;
+package org.jspare.vertx.internal;
 
 /**
  * Created by paulo.ferreira on 03/06/2017.

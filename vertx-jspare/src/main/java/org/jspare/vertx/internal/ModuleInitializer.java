@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.autoconfiguration;
+package org.jspare.vertx.internal;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -22,22 +22,23 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import org.jspare.core.MySupport;
+import org.jspare.vertx.Module;
+import org.jspare.vertx.annotation.Modules;
 import org.jspare.vertx.concurrent.ReduceFuture;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Responsible to init {@link AutoConfiguration} life cycle.
+ * Responsible to init {@link Modules} life cycle.
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Slf4j
-public class AutoConfigurationInitializer extends MySupport {
+public class ModuleInitializer extends MySupport {
 
   /**
    * The vertx.
@@ -54,7 +55,7 @@ public class AutoConfigurationInitializer extends MySupport {
 
     Future<Void> initFuture = Future.future();
 
-    if (verticle == null || verticle.getVertx() == null || !verticle.getClass().isAnnotationPresent(AutoConfiguration.class)) {
+    if (verticle == null || verticle.getVertx() == null || !verticle.getClass().isAnnotationPresent(Modules.class)) {
       initFuture.complete();
       return initFuture;
     }
@@ -62,7 +63,7 @@ public class AutoConfigurationInitializer extends MySupport {
     if (log.isDebugEnabled()) {
       log.debug("Initialize Auto Configuration");
     }
-    AutoConfiguration cfg = verticle.getClass().getAnnotation(AutoConfiguration.class);
+    Modules cfg = verticle.getClass().getAnnotation(Modules.class);
     final JsonObject config = new JsonObject();
     if (verticle instanceof AbstractVerticle) {
       config.mergeIn(((AbstractVerticle) verticle).config());
@@ -76,7 +77,7 @@ public class AutoConfigurationInitializer extends MySupport {
     Arrays.asList(cfg.value()).forEach(m -> {
       try {
 
-        AutoConfigurationResource mi = (AutoConfigurationResource) m.value().newInstance();
+        Module mi = (Module) m.value().newInstance();
         synchronized (mi) {
 
           if (log.isDebugEnabled()) {

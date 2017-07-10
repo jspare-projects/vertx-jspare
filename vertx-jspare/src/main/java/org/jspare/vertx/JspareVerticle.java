@@ -1,11 +1,11 @@
-package org.jspare.vertx.bootstrap;
+package org.jspare.vertx;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import org.jspare.core.Environment;
-import org.jspare.vertx.autoconfiguration.AutoConfigurationInitializer;
+import org.jspare.vertx.internal.ModuleInitializer;
 
 /**
  * Created by paulo.ferreira on 15/05/2017.
@@ -20,7 +20,7 @@ public class JspareVerticle extends AbstractVerticle {
 
   protected Future<Void> initAutoConfiguration() {
 
-    return Environment.my(AutoConfigurationInitializer.class).initialize(this);
+    return Environment.my(ModuleInitializer.class).initialize(this);
   }
 
   @Override

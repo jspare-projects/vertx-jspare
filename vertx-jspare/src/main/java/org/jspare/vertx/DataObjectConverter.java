@@ -13,17 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.utils;
+package org.jspare.vertx;
 
-import com.fasterxml.jackson.databind.util.BeanUtil;
-import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.ObjectUtils;
 
 @Slf4j
 @UtilityClass
@@ -52,10 +49,6 @@ public class DataObjectConverter {
    * @return the json object
    */
   public JsonObject toJson(Object obj) {
-    if (obj.getClass().getAnnotation(DataObject.class) == null) {
-
-      throw new IllegalArgumentException();
-    }
     return new JsonObject(Json.encode(obj));
   }
 

@@ -13,14 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.bootstrap;
+package org.jspare.vertx;
 
 import io.vertx.core.Launcher;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import org.jspare.vertx.utils.EnvironmentUtils;
 
 /**
  * The Class VertxJspareLauncher.
+ * <p>The launcher class is used to extend the behavior of the original bootstrao of {@link Launcher}. Using the bootstrap strategy the Jspare {@link org.jspare.core.Environment} is initialized by registering a main instance of the container. After initialization, the main vertx interfaces are registered in the container to be used through IoC by {@link EnvironmentUtils}.</p>
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */

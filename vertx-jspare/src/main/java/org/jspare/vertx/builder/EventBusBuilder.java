@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jspare.core.Environment;
+import org.jspare.vertx.utils.ClasspathScannerUtils;
 
 import java.util.ArrayList;
 import java.util.List;

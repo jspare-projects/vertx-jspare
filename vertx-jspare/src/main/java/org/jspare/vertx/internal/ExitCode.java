@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.bootstrap;
+package org.jspare.vertx.internal;
 
 /**
  * Base Interface for Launcher with Exit Codes.
@@ -23,7 +23,7 @@ package org.jspare.vertx.bootstrap;
  * and launcher exit code</a> specification, and can be extendend implement the
  * codes above follow Vertx Launcher specification, and can be extended
  * implementing this interface.
- * 
+ *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  *
  */

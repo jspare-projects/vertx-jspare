@@ -13,19 +13,28 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.autoconfiguration;
+package org.jspare.vertx;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import io.vertx.core.Future;
+import io.vertx.core.Verticle;
+import io.vertx.core.json.JsonObject;
+import org.jspare.vertx.annotation.Modules;
 
 /**
- *
- * An module responsible for indicating to {@link AutoConfiguration } the
- * modules reached to be initialized by {@link org.jspare.vertx.bootstrap.JspareVerticle }.
+ * An interface able to aggregate for auto boot when used
+ * {@link Modules } feature.
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Resource {
-  Class<? extends AutoConfigurationResource> value();
+public interface Module {
+
+  /**
+   * Execute process.
+   *
+   * @param verticle
+   *          the verticle
+   * @param config
+   *          the configuration
+   */
+  Future<Void> init(Verticle verticle, JsonObject config);
 }

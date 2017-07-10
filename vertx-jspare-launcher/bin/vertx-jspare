@@ -198,4 +198,4 @@ exec "$JAVACMD" \
     -Dvertx.cli.usage.prefix=vertx\
     -Dvertx.clusterManagerFactory=io.vertx.spi.cluster.impl.hazelcast.HazelcastClusterManagerFactory\
     -classpath "$CLASSPATH" \
-    org.jspare.vertx.bootstrap.VertxJspareLauncher "$@"
+    org.jspare.vertx.VertxJspareLauncher "$@"

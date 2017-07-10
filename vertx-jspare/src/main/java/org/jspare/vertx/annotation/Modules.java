@@ -13,9 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.jspare.vertx.autoconfiguration;
+package org.jspare.vertx.annotation;
 
-import org.jspare.vertx.bootstrap.VerticleInitializer;
+import org.jspare.vertx.JspareVerticle;
+import org.jspare.vertx.internal.VerticleInitializer;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,16 +24,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The {@link AutoConfiguration } indicate to {@link org.jspare.vertx.bootstrap.JspareVerticle}
+ * The {@link Modules } indicate to {@link JspareVerticle}
  * that this verticle when initialized by {@link VerticleInitializer } load
- * modules descripted by value field.
+ * internal descripted by value field.
  *
  * <code>
- *  &#64;AutoConfiguration(@Resource("eventbus"))
+ *  &#64;Modules(@Module("eventbus"))
  *  public class SampleVerticle extends AutoConfigurationVerticle
  *  </code>
  *
- * <b>Note</b>: This class is still considered autoconfiguration because we did not
+ * <b>Note</b>: This class is still considered internal because we did not
  * perform all the tests or arrived at a stable version, but we understand that
  * the use of this will be advantageous.
  *
@@ -41,12 +42,12 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
-public @interface AutoConfiguration {
+public @interface Modules {
 
   /**
-   * Indicates which modules will be loaded.
+   * Indicates which internal will be loaded.
    *
    * @return the module[]
    */
-  Resource[] value();
+  Module[] value();
 }

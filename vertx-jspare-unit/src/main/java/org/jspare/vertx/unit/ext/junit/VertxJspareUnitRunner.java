@@ -3,7 +3,7 @@ package org.jspare.vertx.unit.ext.junit;
 import io.vertx.core.Vertx;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.jspare.core.Environment;
-import org.jspare.vertx.bootstrap.EnvironmentUtils;
+import org.jspare.vertx.utils.EnvironmentUtils;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.Fail;
 import org.junit.runners.model.FrameworkMethod;

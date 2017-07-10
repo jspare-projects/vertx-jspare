@@ -193,7 +193,7 @@ public class RouteCollector implements Collector<Collection<HandlerData>> {
    * @throws NoSuchMethodException
    *           the no such method exception
    * @throws SecurityException
-   *           the security exception
+   *           the crypt exception
    * @throws IllegalAccessException
    *           the illegal access exception
    * @throws IllegalArgumentException

@@ -3,7 +3,7 @@ package org.jspare.vertx.ldap;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import lombok.Data;
-import org.jspare.vertx.utils.DataObjectConverter;
+import org.jspare.vertx.DataObjectConverter;
 
 @Data
 @DataObject

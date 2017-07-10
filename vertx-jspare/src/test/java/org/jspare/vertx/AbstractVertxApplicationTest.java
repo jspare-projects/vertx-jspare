@@ -17,8 +17,7 @@ package org.jspare.vertx;
 
 import io.vertx.core.Vertx;
 import org.jspare.core.Environment;
-import org.jspare.vertx.bootstrap.EnvironmentUtils;
-import org.jspare.vertx.bootstrap.VertxRunner;
+import org.jspare.vertx.utils.EnvironmentUtils;
 import org.junit.Before;
 
 /**
