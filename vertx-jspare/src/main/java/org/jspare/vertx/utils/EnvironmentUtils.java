@@ -75,7 +75,6 @@ public class EnvironmentUtils {
     Environment.registry(Bind.bind(Vertx.class), vertx);
     Environment.registry(Bind.bind(Context.class), vertx.getOrCreateContext());
     Environment.registry(Bind.bind(EventBus.class), vertx.eventBus());
-    Environment.registry(Bind.bind(EventBus.class), vertx.eventBus());
     Environment.registry(Bind.bind(FileSystem.class), vertx.fileSystem());
     Environment.registry(Bind.bind(SharedData.class), vertx.sharedData());
   }
