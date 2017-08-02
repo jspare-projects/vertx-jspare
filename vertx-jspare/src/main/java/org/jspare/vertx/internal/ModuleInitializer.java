@@ -15,13 +15,14 @@
  */
 package org.jspare.vertx.internal;
 
-import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
-import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.jspare.core.Environment;
 import org.jspare.core.MySupport;
+import org.jspare.vertx.Modularized;
 import org.jspare.vertx.Module;
 import org.jspare.vertx.annotation.Modules;
 import org.jspare.vertx.concurrent.ReduceFuture;
@@ -29,8 +30,11 @@ import org.jspare.vertx.concurrent.ReduceFuture;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
+
+import static org.jspare.core.Environment.inject;
 
 /**
  * Responsible to init {@link Modules} life cycle.
@@ -40,58 +44,51 @@ import java.util.function.Supplier;
 @Slf4j
 public class ModuleInitializer extends MySupport {
 
+  private List<Class<? extends Module>> loadedModules;
+
   /**
    * The vertx.
    */
   @Inject
   private Vertx vertx;
 
+  public ModuleInitializer() {
+    loadedModules = new ArrayList<>();
+
+  }
+
   /**
-   * Initialize.
-   *
-   * @param verticle the verticle
+   * Initialize one modularized instance
+   * @param modularized the instance
+   * @return the future
    */
-  public Future<Void> initialize(Verticle verticle) {
+  public Future<Void> initialize(Modularized modularized) {
+
+    if (log.isDebugEnabled()) {
+      log.debug("Initialize Auto Configuration for {}", modularized.getClass().getName());
+    }
 
     Future<Void> initFuture = Future.future();
-
-    if (verticle == null || verticle.getVertx() == null || !verticle.getClass().isAnnotationPresent(Modules.class)) {
+    if (modularized == null || !modularized.getClass().isAnnotationPresent(Modules.class)) {
       initFuture.complete();
       return initFuture;
     }
 
-    if (log.isDebugEnabled()) {
-      log.debug("Initialize Auto Configuration");
-    }
-    Modules cfg = verticle.getClass().getAnnotation(Modules.class);
     final JsonObject config = new JsonObject();
-    if (verticle instanceof AbstractVerticle) {
-      config.mergeIn(((AbstractVerticle) verticle).config());
-    }
+    config.mergeIn(modularized.getConfig());
 
     if (log.isDebugEnabled()) {
-      log.debug("Verticle: {}", verticle.getClass().getName());
-      log.debug("Config: {}", config.encode());
+      log.debug("Config: {}", modularized.getConfig());
     }
+
     final List<Supplier<Future>> futures = new ArrayList<>();
-    Arrays.asList(cfg.value()).forEach(m -> {
-      try {
+    try {
+      lookupModules(futures, modularized);
 
-        Module mi = (Module) m.value().newInstance();
-        synchronized (mi) {
+    } catch (Throwable e) {
 
-          if (log.isDebugEnabled()) {
-            log.debug("Load Module: {}", m.value().getName());
-          }
-          if (mi != null) {
-            futures.add(() -> mi.init(verticle, config));
-          }
-        }
-      } catch (Exception e) {
-
-        log.error("Failed to load {}", m.value().getName(), e);
-      }
-    });
+      return Future.failedFuture(e);
+    }
 
     ReduceFuture.create(futures).reduce().setHandler(ar -> {
       if (ar.succeeded()) {
@@ -104,4 +101,84 @@ public class ModuleInitializer extends MySupport {
     });
     return initFuture;
   }
+
+  private void lookupModules(List<Supplier<Future>> futures, Modularized modularized) throws InitilizationException {
+
+    if (!modularized.getClass().isAnnotationPresent(Modules.class)) {
+      return;
+    }
+
+    Modules modules = modularized.getClass().getAnnotation(Modules.class);
+    JsonObject config = modularized.getConfig();
+
+    Arrays.asList(modules.value()).forEach(m -> {
+
+      Class<? extends Module> mClazz = m.value();
+      try {
+
+        if (hasLoaded(mClazz) && m.persistent()) {
+
+          futures.add(() -> Future.succeededFuture());
+          return;
+        }
+
+        if (m.persistent()) {
+          loadedModules.add(mClazz);
+        }
+
+        Module mi = Environment.provide(mClazz);
+        mi.setConfig(config);
+
+        synchronized (mi) {
+
+          lookupModules(futures, mi);
+
+          if (log.isDebugEnabled()) {
+            log.debug("Load Module: {}", m.value().getName());
+          }
+          if (mi != null) {
+            futures.add(() -> initModule(modularized, config, mClazz, mi));
+          }
+        }
+      } catch (Exception e) {
+
+        log.error("Failed to load {}", m.value().getName(), e);
+      }
+    });
+  }
+
+  private boolean hasLoaded(Class<? extends Module> mName) {
+    return loadedModules.contains(mName);
+  }
+
+  private boolean moduleHasDependencies(Module module) {
+    return module.getClass().isAnnotationPresent(Modules.class);
+  }
+
+  private boolean allDependenciesHasLoaded(Module module) {
+    return getDependenciesDisjunction(module).isEmpty();
+  }
+
+  private Collection<Class<? extends Module>> getDependenciesDisjunction(Module module) {
+    Modules dependencies = module.getClass().getAnnotation(Modules.class);
+    return CollectionUtils.disjunction(Arrays.asList(dependencies.value()), loadedModules);
+  }
+
+  private Future initModule(Modularized modularized, JsonObject config, Class<? extends Module> mClazz, Module mi) {
+    /*if (moduleHasDependencies(mi) && !allDependenciesHasLoaded(mi)) {
+
+      String dependenciesUnresolved = getDependenciesDisjunction(mi).stream().map(c -> c.getSimpleName()).collect(Collectors.joining(","));
+      return Future.failedFuture(String.format("Could not load module %s the following dependencies need to be loaded: %s", mClazz.getSimpleName(), dependenciesUnresolved));
+    }*/
+
+    if (log.isDebugEnabled()) {
+      log.debug("Init Module: {}", mi.getClass().getName());
+    }
+
+    inject(modularized);
+    inject(mi);
+
+    return mi.init(modularized, config);
+  }
+
 }

@@ -4,6 +4,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.ext.unit.TestContext;
+import org.jspare.unit.mock.InjectMocks;
 import org.jspare.unit.mock.Mock;
 import org.jspare.unit.mock.Mocker;
 import org.jspare.vertx.unit.ext.junit.VertxJspareUnitRunner;
@@ -20,7 +21,7 @@ import javax.inject.Inject;
 public class AsyncResultMockerTest {
 
   @Mock
-  @Inject
+  @InjectMocks
   private SomeService someService;
 
   @Test

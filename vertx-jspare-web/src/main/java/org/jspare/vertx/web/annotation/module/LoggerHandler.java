@@ -1,9 +1,9 @@
 package org.jspare.vertx.web.annotation.module;
 
 import io.vertx.core.Handler;
-import io.vertx.core.Verticle;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.LoggerFormat;
+import org.jspare.vertx.Modularized;
 import org.jspare.vertx.web.module.AnnotationHandlerFactory;
 
 import java.lang.annotation.ElementType;
@@ -26,7 +26,7 @@ public @interface LoggerHandler {
   class LoggerHandlerFactory implements AnnotationHandlerFactory<LoggerHandler> {
 
     @Override
-    public Handler<RoutingContext> factory(LoggerHandler logger, Verticle verticle) {
+    public Handler<RoutingContext> factory(LoggerHandler logger, Modularized instance) {
       return io.vertx.ext.web.handler.LoggerHandler.create(logger.immediate(), logger.loggerFormat());
     }
   }

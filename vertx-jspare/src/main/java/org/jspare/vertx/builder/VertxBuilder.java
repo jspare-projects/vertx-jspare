@@ -23,7 +23,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.jspare.vertx.utils.EnvironmentUtils;
+import org.jspare.vertx.cdi.EnvironmentLoader;
 
 import java.util.function.Consumer;
 
@@ -150,7 +150,7 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 
     // Register vertx on VertxHolder. This interaction allow that the Vertx
     // can be accessed internally by application.
-   EnvironmentUtils.bindInterfaces(vertx);
+   EnvironmentLoader.bindInterfaces(vertx);
 
     return future;
   }

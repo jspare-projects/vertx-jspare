@@ -28,7 +28,7 @@
 
     <dependency>
       <groupId>org.jspare.vertx</groupId>
-      <artifactId>vertx-jspare</artifactId>
+      <artifactId>vertx-jspare-cdi</artifactId>
       <version>${project.version}</version>
     </dependency>
 

@@ -56,7 +56,7 @@
     <lombok.version>1.16.8</lombok.version>
     <logback.version>1.1.6</logback.version>
     <junit.version>4.12</junit.version>
-    <jspare.core.version>3.0.0-SNAPSHOT</jspare.core.version>
+    <jspare.core.version>3.0.1</jspare.core.version>
     <vertx.version>3.4.2</vertx.version>
   </properties>
 
@@ -195,6 +195,55 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Exclude jackson use originally on vertx  -->
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+      <version>${vertx.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-parameter-names</artifactId>
+      <version>2.8.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jdk8</artifactId>
+      <version>2.8.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>2.8.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.xebia</groupId>
+      <artifactId>jackson-lombok</artifactId>
+      <version>1.1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>1.9.3</version>
+    </dependency>
+
   </dependencies>
 
   <dependencyManagement>
@@ -215,6 +264,7 @@
     <module>vertx-jspare-jpa</module>
     <module>vertx-jspare-ldap</module>
     <module>vertx-jspare-unit</module>
+    <module>vertx-jspare-cdi</module>
   </modules>
 
   <distributionManagement>

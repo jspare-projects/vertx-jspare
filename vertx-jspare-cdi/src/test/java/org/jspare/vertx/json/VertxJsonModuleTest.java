@@ -1,10 +1,5 @@
 package org.jspare.vertx.json;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.xebia.jacksonlombok.JacksonLombokAnnotationIntrospector;
 import io.vertx.core.json.Json;
 import org.jspare.vertx.ext.jackson.datatype.VertxJsonModule;

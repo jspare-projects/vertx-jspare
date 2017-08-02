@@ -1,10 +1,10 @@
 package org.jspare.vertx.web.annotation.module;
 
 import io.vertx.core.Handler;
-import io.vertx.core.Verticle;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.CorsHandler;
+import org.jspare.vertx.Modularized;
 import org.jspare.vertx.web.module.AnnotationHandlerFactory;
 
 import java.lang.annotation.ElementType;
@@ -37,7 +37,7 @@ public @interface Cors {
   class CorsHandlerFactory implements AnnotationHandlerFactory<Cors> {
 
     @Override
-    public Handler<RoutingContext> factory(Cors cors, Verticle verticle) {
+    public Handler<RoutingContext> factory(Cors cors, Modularized instance) {
       return CorsHandler.create(cors.allowedOriginPattern())
         .allowCredentials(cors.allowCredentials())
         .allowedHeaders(Arrays.asList(cors.allowedHeaders()).stream().collect(Collectors.toSet()))

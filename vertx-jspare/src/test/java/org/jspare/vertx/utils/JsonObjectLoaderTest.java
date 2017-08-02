@@ -18,7 +18,6 @@ package org.jspare.vertx.utils;
 
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonObject;
-import org.jspare.vertx.AbstractVertxApplicationTest;
 import org.junit.Assert;
 import org.junit.Test;
 

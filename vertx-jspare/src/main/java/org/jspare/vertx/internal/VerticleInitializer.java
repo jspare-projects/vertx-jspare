@@ -19,7 +19,7 @@ import io.vertx.core.Verticle;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.jspare.core.Environment;
-import org.jspare.vertx.internal.ModuleInitializer;
+import org.jspare.vertx.Modularized;
 
 /**
  * Instantiates a new verticle initializer.
@@ -32,8 +32,7 @@ public class VerticleInitializer {
   /**
    * Initialize.
    *
-   * @param clazz
-   *          the clazz
+   * @param clazz the clazz
    * @return the verticle
    */
   @SneakyThrows
@@ -45,8 +44,7 @@ public class VerticleInitializer {
   /**
    * Initialize.
    *
-   * @param name
-   *          the name
+   * @param name the name
    * @return the verticle
    */
   @SneakyThrows
@@ -59,14 +57,16 @@ public class VerticleInitializer {
   /**
    * Initialize.
    *
-   * @param verticle
-   *          the verticle
+   * @param verticle the verticle
    * @return the verticle
    */
   @SneakyThrows
   public Verticle initialize(Verticle verticle) {
     Environment.inject(verticle);
-    Environment.my(ModuleInitializer.class).initialize(verticle);
+
+    if (verticle instanceof Modularized) {
+      Environment.my(ModuleInitializer.class).initialize((Modularized) verticle);
+    }
     return verticle;
   }
 }

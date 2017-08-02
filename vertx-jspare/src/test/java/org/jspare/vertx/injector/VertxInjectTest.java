@@ -15,11 +15,11 @@
  */
 package org.jspare.vertx.injector;
 
-import org.jspare.vertx.AbstractVertxApplicationTest;
-import org.junit.Assert;
-import org.junit.Test;
-
 import io.vertx.core.Vertx;
+import io.vertx.ext.unit.TestContext;
+import org.jspare.vertx.unit.ext.junit.VertxJspareUnitRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 
@@ -28,9 +28,12 @@ import javax.inject.Inject;
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-public class VertxInjectTest extends AbstractVertxApplicationTest {
+@RunWith(VertxJspareUnitRunner.class)
+public class VertxInjectTest {
 
-  /** The vertx. */
+  /**
+   * The vertx.
+   */
   @Inject
   private Vertx vertx;
 
@@ -38,8 +41,8 @@ public class VertxInjectTest extends AbstractVertxApplicationTest {
    * Vertx test.
    */
   @Test
-  public void vertxTest() {
+  public void vertxTest(TestContext ctx) {
 
-    Assert.assertNotNull(vertx);
+    ctx.assertNotNull(vertx);
   }
 }

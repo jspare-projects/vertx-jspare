@@ -15,67 +15,70 @@
  */
 package org.jspare.vertx.web.builder;
 
-import java.util.List;
-
+import io.vertx.ext.unit.TestContext;
+import org.jspare.vertx.unit.ext.junit.VertxJspareUnitRunner;
 import org.jspare.vertx.web.builder.route.MultiHandlers;
 import org.jspare.vertx.web.builder.route.MultiHttpMethods;
 import org.jspare.vertx.web.builder.route.MultiRoutes;
-import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.util.List;
 
 /**
  * The Class HandlerCollectorTest.
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
+@RunWith(VertxJspareUnitRunner.class)
 public class HandlerCollectorTest extends AbstractCollectorTest {
 
   /**
    * Collect route set test.
    */
   @Test
-  public void collectRouteSetTest() {
+  public void collectRouteSetTest(TestContext ctx) {
 
     List<HandlerData> handlers = collect(MultiRoutes.class);
 
-    Assert.assertEquals(2, handlers.size());
+    ctx.assertEquals(2, handlers.size());
 
     HandlerData handler1 = handlers.get(0);
     HandlerData handler2 = handlers.get(1);
 
-    Assert.assertEquals(MultiRoutes.class, handler1.clazz());
-    Assert.assertEquals("handler1", handler1.method().getName());
-    Assert.assertEquals("/multiRoutes/1", handler1.path());
-    Assert.assertEquals("GET", handler1.httpMethod());
-    Assert.assertEquals(HandlerType.HANDLER, handler1.handlerType());
-    Assert.assertEquals(Integer.MIN_VALUE, handler1.order());
+    ctx.assertEquals(MultiRoutes.class, handler1.clazz());
+    ctx.assertEquals("handler1", handler1.method().getName());
+    ctx.assertEquals("/multiRoutes/1", handler1.path());
+    ctx.assertEquals("GET", handler1.httpMethod());
+    ctx.assertEquals(HandlerType.HANDLER, handler1.handlerType());
+    ctx.assertEquals(Integer.MIN_VALUE, handler1.order());
 
-    Assert.assertEquals("/multiRoutes/2", handler2.path());
-    Assert.assertEquals(HandlerType.BLOCKING_HANDLER, handler2.handlerType());
-    Assert.assertEquals("handler2", handler2.method().getName());
-    Assert.assertEquals(1, handler2.order());
-    Assert.assertTrue(handler2.pathRegex());
-    Assert.assertEquals("*/*", handler2.consumes());
-    Assert.assertEquals("text/plain", handler2.produces());
+    ctx.assertEquals("/multiRoutes/2", handler2.path());
+    ctx.assertEquals(HandlerType.BLOCKING_HANDLER, handler2.handlerType());
+    ctx.assertEquals("handler2", handler2.method().getName());
+    ctx.assertEquals(1, handler2.order());
+    ctx.assertTrue(handler2.pathRegex());
+    ctx.assertEquals("*/*", handler2.consumes());
+    ctx.assertEquals("text/plain", handler2.produces());
   }
 
   /**
    * Multi handlers test.
    */
   @Test
-  public void multiHandlersTest() {
+  public void multiHandlersTest(TestContext ctx) {
 
     List<HandlerData> handlers = collect(MultiHandlers.class);
-    Assert.assertEquals(3, handlers.size());
+    ctx.assertEquals(3, handlers.size());
   }
 
   /**
    * Multi http methods test.
    */
   @Test
-  public void multiHttpMethodsTest() {
+  public void multiHttpMethodsTest(TestContext ctx) {
 
     List<HandlerData> handlers = collect(MultiHttpMethods.class);
-    Assert.assertEquals(HttpMethodType.values().length * 2, handlers.size());
+    ctx.assertEquals(HttpMethodType.values().length * 2, handlers.size());
   }
 }

@@ -41,7 +41,7 @@ public interface ExitCode {
    * The general error.
    * <p>
    * 1 for general purpose error
-   * <p>
+   * </p>
    * /
    */
   int GENERAL_ERROR = 1;
@@ -50,7 +50,7 @@ public interface ExitCode {
    * The vertx cannot be initialized.
    * <p>
    * 11 if Vert.x cannot be initialized
-   * <p>
+   * </p>
    */
   int VERTX_CANNOT_BE_INITIALIZED = 11;
 
@@ -68,7 +68,7 @@ public interface ExitCode {
    * <p>
    * 14 if the system configuration is not meeting the system requirement (shc
    * as java not found)
-   * <p>
+   * </p>
    */
   int SYSTEM_CONFIGURATION_ERROR = 14;
 
@@ -76,7 +76,7 @@ public interface ExitCode {
    * The main verticle error.
    * <p>
    * 15 if the main verticle cannot be deployed
-   * <p>
+   * </p>
    */
   int MAIN_VERTICLE_ERROR = 15;
 }

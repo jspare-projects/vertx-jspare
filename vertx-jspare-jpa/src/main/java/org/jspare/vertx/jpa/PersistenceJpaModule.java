@@ -16,16 +16,15 @@
 package org.jspare.vertx.jpa;
 
 import io.vertx.core.Future;
-import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import lombok.SneakyThrows;
-import org.jspare.core.MySupport;
 import org.jspare.core.internal.ReflectionUtils;
 import org.jspare.jpa.PersistenceOptions;
 import org.jspare.jpa.PersistenceUnitProvider;
-import org.jspare.vertx.Module;
+import org.jspare.vertx.AbstractModule;
 import org.jspare.vertx.DataObjectConverter;
+import org.jspare.vertx.Modularized;
 
 import javax.inject.Inject;
 import java.lang.reflect.Method;
@@ -39,7 +38,7 @@ import java.util.*;
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-public class PersistenceJpaModule extends MySupport implements Module {
+public class PersistenceJpaModule extends AbstractModule {
 
   @Inject
   private PersistenceUnitProvider provider;
@@ -55,15 +54,15 @@ public class PersistenceJpaModule extends MySupport implements Module {
    * java.lang.String[])
    */
   @Override
-  public Future<Void> init(Verticle verticle, JsonObject config) {
+  public Future<Void> init(Modularized instance, JsonObject config) {
 
     Future<Void> loadFuture = Future.future();
-    final Vertx vertx = verticle.getVertx();
+    final Vertx vertx = instance.getVertx();
 
     vertx.executeBlocking(f -> {
       try {
 
-        load(verticle, config);
+        load(instance, config);
 
         DATA_SOURCES.entrySet().forEach(es -> {
           PersistenceOptions options = es.getValue();
@@ -80,16 +79,16 @@ public class PersistenceJpaModule extends MySupport implements Module {
     return loadFuture;
   }
 
-  private void load(Verticle verticle, JsonObject config) {
+  private void load(Modularized instance, JsonObject config) {
 
-    if (verticle.getClass().isAnnotationPresent(AnnotatedClasses.class)) {
-      AnnotatedClasses ann = verticle.getClass().getAnnotation(AnnotatedClasses.class);
+    if (instance.getClass().isAnnotationPresent(AnnotatedClasses.class)) {
+      AnnotatedClasses ann = instance.getClass().getAnnotation(AnnotatedClasses.class);
       ANNOTATED_CLASSES.addAll(Arrays.asList(ann.value()));
     }
 
     ReflectionUtils
-      .getMethodsWithAnnotation(verticle.getClass(), PersistenceUnitOptions.class)
-      .forEach(m -> setPersistenceOption(verticle, m));
+      .getMethodsWithAnnotation(instance.getClass(), PersistenceUnitOptions.class)
+      .forEach(m -> setPersistenceOption(instance, m));
 
     if (DATA_SOURCES.isEmpty()) {
 
@@ -100,11 +99,11 @@ public class PersistenceJpaModule extends MySupport implements Module {
   }
 
   @SneakyThrows
-  private void setPersistenceOption(Verticle verticle, Method method) {
+  private void setPersistenceOption(Modularized instance, Method method) {
 
     method.setAccessible(true);
     String dataSource = ReflectionUtils.getAnnotation(method, PersistenceUnitOptions.class).value();
-    PersistenceOptions options = (PersistenceOptions) method.invoke(verticle);
+    PersistenceOptions options = (PersistenceOptions) method.invoke(instance);
     DATA_SOURCES.put(dataSource, options);
   }
 }

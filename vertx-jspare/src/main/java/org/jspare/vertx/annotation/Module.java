@@ -30,4 +30,5 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Module {
   Class<? extends org.jspare.vertx.Module> value();
+  boolean persistent() default true;
 }

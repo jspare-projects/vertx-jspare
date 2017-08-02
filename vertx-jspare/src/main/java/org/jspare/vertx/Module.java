@@ -16,7 +16,6 @@
 package org.jspare.vertx;
 
 import io.vertx.core.Future;
-import io.vertx.core.Verticle;
 import io.vertx.core.json.JsonObject;
 import org.jspare.vertx.annotation.Modules;
 
@@ -26,15 +25,14 @@ import org.jspare.vertx.annotation.Modules;
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
-public interface Module {
+public interface Module extends Modularized {
 
   /**
    * Execute process.
    *
-   * @param verticle
-   *          the verticle
-   * @param config
-   *          the configuration
+   * @param instance the modularized instance
+   * @param config      the configuration
+   * @return Future the future
    */
-  Future<Void> init(Verticle verticle, JsonObject config);
+  Future<Void> init(Modularized instance, JsonObject config);
 }

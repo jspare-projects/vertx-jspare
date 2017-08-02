@@ -3,6 +3,7 @@ package org.jspare.vertx.web.module;
 import io.vertx.core.Handler;
 import io.vertx.core.Verticle;
 import io.vertx.ext.web.RoutingContext;
+import org.jspare.vertx.Modularized;
 
 import java.lang.annotation.Annotation;
 
@@ -11,6 +12,6 @@ import java.lang.annotation.Annotation;
  */
 public interface AnnotationHandlerFactory<A extends  Annotation> {
 
-  Handler<RoutingContext> factory(A annotation, Verticle verticle);
+  Handler<RoutingContext> factory(A annotation, Modularized modularized);
 
 }

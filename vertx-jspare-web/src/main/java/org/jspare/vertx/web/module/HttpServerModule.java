@@ -15,7 +15,10 @@
  */
 package org.jspare.vertx.web.module;
 
-import io.vertx.core.*;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
+import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
@@ -24,7 +27,8 @@ import io.vertx.ext.web.RoutingContext;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jspare.core.Environment;
-import org.jspare.vertx.Module;
+import org.jspare.vertx.AbstractModule;
+import org.jspare.vertx.Modularized;
 import org.jspare.vertx.web.annotation.module.*;
 import org.jspare.vertx.web.builder.HttpServerBuilder;
 import org.jspare.vertx.web.builder.RouterBuilder;
@@ -47,7 +51,7 @@ import java.util.stream.Stream;
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Slf4j
-public class HttpServerModule implements Module {
+public class HttpServerModule extends AbstractModule {
 
   /*
    * (non-Javadoc)
@@ -57,17 +61,17 @@ public class HttpServerModule implements Module {
    * java.lang.String[])
    */
   @Override
-  public Future<Void> init(Verticle verticle, JsonObject config) {
+  public Future<Void> init(Modularized instance, JsonObject config) {
 
     Future<Void> loadFuture = Future.future();
-    final Vertx vertx = verticle.getVertx();
+    final Vertx vertx = instance.getVertx();
 
-    HttpServerOptions options = getOptions(verticle, config);
+    HttpServerOptions options = getOptions(instance, config);
     Router router = Router.router(vertx);
-    setRouter(verticle, router);
+    setRouter(instance, router);
 
     HttpServer server = HttpServerBuilder.create(vertx).httpServerOptions(options).router(router).build();
-    Optional<Method> oMethod = Arrays.asList(verticle.getClass().getDeclaredMethods())
+    Optional<Method> oMethod = Arrays.asList(instance.getClass().getDeclaredMethods())
       .stream()
       .filter(m -> m.isAnnotationPresent(ListenHandler.class))
       .findFirst();
@@ -91,7 +95,7 @@ public class HttpServerModule implements Module {
 
           Method method = oMethod.get();
           method.setAccessible(true);
-          method.invoke(verticle, ar);
+          method.invoke(instance, ar);
         } catch (Exception e) {
 
           loadFuture.fail(e);
@@ -109,14 +113,14 @@ public class HttpServerModule implements Module {
    * @return the options
    */
   @SneakyThrows
-  private HttpServerOptions getOptions(Verticle verticle, JsonObject config) {
+  private HttpServerOptions getOptions(Modularized modularized, JsonObject config) {
 
-    Optional<Method> oMethod = Arrays.asList(verticle.getClass().getDeclaredMethods()).stream()
+    Optional<Method> oMethod = Arrays.asList(modularized.getClass().getDeclaredMethods()).stream()
       .filter(m -> HttpServerOptions.class.equals(m.getReturnType())).findFirst();
     if (oMethod.isPresent() && oMethod.get().getParameterCount() == 0) {
       Method method = oMethod.get();
       method.setAccessible(true);
-      return (HttpServerOptions) method.invoke(verticle);
+      return (HttpServerOptions) method.invoke(modularized);
     }
 
     return new HttpServerOptions(config);
@@ -129,24 +133,24 @@ public class HttpServerModule implements Module {
    * @return the router
    */
   @SneakyThrows
-  private void setRouter(Verticle verticle, Router router) {
+  private void setRouter(Modularized modularized, Router router) {
 
-    final RouterBuilder builder = RouterBuilder.create(verticle.getVertx(), router);
+    final RouterBuilder builder = RouterBuilder.create(modularized.getVertx(), router);
 
-    getHandlerAwareAnnotations(verticle).forEach(a -> setHandlerAnnotation(verticle, builder, a));
+    getHandlerAwareAnnotations(modularized).forEach(a -> setHandlerAnnotation(modularized, builder, a));
 
-    buildMethodAware(verticle, builder);
+    buildMethodAware(modularized, builder);
 
-    buildAuthHandler(verticle, builder);
+    buildAuthHandler(modularized, builder);
 
-    builderAnnAware(verticle, builder);
+    builderAnnAware(modularized, builder);
 
     builder.build();
   }
 
-  private void buildMethodAware(Verticle verticle, RouterBuilder builder) throws InvocationTargetException, IllegalAccessException {
+  private void buildMethodAware(Modularized modularized, RouterBuilder builder) throws InvocationTargetException, IllegalAccessException {
 
-    Optional<Method> oMethod = Arrays.asList(verticle.getClass().getDeclaredMethods())
+    Optional<Method> oMethod = Arrays.asList(modularized.getClass().getDeclaredMethods())
       .stream()
       .filter(m -> m.isAnnotationPresent(RouterBuilderAware.class))
       .findFirst();
@@ -156,10 +160,10 @@ public class HttpServerModule implements Module {
       && oMethod.get().getParameters()[0].getType().equals(RouterBuilder.class)) {
       Method method = oMethod.get();
       method.setAccessible(true);
-      method.invoke(verticle, builder);
+      method.invoke(modularized, builder);
     }
-    if (verticle.getClass().isAnnotationPresent(org.jspare.vertx.web.annotation.module.Routes.class)) {
-      Routes routes = verticle.getClass().getAnnotation(Routes.class);
+    if (modularized.getClass().isAnnotationPresent(org.jspare.vertx.web.annotation.module.Routes.class)) {
+      Routes routes = modularized.getClass().getAnnotation(Routes.class);
       builder.scanClasspath(routes.scanClasspath());
       Arrays.asList(routes.routes()).forEach(builder::addRoute);
       Arrays.asList(routes.skipRoutes()).forEach(builder::skipRoute);
@@ -167,13 +171,13 @@ public class HttpServerModule implements Module {
     }
   }
 
-  private Stream<Annotation> getHandlerAwareAnnotations(Verticle verticle) {
-    Class<?> clazz = verticle.getClass();
+  private Stream<Annotation> getHandlerAwareAnnotations(Modularized modularized) {
+    Class<?> clazz = modularized.getClass();
     return Arrays.asList(clazz.getAnnotations()).stream().filter(a -> a.annotationType().isAnnotationPresent(HandlerAware.class));
   }
 
   @SneakyThrows
-  private <A extends Annotation> void setHandlerAnnotation(Verticle verticle, RouterBuilder builder, A annotation) {
+  private <A extends Annotation> void setHandlerAnnotation(Modularized modularized, RouterBuilder builder, A annotation) {
 
     Class<?> factoryClass = ((Annotation) annotation).annotationType().getDeclaredClasses()[0];
     if (factoryClass == null) {
@@ -183,7 +187,7 @@ public class HttpServerModule implements Module {
       return;
     }
     AnnotationHandlerFactory<A> factory = (AnnotationHandlerFactory<A>) factoryClass.newInstance();
-    io.vertx.core.Handler<RoutingContext> handler = factory.factory(annotation, verticle);
+    io.vertx.core.Handler<RoutingContext> handler = factory.factory(annotation, modularized);
     builder.addHandler(handler);
 
     if (log.isDebugEnabled()) {
@@ -191,10 +195,10 @@ public class HttpServerModule implements Module {
     }
   }
 
-  private void buildAuthHandler(Verticle verticle, RouterBuilder builder) throws IllegalAccessException, InstantiationException {
+  private void buildAuthHandler(Modularized instance, RouterBuilder builder) throws IllegalAccessException, InstantiationException {
 
-    if (verticle.getClass().isAnnotationPresent(AuthHandler.class)) {
-      AuthHandler ann = verticle.getClass().getAnnotation(AuthHandler.class);
+    if (instance.getClass().isAnnotationPresent(AuthHandler.class)) {
+      AuthHandler ann = instance.getClass().getAnnotation(AuthHandler.class);
       Supplier<io.vertx.ext.web.handler.AuthHandler> supplier = () -> {
         return Environment.provide(ann.value());
       };
@@ -202,10 +206,10 @@ public class HttpServerModule implements Module {
     }
   }
 
-  private void builderAnnAware(Verticle verticle, RouterBuilder builder) throws IllegalAccessException, InstantiationException {
+  private void builderAnnAware(Modularized instance, RouterBuilder builder) throws IllegalAccessException, InstantiationException {
 
-    if (verticle.getClass().isAnnotationPresent(BuilderAware.class)) {
-      for (Class<? extends Handler<RouterBuilder>> clazz : verticle.getClass().getAnnotation(BuilderAware.class).value()) {
+    if (instance.getClass().isAnnotationPresent(BuilderAware.class)) {
+      for (Class<? extends Handler<RouterBuilder>> clazz : instance.getClass().getAnnotation(BuilderAware.class).value()) {
         Handler<RouterBuilder> handler = clazz.newInstance();
         handler.handle(builder);
       }

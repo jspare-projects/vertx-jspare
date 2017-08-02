@@ -17,8 +17,6 @@ package org.jspare.vertx.web.builder;
 
 import io.vertx.core.Vertx;
 import org.jspare.core.Environment;
-import org.jspare.vertx.utils.EnvironmentUtils;
-import org.junit.Before;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,17 +31,6 @@ public class AbstractCollectorTest {
 
   /** The builder. */
   protected RouterBuilder builder = RouterBuilder.create(Vertx.vertx());
-
-  /**
-   * Load.
-   */
-  @Before
-  public void load() {
-    Environment.create();
-    Vertx vertx = Vertx.vertx();
-    EnvironmentUtils.bindInterfaces(vertx);
-    Environment.inject(this);
-  }
 
   /**
    * Collect.

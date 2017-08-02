@@ -47,7 +47,8 @@ public class FutureSupplier {
    * Useful for reducing many futures into a single @{link Future}.
    *
    * @param futures a list of {@link Future futures}
-   * @return the transformed future
+   * @param <R> the type R
+   * @return the future
    */
   public static <R> Future<List<R>> sequenceFuture(List<Future<R>> futures) {
     return CompositeFutureImpl.all(futures.toArray(new Future[futures.size()]))

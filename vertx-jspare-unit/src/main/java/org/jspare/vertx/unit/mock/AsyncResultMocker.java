@@ -35,7 +35,7 @@ public class AsyncResultMocker {
   }
 
   public static Function<Object[], Object> mockSucceeded(Object result) {
-    return mock((f) -> f.complete());
+    return mock((f) -> f.complete(result));
   }
 
   public static Function<Object[], Object> mockFailed(Object[] args) {

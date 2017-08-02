@@ -15,15 +15,14 @@
  */
 package org.jspare.vertx;
 
-import org.jspare.core.Runner;
-
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.spi.cluster.ClusterManager;
+import org.jspare.core.Runner;
 import org.jspare.vertx.builder.VertxBuilder;
-import org.jspare.vertx.utils.EnvironmentUtils;
+import org.jspare.vertx.cdi.EnvironmentLoader;
 
 /**
  * The Class VertxClusteredRunner.
@@ -48,7 +47,7 @@ public abstract class VertxClusteredRunner extends AbstractVerticle implements R
 
       if (res.succeeded()) {
 
-        EnvironmentUtils.bindInterfaces(res.result());
+        EnvironmentLoader.bindInterfaces(res.result());
       } else {
 
         throw new RuntimeException("Failed to create Vert.x instance");
@@ -64,7 +63,7 @@ public abstract class VertxClusteredRunner extends AbstractVerticle implements R
   @Override
   public void setup() {
 
-    EnvironmentUtils.setup();
+    EnvironmentLoader.setup();
   }
 
   /**
@@ -77,7 +76,7 @@ public abstract class VertxClusteredRunner extends AbstractVerticle implements R
   /**
    * Vertx.
    *
-   * @return the future
+   * @return the future vertx
    */
   protected Future<Vertx> vertx() {
 

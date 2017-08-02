@@ -1,8 +1,8 @@
 package org.jspare.vertx.web.annotation.module;
 
 import io.vertx.core.Handler;
-import io.vertx.core.Verticle;
 import io.vertx.ext.web.RoutingContext;
+import org.jspare.vertx.Modularized;
 import org.jspare.vertx.web.module.AnnotationHandlerFactory;
 
 import java.lang.annotation.ElementType;
@@ -21,7 +21,7 @@ public @interface CookieHandler {
   class CookieHandlerFactory implements AnnotationHandlerFactory<CookieHandler> {
 
     @Override
-    public Handler<RoutingContext> factory(CookieHandler cookieHandler, Verticle verticle) {
+    public Handler<RoutingContext> factory(CookieHandler cookieHandler, Modularized instance) {
       return io.vertx.ext.web.handler.CookieHandler.create();
     }
   }

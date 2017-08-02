@@ -18,6 +18,7 @@ package org.jspare.vertx;
 import io.vertx.core.Launcher;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import org.jspare.vertx.cdi.EnvironmentLoader;
 import org.jspare.vertx.utils.EnvironmentUtils;
 
 /**
@@ -44,7 +45,7 @@ public class VertxJspareLauncher extends Launcher {
    */
   @Override
   public void afterStartingVertx(Vertx vertx) {
-    EnvironmentUtils.bindInterfaces(vertx);
+    EnvironmentLoader.bindInterfaces(vertx);
   }
 
   /*
@@ -54,6 +55,6 @@ public class VertxJspareLauncher extends Launcher {
    */
   @Override
   public void beforeStartingVertx(VertxOptions options) {
-    EnvironmentUtils.setup();
+    EnvironmentLoader.setup();
   }
 }

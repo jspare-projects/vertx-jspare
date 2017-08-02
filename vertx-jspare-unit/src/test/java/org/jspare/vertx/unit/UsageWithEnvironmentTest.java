@@ -4,14 +4,13 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.ext.unit.TestContext;
+import org.jspare.unit.mock.InjectMocks;
 import org.jspare.unit.mock.Mock;
 import org.jspare.unit.mock.Mocker;
 import org.jspare.vertx.unit.ext.junit.VertxJspareUnitRunner;
 import org.jspare.vertx.unit.mock.AsyncResultMocker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
 
 /**
  * Created by paulo.ferreira on 25/07/2017.
@@ -20,7 +19,7 @@ import javax.inject.Inject;
 public class UsageWithEnvironmentTest {
 
   @Mock
-  @Inject
+  @InjectMocks
   private SomeService someService;
 
   @Test

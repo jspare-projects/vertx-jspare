@@ -21,8 +21,8 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import org.jspare.core.Runner;
 import org.jspare.vertx.builder.VertxBuilder;
+import org.jspare.vertx.cdi.EnvironmentLoader;
 import org.jspare.vertx.internal.VerticleInitializer;
-import org.jspare.vertx.utils.EnvironmentUtils;
 
 /**
  * The Class VertxRunner.
@@ -45,7 +45,7 @@ public abstract class VertxRunner extends AbstractVerticle implements Runner {
 
       if (res.succeeded()) {
 
-        EnvironmentUtils.bindInterfaces(vertx);
+        EnvironmentLoader.bindInterfaces(vertx);
 
         mySupport();
 
@@ -63,7 +63,7 @@ public abstract class VertxRunner extends AbstractVerticle implements Runner {
    */
   @Override
   public void setup() {
-    EnvironmentUtils.setup();
+    EnvironmentLoader.setup();
   }
 
   /**

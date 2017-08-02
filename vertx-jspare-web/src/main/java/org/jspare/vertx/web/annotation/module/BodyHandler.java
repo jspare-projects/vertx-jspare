@@ -1,8 +1,8 @@
 package org.jspare.vertx.web.annotation.module;
 
 import io.vertx.core.Handler;
-import io.vertx.core.Verticle;
 import io.vertx.ext.web.RoutingContext;
+import org.jspare.vertx.Modularized;
 import org.jspare.vertx.web.module.AnnotationHandlerFactory;
 
 import java.lang.annotation.ElementType;
@@ -23,7 +23,7 @@ public @interface BodyHandler {
   class BodyHandlerFactory implements AnnotationHandlerFactory<BodyHandler> {
 
     @Override
-    public Handler<RoutingContext> factory(BodyHandler bodyHandler, Verticle verticle) {
+    public Handler<RoutingContext> factory(BodyHandler bodyHandler, Modularized instance) {
 
       String uploadDirectory = bodyHandler.uploadDirectory();
       return io.vertx.ext.web.handler.BodyHandler.create(uploadDirectory);

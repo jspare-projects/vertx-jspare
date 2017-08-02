@@ -9,7 +9,7 @@ import io.vertx.ext.unit.impl.TestContextImpl;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.jspare.core.Environment;
 import org.jspare.unit.mock.MockerUtils;
-import org.jspare.vertx.utils.EnvironmentUtils;
+import org.jspare.vertx.cdi.EnvironmentLoader;
 import org.junit.*;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.internal.runners.statements.Fail;
@@ -62,8 +62,9 @@ public class VertxJspareUnitRunner extends VertxUnitRunner {
   }
 
   private void setup() {
-    Environment.create();
-    EnvironmentUtils.bindInterfaces(Vertx.vertx());
+
+    EnvironmentLoader.setup();
+    EnvironmentLoader.bindInterfaces(Vertx.vertx());
     MockerUtils.initialize(this.testClass.getJavaClass());
   }
 

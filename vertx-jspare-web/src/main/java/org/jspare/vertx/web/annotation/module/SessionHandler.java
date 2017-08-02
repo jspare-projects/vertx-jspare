@@ -1,10 +1,10 @@
 package org.jspare.vertx.web.annotation.module;
 
 import io.vertx.core.Handler;
-import io.vertx.core.Verticle;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.sstore.ClusteredSessionStore;
 import io.vertx.ext.web.sstore.LocalSessionStore;
+import org.jspare.vertx.Modularized;
 import org.jspare.vertx.web.module.AnnotationHandlerFactory;
 
 import java.lang.annotation.ElementType;
@@ -25,13 +25,13 @@ public @interface SessionHandler {
   class SessionHandlerFactory implements AnnotationHandlerFactory<SessionHandler> {
 
     @Override
-    public Handler<RoutingContext> factory(SessionHandler logger, Verticle verticle) {
+    public Handler<RoutingContext> factory(SessionHandler logger, Modularized instance) {
 
-      if(logger.clustered()){
+      if (logger.clustered()) {
 
-        return io.vertx.ext.web.handler.SessionHandler.create(ClusteredSessionStore.create(verticle.getVertx()));
-      }else{
-        return io.vertx.ext.web.handler.SessionHandler.create(LocalSessionStore.create(verticle.getVertx()));
+        return io.vertx.ext.web.handler.SessionHandler.create(ClusteredSessionStore.create(instance.getVertx()));
+      } else {
+        return io.vertx.ext.web.handler.SessionHandler.create(LocalSessionStore.create(instance.getVertx()));
       }
     }
   }
