@@ -59,7 +59,7 @@ public interface ExitCode {
    * <p>
    * 12 if a spawn process cannot be started, found or stopped. This error code
    * is used by the start and stop command
-   * <p>
+   * </p>
    */
   int SPAWN_PROCESS_ERROR = 12;
 

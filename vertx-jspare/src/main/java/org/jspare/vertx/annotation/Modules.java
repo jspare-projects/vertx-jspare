@@ -16,7 +16,6 @@
 package org.jspare.vertx.annotation;
 
 import org.jspare.vertx.JspareVerticle;
-import org.jspare.vertx.internal.VerticleInitializer;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,9 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The {@link Modules } indicate to {@link JspareVerticle}
- * that this verticle when initialized by {@link VerticleInitializer } load
- * internal descripted by value field.
+ * The {@link Modules } indicate to {@link JspareVerticle}.
  *
  * <code>
  *  &#64;Modules(@Module("eventbus"))

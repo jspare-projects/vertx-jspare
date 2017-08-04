@@ -22,7 +22,6 @@ import io.vertx.core.Vertx;
 import org.jspare.core.Runner;
 import org.jspare.vertx.builder.VertxBuilder;
 import org.jspare.vertx.cdi.EnvironmentLoader;
-import org.jspare.vertx.internal.VerticleInitializer;
 
 /**
  * The Class VertxRunner.
@@ -75,7 +74,7 @@ public abstract class VertxRunner extends AbstractVerticle implements Runner {
 
     return VertxBuilder.create().build().compose(vertx -> {
 
-      vertx.deployVerticle(VerticleInitializer.initialize(this));
+      vertx.deployVerticle(this);
     }, Future.succeededFuture());
   }
 }
