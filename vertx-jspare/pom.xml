@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jspare.vertx</groupId>
     <artifactId>vertx-jspare-parent</artifactId>
-    <version>3.0.1</version>
+    <version>3.0.2</version>
     <relativePath>../</relativePath>
   </parent>
 
@@ -24,6 +24,7 @@
       <groupId>org.jspare.vertx</groupId>
       <artifactId>vertx-jspare-unit</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
