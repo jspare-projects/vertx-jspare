@@ -76,11 +76,12 @@ public abstract class AbstractModule extends MySupport implements Module {
     bind(String.class).name(name).registry(value);
   }
 
-  protected <T> void hookIfPresent(Class<? extends Annotation> ann, Handler<T> execute) {
+  protected <T> void hookIfPresent(Class<T> ann, Handler<T> execute) {
 
-    if (getClass().isAnnotationPresent(ann)) {
+    if (getClass().isAnnotationPresent((Class<? extends Annotation>) ann)) {
 
-      Object instance = getClass().getAnnotation(ann);
+      Class<? extends Annotation> annClass = (Class<? extends Annotation>) ann;
+      Object instance = getClass().getAnnotation(annClass);
       execute.handle((T) instance);
     }
   }

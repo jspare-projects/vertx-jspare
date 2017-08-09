@@ -5,12 +5,11 @@
   <parent>
     <artifactId>vertx-jspare-parent</artifactId>
     <groupId>org.jspare.vertx</groupId>
-    <version>3.0.2</version>
+    <version>3.0.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.jspare.vertx</groupId>
   <artifactId>vertx-jspare-cdi</artifactId>
-
 
 </project>

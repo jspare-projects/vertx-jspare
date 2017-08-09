@@ -105,7 +105,7 @@ public class DefaultHandler implements Handler<RoutingContext> {
    * @param t              the t
    */
   protected void catchInvoke(RoutingContext routingContext, Throwable t) {
-    // Any server error return internal server error
+    // Any server error return impl server error
     while (t.getCause() != null) {
 
       t = t.getCause();

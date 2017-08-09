@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  *
  * An module responsible for indicating to {@link Modules } the
- * internal reached to be initialized by {@link JspareVerticle }.
+ * impl reached to be initialized by {@link JspareVerticle }.
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
