@@ -28,9 +28,11 @@ import io.vertx.ext.web.RoutingContext;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
+import static org.jspare.vertx.web.handler.DefaultHandler.HANDLER_DATA;
+
 /**
  * Instantiates a new handler wrapper.
- * 
+ *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @UtilityClass
@@ -128,7 +130,13 @@ public class HandlerWrapper {
     }
 
     // Create route handler
+    Route hdRegRoute = createRoute(router, data);
     Route route = createRoute(router, data);
+
+    hdRegRoute.order(Integer.MIN_VALUE).handler(ctx -> {
+      ctx.put(HANDLER_DATA, data);
+      ctx.next();
+    });
 
     if (HandlerType.HANDLER.equals(data.handlerType())) {
 
