@@ -17,7 +17,6 @@ package org.jspare.vertx.web.module;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
@@ -38,7 +37,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -143,8 +141,6 @@ public class HttpServerModule extends AbstractModule {
 
     buildAuthHandler(modularized, builder);
 
-    builderAnnAware(modularized, builder);
-
     builder.build();
   }
 
@@ -162,13 +158,13 @@ public class HttpServerModule extends AbstractModule {
       method.setAccessible(true);
       method.invoke(modularized, builder);
     }
-    if (modularized.getClass().isAnnotationPresent(org.jspare.vertx.web.annotation.module.Routes.class)) {
-      Routes routes = modularized.getClass().getAnnotation(Routes.class);
+
+    doHookIfPresent(Routes.class, routes -> {
       builder.scanClasspath(routes.scanClasspath());
       Arrays.asList(routes.routes()).forEach(builder::addRoute);
       Arrays.asList(routes.skipRoutes()).forEach(builder::skipRoute);
       Arrays.asList(routes.scanPackages()).forEach(builder::addRoutePackage);
-    }
+    });
   }
 
   private Stream<Annotation> getHandlerAwareAnnotations(Modularized modularized) {
@@ -196,23 +192,6 @@ public class HttpServerModule extends AbstractModule {
   }
 
   private void buildAuthHandler(Modularized instance, RouterBuilder builder) throws IllegalAccessException, InstantiationException {
-
-    if (instance.getClass().isAnnotationPresent(AuthHandler.class)) {
-      AuthHandler ann = instance.getClass().getAnnotation(AuthHandler.class);
-      Supplier<io.vertx.ext.web.handler.AuthHandler> supplier = () -> {
-        return Environment.provide(ann.value());
-      };
-      builder.authHandler(supplier);
-    }
-  }
-
-  private void builderAnnAware(Modularized instance, RouterBuilder builder) throws IllegalAccessException, InstantiationException {
-
-    if (instance.getClass().isAnnotationPresent(BuilderAware.class)) {
-      for (Class<? extends Handler<RouterBuilder>> clazz : instance.getClass().getAnnotation(BuilderAware.class).value()) {
-        Handler<RouterBuilder> handler = clazz.newInstance();
-        handler.handle(builder);
-      }
-    }
+    hookIfPresent(AuthHandler.class, ann -> builder.authHandler(() -> Environment.provide(ann.value())));
   }
 }

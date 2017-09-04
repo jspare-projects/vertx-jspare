@@ -67,8 +67,7 @@ public class EventBusCollector implements Collector<Collection<EventBusData>> {
   /**
    * Gets the single instance of EventBusCollector.
    *
-   * @param clazz
-   *          the clazz
+   * @param clazz the clazz
    * @return single instance of EventBusCollector
    */
   private Object getInstance(Class<?> clazz) {

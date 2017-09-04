@@ -11,12 +11,17 @@ import org.jspare.core.internal.Bind;
 
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
+import java.lang.reflect.AnnotatedElement;
+import java.util.Arrays;
+import java.util.function.BiConsumer;
 
 /**
  * A support class for {@link Module}s which reduces repetition and results in a more readable
  * configuration. Simply extend this class, implement {@link #load()}, and call the inherited
  * methods which mirror those found in {@link org.jspare.core.internal.Bind}. For example:
- *
+ * <p>
  * <pre>
  * public class MyModule extends AbstractModule {
  *   protected void init() {
@@ -76,13 +81,91 @@ public abstract class AbstractModule extends MySupport implements Module {
     bind(String.class).name(name).registry(value);
   }
 
+  /**
+   * Use instead doHookIfPresent.
+   *
+   * @param ann     the annotation
+   * @param execute the handler
+   * @param <T>     the type
+   */
+  @Deprecated
   protected <T> void hookIfPresent(Class<T> ann, Handler<T> execute) {
 
-    if (getClass().isAnnotationPresent((Class<? extends Annotation>) ann)) {
+    if (instance.getClass().isAnnotationPresent((Class<? extends Annotation>) ann)) {
 
       Class<? extends Annotation> annClass = (Class<? extends Annotation>) ann;
       Object instance = getClass().getAnnotation(annClass);
       execute.handle((T) instance);
+    }
+  }
+
+  /**
+   * Execute one hook if is present.
+   *
+   * @param ann     the annotation
+   * @param execute the bi consumer
+   * @param <T>     the type
+   */
+  protected <T> void doHookIfPresent(Class<T> ann, BiConsumer<AnnotatedElement, T> execute) {
+
+    Class<? extends Annotation> annClass = (Class<? extends Annotation>) ann;
+    Target target = annClass.getAnnotation(Target.class);
+
+    if (isCheckType(target, ElementType.TYPE)) executeHookType(annClass, execute);
+    if (isCheckType(target, ElementType.METHOD)) executeHookMethods(annClass, execute);
+  }
+
+  /**
+   * Execute one hook if is present.
+   *
+   * @param ann     the annotation
+   * @param execute the handler
+   * @param <T>     the type
+   */
+  protected <T> void doHookIfPresent(Class<T> ann, Handler<T> execute) {
+
+    Class<? extends Annotation> annClass = (Class<? extends Annotation>) ann;
+    Target target = annClass.getAnnotation(Target.class);
+
+    if (isCheckType(target, ElementType.TYPE)) {
+      executeHookType(annClass, (a, t) -> execute.handle((T) t));
+    }
+
+    if (isCheckType(target, ElementType.METHOD)) {
+      executeHookMethods(annClass, (a, t) -> execute.handle((T) t));
+    }
+  }
+
+  /**
+   * Check has class contains one annotation type
+   *
+   * @param annElement the ann element
+   * @param annClass   the ann class
+   * @return boolean
+   */
+  protected boolean hasAnnotationInType(AnnotatedElement annElement, Class<? extends Annotation> annClass) {
+    return annElement.isAnnotationPresent(annClass);
+  }
+
+  private boolean isCheckType(Target target, ElementType type) {
+    return target != null ? Arrays.asList(target.value()).contains(type) : false;
+  }
+
+  private <T> void executeHookMethods(Class<? extends Annotation> annClass, BiConsumer<AnnotatedElement, T> biConsumer) {
+
+    Arrays.asList(instance.getClass().getDeclaredMethods()).forEach(m -> {
+
+      if (hasAnnotationInType(m, annClass)) {
+        Object instance = m.getAnnotation(annClass);
+        biConsumer.accept(m, (T) instance);
+      }
+    });
+  }
+
+  private <T> void executeHookType(Class<? extends Annotation> annClass, BiConsumer<AnnotatedElement, T> biConsumer) {
+    if (hasAnnotationInType(instance.getClass(), annClass)) {
+      Object result = instance.getClass().getAnnotation(annClass);
+      biConsumer.accept(getClass(), (T) result);
     }
   }
 }

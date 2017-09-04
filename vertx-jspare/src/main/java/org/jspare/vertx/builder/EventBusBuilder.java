@@ -43,21 +43,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class EventBusBuilder extends AbstractBuilder<Void> {
 
-  /** The Constant NUMBER_CLASSPATH_SCANNER_THREADS. */
-  private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
-
   /**
-   * Creates the.
-   *
-   * @param vertx
-   *          the vertx
-   * @return the event bus builder
+   * The Constant NUMBER_CLASSPATH_SCANNER_THREADS.
    */
-  public static EventBusBuilder create(Vertx vertx) {
-
-    return new EventBusBuilder(vertx);
-  }
-
+  private static final int NUMBER_CLASSPATH_SCANNER_THREADS = 3;
   /**
    * Vertx.
    *
@@ -65,7 +54,6 @@ public class EventBusBuilder extends AbstractBuilder<Void> {
    */
   @Getter
   private final Vertx vertx;
-
   /**
    * Scan classpath.
    *
@@ -82,7 +70,6 @@ public class EventBusBuilder extends AbstractBuilder<Void> {
    */
   @Setter
   private boolean scanClasspath;
-
   /**
    * Classes.
    *
@@ -99,7 +86,6 @@ public class EventBusBuilder extends AbstractBuilder<Void> {
    */
   @Setter
   private List<Class<?>> classes;
-
   /**
    * Scan specs.
    *
@@ -120,8 +106,7 @@ public class EventBusBuilder extends AbstractBuilder<Void> {
   /**
    * Instantiates a new event bus builder.
    *
-   * @param vertx
-   *          the vertx
+   * @param vertx the vertx
    */
   private EventBusBuilder(Vertx vertx) {
 
@@ -129,6 +114,17 @@ public class EventBusBuilder extends AbstractBuilder<Void> {
     scanClasspath = false;
     classes = new ArrayList<>();
     scanSpecs = new ArrayList<>();
+  }
+
+  /**
+   * Creates the.
+   *
+   * @param vertx the vertx
+   * @return the event bus builder
+   */
+  public static EventBusBuilder create(Vertx vertx) {
+
+    return new EventBusBuilder(vertx);
   }
 
   /*
@@ -151,8 +147,8 @@ public class EventBusBuilder extends AbstractBuilder<Void> {
     scanSpecs.forEach(scanSpec -> {
 
       ClasspathScannerUtils.scanner(scanSpec)
-          .matchClassesWithMethodAnnotation(org.jspare.vertx.annotation.Consumer.class, processor)
-          .scan(NUMBER_CLASSPATH_SCANNER_THREADS);
+        .matchClassesWithMethodAnnotation(org.jspare.vertx.annotation.Consumer.class, processor)
+        .scan(NUMBER_CLASSPATH_SCANNER_THREADS);
     });
 
     List<EventBusData> consumers = new ArrayList<>();

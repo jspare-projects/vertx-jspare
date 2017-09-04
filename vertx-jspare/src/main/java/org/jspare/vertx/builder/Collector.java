@@ -18,19 +18,16 @@ package org.jspare.vertx.builder;
 /**
  * The Interface Collector.
  *
+ * @param <T> the generic type
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
- * @param <T>
- *          the generic type
  */
 public interface Collector<T> {
 
   /**
    * Collect.
    *
-   * @param source
-   *          the source
-   * @param args
-   *          the args
+   * @param source the source
+   * @param args   the args
    * @return the t
    */
   T collect(Class<?> source, Object... args);

@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD })
+@Target({ElementType.FIELD})
 public @interface VertxProxyInject {
 
   /**

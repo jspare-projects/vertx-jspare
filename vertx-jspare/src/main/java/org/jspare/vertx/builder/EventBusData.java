@@ -15,14 +15,14 @@
  */
 package org.jspare.vertx.builder;
 
-import java.lang.reflect.Method;
-
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.Message;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+
+import java.lang.reflect.Method;
 
 /* (non-Javadoc)
  * @see java.lang.Object#toString()
@@ -43,20 +43,25 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public class EventBusData {
 
-  /** The controller. */
+  /**
+   * The controller.
+   */
   private Object controller;
 
-  /** The method. */
+  /**
+   * The method.
+   */
   private Method method;
 
-  /** The name. */
+  /**
+   * The name.
+   */
   private String name;
 
   /**
    * Wrap.
    *
-   * @param <T>
-   *          the generic type
+   * @param <T> the generic type
    * @return the handler
    */
   public <T> Handler<Message<T>> wrap() {

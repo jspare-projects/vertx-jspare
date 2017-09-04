@@ -43,28 +43,6 @@ import java.util.function.Consumer;
 public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 
   /**
-   * Creates the.
-   *
-   * @return the vertx builder
-   */
-  public static VertxBuilder create() {
-
-    return new VertxBuilder();
-  }
-
-  /**
-   * Creates the.
-   *
-   * @param vertxOptions
-   *          the vertx options
-   * @return the vertx builder
-   */
-  public static VertxBuilder create(VertxOptions vertxOptions) {
-
-    return new VertxBuilder().options(vertxOptions);
-  }
-
-  /**
    * Name.
    *
    * @return the string
@@ -80,7 +58,6 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
    */
   @Setter
   private String name;
-
   /**
    * Vertx.
    *
@@ -97,7 +74,6 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
    */
   @Setter
   private Vertx vertx;
-
   /**
    * Options.
    *
@@ -119,6 +95,27 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
    * Instantiates a new vertx builder.
    */
   private VertxBuilder() {
+  }
+
+  /**
+   * Creates the.
+   *
+   * @return the vertx builder
+   */
+  public static VertxBuilder create() {
+
+    return new VertxBuilder();
+  }
+
+  /**
+   * Creates the.
+   *
+   * @param vertxOptions the vertx options
+   * @return the vertx builder
+   */
+  public static VertxBuilder create(VertxOptions vertxOptions) {
+
+    return new VertxBuilder().options(vertxOptions);
   }
 
   /*
@@ -150,7 +147,7 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
 
     // Register vertx on VertxHolder. This interaction allow that the Vertx
     // can be accessed internally by application.
-   EnvironmentLoader.bindInterfaces(vertx);
+    EnvironmentLoader.bindInterfaces(vertx);
 
     return future;
   }
@@ -158,8 +155,7 @@ public class VertxBuilder extends AbstractBuilder<Future<Vertx>> {
   /**
    * Creates the vertx.
    *
-   * @param runner
-   *          the runner
+   * @param runner the runner
    */
   protected void createVertx(Consumer<Vertx> runner) {
 

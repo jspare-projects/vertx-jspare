@@ -26,7 +26,8 @@ import org.jspare.vertx.cdi.EnvironmentLoader;
 /**
  * The Class VertxRunner.
  * <p>Auxiliary class for booting and configuring a standalone application using the framework.</p>
- *  @author <a href="https://pflima92.github.io/">Paulo Lima</a>
+ *
+ * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 public abstract class VertxRunner extends AbstractVerticle implements Runner {
 
@@ -71,10 +72,7 @@ public abstract class VertxRunner extends AbstractVerticle implements Runner {
    * @return the future
    */
   protected Future<Vertx> vertx() {
-
-    return VertxBuilder.create().build().compose(vertx -> {
-
-      vertx.deployVerticle(this);
-    }, Future.succeededFuture());
+    
+    return VertxBuilder.create().build().compose(vertx -> vertx.deployVerticle(this), Future.succeededFuture());
   }
 }

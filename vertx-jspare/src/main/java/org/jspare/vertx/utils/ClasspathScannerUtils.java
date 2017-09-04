@@ -26,14 +26,15 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ClasspathScannerUtils {
 
-  /** The Constant ALL_SCAN_QUOTE. */
+  /**
+   * The Constant ALL_SCAN_QUOTE.
+   */
   public static final String ALL_SCAN_QUOTE = ".*";
 
   /**
    * Resolve package name.
    *
-   * @param cPackage
-   *          the c package
+   * @param cPackage the c package
    * @return the string
    */
   public String resolvePackageName(String cPackage) {
@@ -44,8 +45,7 @@ public class ClasspathScannerUtils {
   /**
    * Scanner.
    *
-   * @param scanSpec
-   *          the scan spec
+   * @param scanSpec the scan spec
    * @return the fast classpath scanner
    */
   public FastClasspathScanner scanner(String scanSpec) {

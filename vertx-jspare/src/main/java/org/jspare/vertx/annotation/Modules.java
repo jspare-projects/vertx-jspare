@@ -24,12 +24,12 @@ import java.lang.annotation.Target;
 
 /**
  * The {@link Modules } indicate to {@link JspareVerticle}.
- *
+ * <p>
  * <code>
- *  &#64;Modules(@Module("eventbus"))
- *  public class SampleVerticle extends AutoConfigurationVerticle
- *  </code>
- *
+ * &#64;Modules(@Module("eventbus"))
+ * public class SampleVerticle extends AutoConfigurationVerticle
+ * </code>
+ * <p>
  * <b>Note</b>: This class is still considered impl because we did not
  * perform all the tests or arrived at a stable version, but we understand that
  * the use of this will be advantageous.
@@ -38,7 +38,7 @@ import java.lang.annotation.Target;
  * @since 1.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 public @interface Modules {
 
   /**

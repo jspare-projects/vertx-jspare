@@ -59,6 +59,7 @@ public class ModuleInitializer extends MySupport {
 
   /**
    * Initialize one modularized instance
+   *
    * @param modularized the instance
    * @return the future
    */

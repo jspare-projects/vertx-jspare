@@ -20,13 +20,13 @@ public class ReduceFuture {
     init();
   }
 
+  public static ReduceFuture create(List<Supplier<Future>> futures) {
+    return new ReduceFuture(futures);
+  }
+
   private void init() {
     this.future = Future.future();
     this.count = new AtomicInteger(0);
-  }
-
-  public static ReduceFuture create(List<Supplier<Future>> futures) {
-    return new ReduceFuture(futures);
   }
 
   public Future<Void> reduce() {

@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 public @interface PersistenceUnitOptions {
 
   /**
-   * Define name of data source to be registered
+   * Define name of unit name to be registered.
    * @return the value
    */
   String value() default PersistenceUnitProvider.DEFAULT_DS;

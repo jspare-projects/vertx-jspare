@@ -21,7 +21,6 @@ import io.vertx.core.impl.CompositeFutureImpl;
 import lombok.experimental.UtilityClass;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -47,7 +46,7 @@ public class FutureSupplier {
    * Useful for reducing many futures into a single @{link Future}.
    *
    * @param futures a list of {@link Future futures}
-   * @param <R> the type R
+   * @param <R>     the type R
    * @return the future
    */
   public static <R> Future<List<R>> sequenceFuture(List<Future<R>> futures) {

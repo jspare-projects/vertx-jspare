@@ -15,12 +15,12 @@
  */
 package org.jspare.vertx.annotation;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * The Interface SharedWorkerExecutor.
@@ -28,7 +28,7 @@ import org.apache.commons.lang.StringUtils;
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD })
+@Target({ElementType.FIELD})
 public @interface SharedWorkerExecutor {
 
   /**

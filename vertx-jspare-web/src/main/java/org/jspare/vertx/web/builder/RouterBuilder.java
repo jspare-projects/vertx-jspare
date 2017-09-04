@@ -33,10 +33,7 @@ import org.jspare.vertx.builder.AbstractBuilder;
 import org.jspare.vertx.utils.ClasspathScannerUtils;
 import org.jspare.vertx.web.handler.DefaultHandler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -58,6 +55,9 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 
   /** The Constant DEFAULT_AUTH_HANDLER_KEY. */
   public static final String DEFAULT_AUTH_HANDLER_KEY = "default-auth-handler";
+
+  /** The Constant HANDLER_MAP_ROUTES. */
+  public static final String HANDLER_MAP_ROUTES = "__handlerMapRoutes";
 
   /**
    * Creates the.
@@ -162,13 +162,15 @@ public class RouterBuilder extends AbstractBuilder<Router> {
   private Class<? extends Handler<RoutingContext>> handlerClass;
 
   /**
-   * The sock JS handler options. </br>
-   * Used for all SockJsHandlers mapped by this RouterBuilderAware
-   *
+   * Naming RouterBuilder.
    */
+  @Getter
+  @Setter
+  private String name;
 
   /**
-   * Sock JS handler options.
+   * The sock JS handler options. </br>
+   * Used for all SockJsHandlers mapped by this RouterBuilderAware
    *
    * @return the sock JS handler options
    */
@@ -255,6 +257,7 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 
     this.vertx = vertx;
     this.router = router;
+    name = UUID.randomUUID().toString();
     handlers = new ArrayList<>();
     scanClasspath = false;
     routePackages = new ArrayList<>();
@@ -340,9 +343,12 @@ public class RouterBuilder extends AbstractBuilder<Router> {
 
     log.debug("Building RouterBuilderAware");
 
+    HandlerMap map = new HandlerMap();
+
     handlers.forEach(h -> {
       log.debug("Routing handler [{}]", h.toString());
       router.route().handler(h);
+      map.add((Class<Handler<RoutingContext>>) h.getClass());
     });
 
     collectRoutes();
@@ -354,7 +360,13 @@ public class RouterBuilder extends AbstractBuilder<Router> {
     handlerDataList.forEach(hd -> {
       log.debug("Routing handler {}", hd.toStringLine());
       HandlerWrapper.prepareHandler(router, hd);
+      map.add(hd);
     });
+
+    vertx
+      .sharedData()
+      .getLocalMap(HANDLER_MAP_ROUTES)
+      .put(name, handlerDataList);
 
     return router;
   }

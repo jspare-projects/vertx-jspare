@@ -15,11 +15,6 @@
  */
 package org.jspare.vertx.web.builder;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.apache.commons.lang.StringUtils;
-import org.jspare.vertx.web.handler.DefaultSockJSHandler;
-
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Route;
@@ -27,10 +22,16 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang.StringUtils;
+import org.jspare.vertx.web.handler.DefaultSockJSHandler;
+
+import java.lang.reflect.InvocationTargetException;
+
+import static org.jspare.vertx.web.handler.DefaultHandler.HANDLER_DATA;
 
 /**
  * Instantiates a new handler wrapper.
- * 
+ *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 @UtilityClass
@@ -39,10 +40,8 @@ public class HandlerWrapper {
   /**
    * Prepare handler.
    *
-   * @param router
-   *          the router
-   * @param handlerData
-   *          the handler data
+   * @param router      the router
+   * @param handlerData the handler data
    */
   public void prepareHandler(Router router, HandlerData handlerData) {
 
@@ -52,10 +51,8 @@ public class HandlerWrapper {
   /**
    * Creates the route.
    *
-   * @param router
-   *          the router
-   * @param data
-   *          the data
+   * @param router the router
+   * @param data   the data
    * @return the route
    */
   protected Route createRoute(Router router, HandlerData data) {
@@ -85,10 +82,8 @@ public class HandlerWrapper {
   /**
    * Sets the order.
    *
-   * @param data
-   *          the data
-   * @param route
-   *          the route
+   * @param data  the data
+   * @param route the route
    */
   private void setOrder(HandlerData data, Route route) {
 
@@ -101,10 +96,8 @@ public class HandlerWrapper {
   /**
    * Sets the consumes.
    *
-   * @param data
-   *          the data
-   * @param route
-   *          the route
+   * @param data  the data
+   * @param route the route
    */
   protected void setConsumes(HandlerData data, Route route) {
     route.consumes(data.consumes());
@@ -113,10 +106,8 @@ public class HandlerWrapper {
   /**
    * Sets the handler.
    *
-   * @param router
-   *          the router
-   * @param data
-   *          the data
+   * @param router the router
+   * @param data   the data
    */
   protected void setHandler(Router router, HandlerData data) {
 
@@ -128,7 +119,13 @@ public class HandlerWrapper {
     }
 
     // Create route handler
+    Route hdRegRoute = createRoute(router, data);
     Route route = createRoute(router, data);
+
+    hdRegRoute.order(Integer.MIN_VALUE).handler(ctx -> {
+      ctx.put(HANDLER_DATA, data);
+      ctx.next();
+    });
 
     if (HandlerType.HANDLER.equals(data.handlerType())) {
 
@@ -148,10 +145,8 @@ public class HandlerWrapper {
   /**
    * Sets the method.
    *
-   * @param data
-   *          the data
-   * @param route
-   *          the route
+   * @param data  the data
+   * @param route the route
    */
   protected void setMethod(HandlerData data, Route route) {
     route.method(HttpMethod.valueOf(data.httpMethod()));
@@ -160,10 +155,8 @@ public class HandlerWrapper {
   /**
    * Sets the path.
    *
-   * @param data
-   *          the data
-   * @param route
-   *          the route
+   * @param data  the data
+   * @param route the route
    */
   protected void setPath(HandlerData data, Route route) {
     if (data.pathRegex()) {
@@ -178,10 +171,8 @@ public class HandlerWrapper {
   /**
    * Sets the produces.
    *
-   * @param data
-   *          the data
-   * @param route
-   *          the route
+   * @param data  the data
+   * @param route the route
    */
   protected void setProduces(HandlerData data, Route route) {
     route.produces(data.produces());
@@ -190,12 +181,11 @@ public class HandlerWrapper {
   /**
    * Prepare handler.
    *
-   * @param handlerData
-   *          the handler data
+   * @param handlerData the handler data
    * @return the handler
    */
-  @SneakyThrows({ InstantiationException.class, IllegalAccessException.class, IllegalArgumentException.class,
-      InvocationTargetException.class, NoSuchMethodException.class })
+  @SneakyThrows({InstantiationException.class, IllegalAccessException.class, IllegalArgumentException.class,
+    InvocationTargetException.class, NoSuchMethodException.class})
   private Handler<RoutingContext> prepareHandler(HandlerData handlerData) {
     return handlerData.routeHandlerClass().getConstructor(HandlerData.class).newInstance(handlerData);
   }
@@ -203,8 +193,7 @@ public class HandlerWrapper {
   /**
    * Prepare sock js handler.
    *
-   * @param handlerData
-   *          the handler data
+   * @param handlerData the handler data
    * @return the handler
    */
   private Handler<RoutingContext> prepareSockJsHandler(HandlerData handlerData) {

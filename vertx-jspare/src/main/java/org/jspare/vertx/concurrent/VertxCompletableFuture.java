@@ -15,20 +15,16 @@
  */
 package org.jspare.vertx.concurrent;
 
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
+import java.util.function.*;
 
 /**
  * An implementation of {@link CompletableFuture} for Vert.x. It differs in the
@@ -43,12 +39,73 @@ import io.vertx.core.Vertx;
  * The class also offer bridges methods with Vert.x {@link Future}, and regular
  * {@link CompletableFuture}.
  *
- * @param <T>
- *          the expected type of result
- * 
+ * @param <T> the expected type of result
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
 public class VertxCompletableFuture<T> extends CompletableFuture<T> implements CompletionStage<T> {
+  /**
+   * The executor.
+   */
+  private final Executor executor;
+  /**
+   * The {@link Context} used by the future.
+   */
+  private final Context context;
+
+  // ============= Constructors =============
+
+  /**
+   * Creates a new {@link VertxCompletableFuture} using the current
+   * {@link Context}. This method <strong>must</strong> be used from a Vert.x
+   * thread, or fails.
+   */
+  public VertxCompletableFuture() {
+    this(Vertx.currentContext());
+  }
+
+  /**
+   * Creates an instance of {@link VertxCompletableFuture}, using the given
+   * {@link Context}.
+   *
+   * @param context the context
+   */
+  public VertxCompletableFuture(Context context) {
+    this.context = Objects.requireNonNull(context);
+    this.executor = command -> context.runOnContext(v -> command.run());
+  }
+
+  /**
+   * Creates an instance of {@link VertxCompletableFuture}, using the current
+   * Vert.x context or create a new one.
+   *
+   * @param vertx the Vert.x instance
+   */
+  public VertxCompletableFuture(Vertx vertx) {
+    this(Objects.requireNonNull(vertx).getOrCreateContext());
+  }
+
+  /**
+   * Creates a new {@link VertxCompletableFuture} from the given context and
+   * given {@link CompletableFuture}. The created {@link VertxCompletableFuture}
+   * is completed successfully or not when the given completable future
+   * completes successfully or not.
+   *
+   * @param context the context
+   * @param future  the completable future
+   */
+  private VertxCompletableFuture(Context context, CompletableFuture<T> future) {
+    this(context);
+    Objects.requireNonNull(future).whenComplete((res, err) -> {
+      if (err != null) {
+        completeExceptionally(err);
+      } else {
+        complete(res);
+      }
+    });
+  }
+
+  // ============= Factory methods (from) =============
+
   /**
    * Returns a new CompletableFuture that is completed when all of the given
    * CompletableFutures complete. If any of the given CompletableFutures
@@ -66,14 +123,11 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * Unlike the original {@link CompletableFuture#allOf(CompletableFuture[])}
    * this method invokes the dependent stages into the Vert.x context.
    *
-   * @param context
-   *          the context
-   * @param futures
-   *          the CompletableFutures
+   * @param context the context
+   * @param futures the CompletableFutures
    * @return a new CompletableFuture that is completed when all of the given
-   *         CompletableFutures complete
-   * @throws NullPointerException
-   *           if the array or any of its elements are {@code null}
+   * CompletableFutures complete
+   * @throws NullPointerException if the array or any of its elements are {@code null}
    */
   public static VertxCompletableFuture<Void> allOf(Context context, CompletableFuture<?>... futures) {
     CompletableFuture<Void> all = CompletableFuture.allOf(futures);
@@ -97,21 +151,16 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * Unlike the original {@link CompletableFuture#allOf(CompletableFuture[])}
    * this method invokes the dependent stages into the Vert.x context.
    *
-   * @param vertx
-   *          the Vert.x instance to retrieve the context
-   * @param futures
-   *          the CompletableFutures
+   * @param vertx   the Vert.x instance to retrieve the context
+   * @param futures the CompletableFutures
    * @return a new CompletableFuture that is completed when all of the given
-   *         CompletableFutures complete
-   * @throws NullPointerException
-   *           if the array or any of its elements are {@code null}
+   * CompletableFutures complete
+   * @throws NullPointerException if the array or any of its elements are {@code null}
    */
   public static VertxCompletableFuture<Void> allOf(Vertx vertx, CompletableFuture<?>... futures) {
     CompletableFuture<Void> all = CompletableFuture.allOf(futures);
     return VertxCompletableFuture.from(vertx, all);
   }
-
-  // ============= Constructors =============
 
   /**
    * Returns a new CompletableFuture that is completed when any of the given
@@ -123,14 +172,11 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * Unlike the original {@link CompletableFuture#allOf(CompletableFuture[])}
    * this method invokes the dependent stages into the Vert.x context.
    *
-   * @param context
-   *          the context
-   * @param futures
-   *          the CompletableFutures
+   * @param context the context
+   * @param futures the CompletableFutures
    * @return a new CompletableFuture that is completed with the result or
-   *         exception of any of the given CompletableFutures when one completes
-   * @throws NullPointerException
-   *           if the array or any of its elements are {@code null}
+   * exception of any of the given CompletableFutures when one completes
+   * @throws NullPointerException if the array or any of its elements are {@code null}
    */
   public static VertxCompletableFuture<Object> anyOf(Context context, CompletableFuture<?>... futures) {
     CompletableFuture<Object> all = CompletableFuture.anyOf(futures);
@@ -147,14 +193,11 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * Unlike the original {@link CompletableFuture#allOf(CompletableFuture[])}
    * this method invokes the dependent stages into the Vert.x context.
    *
-   * @param vertx
-   *          the Vert.x instance to retrieve the context
-   * @param futures
-   *          the CompletableFutures
+   * @param vertx   the Vert.x instance to retrieve the context
+   * @param futures the CompletableFutures
    * @return a new CompletableFuture that is completed with the result or
-   *         exception of any of the given CompletableFutures when one completes
-   * @throws NullPointerException
-   *           if the array or any of its elements are {@code null}
+   * exception of any of the given CompletableFutures when one completes
+   * @throws NullPointerException if the array or any of its elements are {@code null}
    */
   public static VertxCompletableFuture<Object> anyOf(Vertx vertx, CompletableFuture<?>... futures) {
     CompletableFuture<Object> all = CompletableFuture.anyOf(futures);
@@ -170,12 +213,9 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * called on the given {@link Context}, immediately if it is already executing
    * on the right context, asynchronously if not.
    *
-   * @param context
-   *          the context
-   * @param future
-   *          the future
-   * @param <T>
-   *          the type of result
+   * @param context the context
+   * @param future  the future
+   * @param <T>     the type of result
    * @return the creation {@link VertxCompletableFuture}
    */
   public static <T> VertxCompletableFuture<T> from(Context context, CompletableFuture<T> future) {
@@ -202,12 +242,9 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * given {@link Context}, immediately if it is already executing on the right
    * context, asynchronously if not.
    *
-   * @param context
-   *          the context
-   * @param future
-   *          the Vert.x future
-   * @param <T>
-   *          the type of the result
+   * @param context the context
+   * @param future  the Vert.x future
+   * @param <T>     the type of the result
    * @return the new {@link VertxCompletableFuture}
    */
   public static <T> VertxCompletableFuture<T> from(Context context, Future<T> future) {
@@ -222,8 +259,6 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
     return res;
   }
 
-  // ============= Factory methods (from) =============
-
   /**
    * Creates a new {@link VertxCompletableFuture} from the given {@link Vertx}
    * instance and given {@link CompletableFuture}. The returned future uses the
@@ -232,12 +267,9 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * The created {@link VertxCompletableFuture} is completed successfully or not
    * when the given completable future completes successfully or not.
    *
-   * @param vertx
-   *          the Vert.x instance
-   * @param future
-   *          the future
-   * @param <T>
-   *          the type of the result
+   * @param vertx  the Vert.x instance
+   * @param future the future
+   * @param <T>    the type of the result
    * @return the new {@link VertxCompletableFuture}
    */
   public static <T> VertxCompletableFuture<T> from(Vertx vertx, CompletableFuture<T> future) {
@@ -252,12 +284,9 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * The created {@link VertxCompletableFuture} is completed successfully or not
    * when the given future completes successfully or not.
    *
-   * @param vertx
-   *          the Vert.x instance
-   * @param future
-   *          the Vert.x future
-   * @param <T>
-   *          the type of the result
+   * @param vertx  the Vert.x instance
+   * @param future the Vert.x future
+   * @param <T>    the type of the result
    * @return the new {@link VertxCompletableFuture}
    */
   public static <T> VertxCompletableFuture<T> from(Vertx vertx, Future<T> future) {
@@ -272,10 +301,8 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * This method is different from {@link CompletableFuture#runAsync(Runnable)}
    * as it does not use a fork join executor, but use the Vert.x context.
    *
-   * @param context
-   *          the context
-   * @param runnable
-   *          the action to run before completing the returned CompletableFuture
+   * @param context  the context
+   * @param runnable the action to run before completing the returned CompletableFuture
    * @return the new CompletableFuture
    */
   public static VertxCompletableFuture<Void> runAsync(Context context, Runnable runnable) {
@@ -301,10 +328,8 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * {@link CompletableFuture#supplyAsync(Supplier)} as it does not use a fork
    * join executor, but use the Vert.x context.
    *
-   * @param vertx
-   *          the Vert.x instance
-   * @param runnable
-   *          the action to run before completing the returned CompletableFuture
+   * @param vertx    the Vert.x instance
+   * @param runnable the action to run before completing the returned CompletableFuture
    * @return the new CompletableFuture
    */
   public static VertxCompletableFuture<Void> runAsync(Vertx vertx, Runnable runnable) {
@@ -318,12 +343,10 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * This method is different from {@link CompletableFuture#runAsync(Runnable)}
    * as it does not use a fork join executor, but the worker thread pool.
    *
-   * @param context
-   *          the Vert.x context
-   * @param runnable
-   *          the action, when its execution completes, it completes the
-   *          returned CompletableFuture. If the execution throws an exception,
-   *          the returned CompletableFuture is completed exceptionally.
+   * @param context  the Vert.x context
+   * @param runnable the action, when its execution completes, it completes the
+   *                 returned CompletableFuture. If the execution throws an exception,
+   *                 the returned CompletableFuture is completed exceptionally.
    * @return the new CompletableFuture
    */
   public static VertxCompletableFuture<Void> runBlockingAsync(Context context, Runnable runnable) {
@@ -347,17 +370,17 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * This method is different from {@link CompletableFuture#runAsync(Runnable)}
    * as it does not use a fork join executor, but the worker thread pool.
    *
-   * @param vertx
-   *          the Vert.x instance
-   * @param runnable
-   *          the action, when its execution completes, it completes the
-   *          returned CompletableFuture. If the execution throws an exception,
-   *          the returned CompletableFuture is completed exceptionally.
+   * @param vertx    the Vert.x instance
+   * @param runnable the action, when its execution completes, it completes the
+   *                 returned CompletableFuture. If the execution throws an exception,
+   *                 the returned CompletableFuture is completed exceptionally.
    * @return the new CompletableFuture
    */
   public static VertxCompletableFuture<Void> runBlockingAsync(Vertx vertx, Runnable runnable) {
     return runBlockingAsync(Objects.requireNonNull(vertx).getOrCreateContext(), runnable);
   }
+
+  // ============= Wrapping methods =============
 
   /**
    * Returns a new CompletableFuture that is asynchronously completed by a task
@@ -368,13 +391,10 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * {@link CompletableFuture#supplyAsync(Supplier)} as it does not use a fork
    * join executor, but use the Vert.x context.
    *
-   * @param context
-   *          the context in which the supplier is executed.
-   * @param supplier
-   *          a function returning the value to be used to complete the returned
-   *          CompletableFuture
-   * @param <T>
-   *          the function's return type
+   * @param context  the context in which the supplier is executed.
+   * @param supplier a function returning the value to be used to complete the returned
+   *                 CompletableFuture
+   * @param <T>      the function's return type
    * @return the new CompletableFuture
    */
   public static <T> VertxCompletableFuture<T> supplyAsync(Context context, Supplier<T> supplier) {
@@ -390,6 +410,8 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
     return future;
   }
 
+  // ============= Parallel composition methods =============
+
   /**
    * Returns a new CompletableFuture that is asynchronously completed by a task
    * running in the current Vert.x {@link Context} with the value obtained by
@@ -399,13 +421,10 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * {@link CompletableFuture#supplyAsync(Supplier)} as it does not use a fork
    * join executor, but use the Vert.x context.
    *
-   * @param vertx
-   *          the Vert.x instance
-   * @param supplier
-   *          a function returning the value to be used to complete the returned
-   *          CompletableFuture
-   * @param <T>
-   *          the function's return type
+   * @param vertx    the Vert.x instance
+   * @param supplier a function returning the value to be used to complete the returned
+   *                 CompletableFuture
+   * @param <T>      the function's return type
    * @return the new CompletableFuture
    */
   public static <T> VertxCompletableFuture<T> supplyAsync(Vertx vertx, Supplier<T> supplier) {
@@ -420,13 +439,10 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * {@link CompletableFuture#supplyAsync(Supplier)} as it does not use a fork
    * join executor, but the worker thread pool.
    *
-   * @param context
-   *          the context in which the supplier is executed.
-   * @param supplier
-   *          a function returning the value to be used to complete the returned
-   *          CompletableFuture
-   * @param <T>
-   *          the function's return type
+   * @param context  the context in which the supplier is executed.
+   * @param supplier a function returning the value to be used to complete the returned
+   *                 CompletableFuture
+   * @param <T>      the function's return type
    * @return the new CompletableFuture
    */
   public static <T> VertxCompletableFuture<T> supplyBlockingAsync(Context context, Supplier<T> supplier) {
@@ -456,13 +472,10 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * {@link CompletableFuture#supplyAsync(Supplier)} as it does not use a fork
    * join executor, but the worker thread pool.
    *
-   * @param vertx
-   *          the Vert.x instance
-   * @param supplier
-   *          a function returning the value to be used to complete the returned
-   *          CompletableFuture
-   * @param <T>
-   *          the function's return type
+   * @param vertx    the Vert.x instance
+   * @param supplier a function returning the value to be used to complete the returned
+   *                 CompletableFuture
+   * @param <T>      the function's return type
    * @return the new CompletableFuture
    */
   public static <T> VertxCompletableFuture<T> supplyBlockingAsync(Vertx vertx, Supplier<T> supplier) {
@@ -473,12 +486,10 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * Creates a Vert.x {@link Future} from the given {@link CompletableFuture}
    * (that can be a {@link VertxCompletableFuture}).
    *
-   * @param future
-   *          the future
-   * @param <T>
-   *          the type of the result
+   * @param future the future
+   * @param <T>    the type of the result
    * @return the Vert.x future completed or failed when the given
-   *         {@link CompletableFuture} completes or fails.
+   * {@link CompletableFuture} completes or fails.
    */
   public static <T> Future<T> toFuture(CompletableFuture<T> future) {
     Future<T> fut = Future.future();
@@ -492,77 +503,11 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
     return fut;
   }
 
-  /** The executor. */
-  private final Executor executor;
-
-  // ============= Wrapping methods =============
-
-  /**
-   * The {@link Context} used by the future.
-   */
-  private final Context context;
-
-  // ============= Parallel composition methods =============
-
-  /**
-   * Creates a new {@link VertxCompletableFuture} using the current
-   * {@link Context}. This method <strong>must</strong> be used from a Vert.x
-   * thread, or fails.
-   */
-  public VertxCompletableFuture() {
-    this(Vertx.currentContext());
-  }
-
-  /**
-   * Creates an instance of {@link VertxCompletableFuture}, using the given
-   * {@link Context}.
-   *
-   * @param context
-   *          the context
-   */
-  public VertxCompletableFuture(Context context) {
-    this.context = Objects.requireNonNull(context);
-    this.executor = command -> context.runOnContext(v -> command.run());
-  }
-
-  /**
-   * Creates an instance of {@link VertxCompletableFuture}, using the current
-   * Vert.x context or create a new one.
-   *
-   * @param vertx
-   *          the Vert.x instance
-   */
-  public VertxCompletableFuture(Vertx vertx) {
-    this(Objects.requireNonNull(vertx).getOrCreateContext());
-  }
-
-  /**
-   * Creates a new {@link VertxCompletableFuture} from the given context and
-   * given {@link CompletableFuture}. The created {@link VertxCompletableFuture}
-   * is completed successfully or not when the given completable future
-   * completes successfully or not.
-   *
-   * @param context
-   *          the context
-   * @param future
-   *          the completable future
-   */
-  private VertxCompletableFuture(Context context, CompletableFuture<T> future) {
-    this(context);
-    Objects.requireNonNull(future).whenComplete((res, err) -> {
-      if (err != null) {
-        completeExceptionally(err);
-      } else {
-        complete(res);
-      }
-    });
-  }
-
   // ============= with context methods =============
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#acceptEither(java.util.concurrent.
    * CompletionStage, java.util.function.Consumer)
@@ -574,32 +519,32 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#acceptEitherAsync(java.util.
    * concurrent.CompletionStage, java.util.function.Consumer)
    */
   @Override
   public VertxCompletableFuture<Void> acceptEitherAsync(CompletionStage<? extends T> other,
-      Consumer<? super T> action) {
+                                                        Consumer<? super T> action) {
     return new VertxCompletableFuture<>(context, super.acceptEitherAsync(other, action, executor));
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#acceptEitherAsync(java.util.
    * concurrent.CompletionStage, java.util.function.Consumer,
    * java.util.concurrent.Executor)
    */
   @Override
   public VertxCompletableFuture<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super T> action,
-      Executor executor) {
+                                                        Executor executor) {
     return new VertxCompletableFuture<>(context, super.acceptEitherAsync(other, action, executor));
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#applyToEither(java.util.concurrent.
    * CompletionStage, java.util.function.Function)
@@ -613,32 +558,32 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#applyToEitherAsync(java.util.
    * concurrent.CompletionStage, java.util.function.Function)
    */
   @Override
   public <U> VertxCompletableFuture<U> applyToEitherAsync(CompletionStage<? extends T> other,
-      Function<? super T, U> fn) {
+                                                          Function<? super T, U> fn) {
     return new VertxCompletableFuture<>(context, super.applyToEitherAsync(other, fn, executor));
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#applyToEitherAsync(java.util.
    * concurrent.CompletionStage, java.util.function.Function,
    * java.util.concurrent.Executor)
    */
   @Override
   public <U> VertxCompletableFuture<U> applyToEitherAsync(CompletionStage<? extends T> other, Function<? super T, U> fn,
-      Executor executor) {
+                                                          Executor executor) {
     return new VertxCompletableFuture<>(context, super.applyToEitherAsync(other, fn, executor));
   }
 
   /**
    * @return the context associated with the current
-   *         {@link VertxCompletableFuture}.
+   * {@link VertxCompletableFuture}.
    */
   public Context context() {
     return context;
@@ -646,7 +591,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#handle(java.util.function.
    * BiFunction)
    */
@@ -657,7 +602,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#handleAsync(java.util.function.
    * BiFunction)
    */
@@ -668,19 +613,19 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#handleAsync(java.util.function.
    * BiFunction, java.util.concurrent.Executor)
    */
   @Override
   public <U> VertxCompletableFuture<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn,
-      Executor executor) {
+                                                   Executor executor) {
     return new VertxCompletableFuture<>(context, super.handleAsync(fn, executor));
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#runAfterBoth(java.util.concurrent.
    * CompletionStage, java.lang.Runnable)
@@ -692,7 +637,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#runAfterBothAsync(java.util.
    * concurrent.CompletionStage, java.lang.Runnable)
    */
@@ -703,7 +648,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#runAfterBothAsync(java.util.
    * concurrent.CompletionStage, java.lang.Runnable,
    * java.util.concurrent.Executor)
@@ -715,7 +660,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#runAfterEither(java.util.concurrent.
    * CompletionStage, java.lang.Runnable)
@@ -727,7 +672,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#runAfterEitherAsync(java.util.
    * concurrent.CompletionStage, java.lang.Runnable)
    */
@@ -738,20 +683,20 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#runAfterEitherAsync(java.util.
    * concurrent.CompletionStage, java.lang.Runnable,
    * java.util.concurrent.Executor)
    */
   @Override
   public VertxCompletableFuture<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action,
-      Executor executor) {
+                                                          Executor executor) {
     return new VertxCompletableFuture<>(context, super.runAfterEitherAsync(other, action, executor));
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#thenAccept(java.util.function.
    * Consumer)
    */
@@ -762,7 +707,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#thenAcceptAsync(java.util.function.
    * Consumer)
@@ -774,7 +719,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#thenAcceptAsync(java.util.function.
    * Consumer, java.util.concurrent.Executor)
@@ -786,45 +731,45 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#thenAcceptBoth(java.util.concurrent.
    * CompletionStage, java.util.function.BiConsumer)
    */
   @Override
   public <U> VertxCompletableFuture<Void> thenAcceptBoth(CompletionStage<? extends U> other,
-      BiConsumer<? super T, ? super U> action) {
+                                                         BiConsumer<? super T, ? super U> action) {
     return new VertxCompletableFuture<>(context, super.thenAcceptBoth(other, action));
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#thenAcceptBothAsync(java.util.
    * concurrent.CompletionStage, java.util.function.BiConsumer)
    */
   @Override
   public <U> VertxCompletableFuture<Void> thenAcceptBothAsync(CompletionStage<? extends U> other,
-      BiConsumer<? super T, ? super U> action) {
+                                                              BiConsumer<? super T, ? super U> action) {
     return new VertxCompletableFuture<>(context, super.thenAcceptBothAsync(other, action, executor));
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#thenAcceptBothAsync(java.util.
    * concurrent.CompletionStage, java.util.function.BiConsumer,
    * java.util.concurrent.Executor)
    */
   @Override
   public <U> VertxCompletableFuture<Void> thenAcceptBothAsync(CompletionStage<? extends U> other,
-      BiConsumer<? super T, ? super U> action, Executor executor) {
+                                                              BiConsumer<? super T, ? super U> action, Executor executor) {
     return new VertxCompletableFuture<>(context, super.thenAcceptBothAsync(other, action, executor));
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#thenApply(java.util.function.
    * Function)
    */
@@ -835,7 +780,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#thenApplyAsync(java.util.function.
    * Function)
@@ -847,7 +792,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#thenApplyAsync(java.util.function.
    * Function, java.util.concurrent.Executor)
@@ -859,45 +804,45 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#thenCombine(java.util.concurrent.
    * CompletionStage, java.util.function.BiFunction)
    */
   @Override
   public <U, V> VertxCompletableFuture<V> thenCombine(CompletionStage<? extends U> other,
-      BiFunction<? super T, ? super U, ? extends V> fn) {
+                                                      BiFunction<? super T, ? super U, ? extends V> fn) {
     return new VertxCompletableFuture<>(context, super.thenCombine(other, fn));
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#thenCombineAsync(java.util.
    * concurrent.CompletionStage, java.util.function.BiFunction)
    */
   @Override
   public <U, V> VertxCompletableFuture<V> thenCombineAsync(CompletionStage<? extends U> other,
-      BiFunction<? super T, ? super U, ? extends V> fn) {
+                                                           BiFunction<? super T, ? super U, ? extends V> fn) {
     return new VertxCompletableFuture<>(context, super.thenCombineAsync(other, fn, executor));
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#thenCombineAsync(java.util.
    * concurrent.CompletionStage, java.util.function.BiFunction,
    * java.util.concurrent.Executor)
    */
   @Override
   public <U, V> VertxCompletableFuture<V> thenCombineAsync(CompletionStage<? extends U> other,
-      BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
+                                                           BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
     return new VertxCompletableFuture<>(context, super.thenCombineAsync(other, fn, executor));
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#thenCompose(java.util.function.
    * Function)
    */
@@ -908,7 +853,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#thenComposeAsync(java.util.function.
    * Function)
@@ -920,20 +865,20 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#thenComposeAsync(java.util.function.
    * Function, java.util.concurrent.Executor)
    */
   @Override
   public <U> VertxCompletableFuture<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn,
-      Executor executor) {
+                                                        Executor executor) {
     return new VertxCompletableFuture<>(context, super.thenComposeAsync(fn, executor));
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#thenRun(java.lang.Runnable)
    */
   @Override
@@ -943,7 +888,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#thenRunAsync(java.lang.Runnable)
    */
@@ -954,7 +899,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#thenRunAsync(java.lang.Runnable,
    * java.util.concurrent.Executor)
@@ -966,7 +911,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.util.concurrent.CompletableFuture#toCompletableFuture()
    */
   @Override
@@ -986,7 +931,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#whenComplete(java.util.function.
    * BiConsumer)
@@ -998,7 +943,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#whenCompleteAsync(java.util.function
    * .BiConsumer)
@@ -1010,14 +955,14 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see
    * java.util.concurrent.CompletableFuture#whenCompleteAsync(java.util.function
    * .BiConsumer, java.util.concurrent.Executor)
    */
   @Override
   public VertxCompletableFuture<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action,
-      Executor executor) {
+                                                     Executor executor) {
     return new VertxCompletableFuture<>(context, super.whenCompleteAsync(action, executor));
   }
 
@@ -1036,8 +981,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * Creates a new {@link VertxCompletableFuture} using the given context. This
    * method is used to switch between Vert.x contexts.
    *
-   * @param context
-   *          the context
+   * @param context the context
    * @return the vertx completable future
    */
   public VertxCompletableFuture<T> withContext(Context context) {
@@ -1058,8 +1002,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
    * Creates a new {@link VertxCompletableFuture} using the current context or
    * creates a new one. This method is used to switch between Vert.x contexts.
    *
-   * @param vertx
-   *          the vertx
+   * @param vertx the vertx
    * @return the vertx completable future
    */
   public VertxCompletableFuture<T> withContext(Vertx vertx) {
@@ -1069,10 +1012,8 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
   /**
    * Complete.
    *
-   * @param result
-   *          the result
-   * @param error
-   *          the error
+   * @param result the result
+   * @param error  the error
    */
   private void complete(T result, Throwable error) {
     if (error == null) {
@@ -1085,8 +1026,7 @@ public class VertxCompletableFuture<T> extends CompletableFuture<T> implements C
   /**
    * Complete from async result.
    *
-   * @param ar
-   *          the ar
+   * @param ar the ar
    */
   private void completeFromAsyncResult(AsyncResult<T> ar) {
     if (ar.succeeded()) {

@@ -81,14 +81,11 @@ public class PersistenceJpaModule extends AbstractModule {
 
   private void load(Modularized instance, JsonObject config) {
 
-    if (instance.getClass().isAnnotationPresent(AnnotatedClasses.class)) {
-      AnnotatedClasses ann = instance.getClass().getAnnotation(AnnotatedClasses.class);
-      ANNOTATED_CLASSES.addAll(Arrays.asList(ann.value()));
-    }
+    doHookIfPresent(AnnotatedClasses.class, ann -> ANNOTATED_CLASSES.addAll(Arrays.asList(ann.value())));
 
-    ReflectionUtils
-      .getMethodsWithAnnotation(instance.getClass(), PersistenceUnitOptions.class)
-      .forEach(m -> setPersistenceOption(instance, m));
+    doHookIfPresent(PersistenceUnitOptions.class, (method, ann) ->
+      setPersistenceOption(instance, (Method) method)
+    );
 
     if (DATA_SOURCES.isEmpty()) {
 
@@ -102,8 +99,10 @@ public class PersistenceJpaModule extends AbstractModule {
   private void setPersistenceOption(Modularized instance, Method method) {
 
     method.setAccessible(true);
+
     String dataSource = ReflectionUtils.getAnnotation(method, PersistenceUnitOptions.class).value();
     PersistenceOptions options = (PersistenceOptions) method.invoke(instance);
+
     DATA_SOURCES.put(dataSource, options);
   }
 }
