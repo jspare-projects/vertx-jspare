@@ -45,6 +45,60 @@ dependencies {
 }
 ```
 
+We can play wiyh one simple http api example (kotlin is fun too:
+
+```kotlin
+
+import org.jspare.vertx.JspareVerticle
+import org.jspare.vertx.annotation.Module
+import org.jspare.vertx.annotation.Modules
+import org.jspare.vertx.web.annotation.module.Routes
+import org.jspare.vertx.web.module.HttpServerModule
+
+@Routes(scanClasspath = true)
+@Modules(Module(HttpServerModule::class))
+class RestModule : JspareVerticle(){
+
+  @Get
+  @Handler
+  fun getAccounts() {
+    success(JsonArray().add(
+      JsonObject().put("name", "Paulo")
+    ))
+  } 
+}
+
+```
+
+ok... in java:
+
+```java
+
+import org.jspare.vertx.JspareVerticle;
+import org.jspare.vertx.annotation.Module;
+import org.jspare.vertx.annotation.Modules;
+import org.jspare.vertx.web.annotation.module.Routes;
+import org.jspare.vertx.web.module.HttpServerModule;
+
+@Routes(scanPackages = true)
+@Modules({
+  @Module(HttpServerModule.class)
+})
+class RestModule extends JspareVerticle{
+
+  @Get
+  @Handler
+  void getAccounts() {
+    success(new JsonArray().add(
+      new JsonObject().put("name", "Paulo")
+    ));
+  } 
+}
+
+```
+
+This is a very simple example, use your imagination to create awesome api's and services, this project is designed to improve your vert.x experience.
+
 ## Documentation
 
 You can [find the vertx-jspare documentation here](https://github.com/jspare-projects/vertx-jspare/wiki) which has extended usage instructions and other useful information. Substantial usage information can be found in the API documentation.
