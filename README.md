@@ -97,7 +97,7 @@ class RestModule extends JspareVerticle{
 
 ```
 
-This is a very simple example, use your imagination to create awesome api's and services, this project is designed to improver your vert.x experience.
+This is a very simple example, use your imagination to create awesome api's and services, this project is designed to improve your vert.x experience.
 
 ## Documentation
 
