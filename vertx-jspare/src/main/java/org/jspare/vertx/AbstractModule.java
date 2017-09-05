@@ -22,7 +22,6 @@ import java.util.function.BiConsumer;
  * A support class for {@link Module}s which reduces repetition and results in a more readable
  * configuration. Simply extend this class, implement {@link #load()}, and call the inherited
  * methods which mirror those found in {@link org.jspare.core.internal.Bind}. For example:
- * <p>
  * <pre>
  * public class MyModule extends AbstractModule {
  *   protected void init() {
