@@ -6,6 +6,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.jspare.core.MySupport;
 import org.jspare.core.internal.Bind;
 
@@ -35,6 +36,7 @@ import java.util.function.BiConsumer;
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
+@Slf4j
 public abstract class AbstractModule extends MySupport implements Module {
 
   @Inject
@@ -55,19 +57,24 @@ public abstract class AbstractModule extends MySupport implements Module {
     this.instance = instance;
     this.config = config;
     Future<Void> future = Future.future();
-    loadAsync(future);
+    try {
+
+      loadAsync(future);
+    } catch (Throwable t) {
+
+      log.error("Failed to load module [{}] - {}", getInstance().getClass().getName(), t.getMessage(), t);
+      log.trace(t.getMessage(), t);
+      if(!future.isComplete()){
+
+        future.fail(t);
+      }
+    }
     return future;
   }
 
   protected void loadAsync(Future<Void> future) {
-    try {
-
-      load();
-      future.complete();
-    } catch (Throwable t) {
-
-      future.fail(t);
-    }
+    load();
+    future.complete();
   }
 
   protected void load() {
@@ -153,7 +160,7 @@ public abstract class AbstractModule extends MySupport implements Module {
 
   private <T> void executeHookMethods(Class<? extends Annotation> annClass, BiConsumer<AnnotatedElement, T> biConsumer) {
 
-    Arrays.asList(instance.getClass().getDeclaredMethods()).forEach(m -> {
+    Arrays.stream(instance.getClass().getDeclaredMethods()).forEach(m -> {
 
       if (hasAnnotationInType(m, annClass)) {
         Object instance = m.getAnnotation(annClass);

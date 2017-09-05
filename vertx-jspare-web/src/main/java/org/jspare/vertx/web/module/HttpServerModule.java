@@ -20,7 +20,6 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.SneakyThrows;
@@ -51,26 +50,17 @@ import java.util.stream.Stream;
 @Slf4j
 public class HttpServerModule extends AbstractModule {
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * Module#init(io.vertx.core.Verticle,
-   * java.lang.String[])
-   */
   @Override
-  public Future<Void> init(Modularized instance, JsonObject config) {
+  protected void loadAsync(Future<Void> loadFuture) {
 
-    Future<Void> loadFuture = Future.future();
-    final Vertx vertx = instance.getVertx();
+    final Vertx vertx = getVertx();
 
-    HttpServerOptions options = getOptions(instance, config);
+    HttpServerOptions options = getOptions();
     Router router = Router.router(vertx);
-    setRouter(instance, router);
+    setRouter(getInstance(), router);
 
     HttpServer server = HttpServerBuilder.create(vertx).httpServerOptions(options).router(router).build();
-    Optional<Method> oMethod = Arrays.asList(instance.getClass().getDeclaredMethods())
-      .stream()
+    Optional<Method> oMethod = Arrays.stream(getInstance().getClass().getDeclaredMethods())
       .filter(m -> m.isAnnotationPresent(ListenHandler.class))
       .findFirst();
 
@@ -93,7 +83,7 @@ public class HttpServerModule extends AbstractModule {
 
           Method method = oMethod.get();
           method.setAccessible(true);
-          method.invoke(instance, ar);
+          method.invoke(getInstance(), ar);
         } catch (Exception e) {
 
           loadFuture.fail(e);
@@ -102,7 +92,6 @@ public class HttpServerModule extends AbstractModule {
       }
       loadFuture.complete();
     });
-    return loadFuture;
   }
 
   /**
@@ -111,24 +100,22 @@ public class HttpServerModule extends AbstractModule {
    * @return the options
    */
   @SneakyThrows
-  private HttpServerOptions getOptions(Modularized modularized, JsonObject config) {
+  private HttpServerOptions getOptions() {
 
-    Optional<Method> oMethod = Arrays.asList(modularized.getClass().getDeclaredMethods()).stream()
+    Optional<Method> oMethod = Arrays.stream(getInstance().getClass().getDeclaredMethods())
       .filter(m -> HttpServerOptions.class.equals(m.getReturnType())).findFirst();
     if (oMethod.isPresent() && oMethod.get().getParameterCount() == 0) {
       Method method = oMethod.get();
       method.setAccessible(true);
-      return (HttpServerOptions) method.invoke(modularized);
+      return (HttpServerOptions) method.invoke(getInstance());
     }
-
-    return new HttpServerOptions(config);
+    return new HttpServerOptions(getConfig());
   }
 
   /**
    * Gets the router.
    *
    * @param router the router
-   * @return the router
    */
   @SneakyThrows
   private void setRouter(Modularized modularized, Router router) {
@@ -137,17 +124,16 @@ public class HttpServerModule extends AbstractModule {
 
     getHandlerAwareAnnotations(modularized).forEach(a -> setHandlerAnnotation(modularized, builder, a));
 
-    buildMethodAware(modularized, builder);
+    buildMethodAware(builder);
 
-    buildAuthHandler(modularized, builder);
+    buildAuthHandler(builder);
 
     builder.build();
   }
 
-  private void buildMethodAware(Modularized modularized, RouterBuilder builder) throws InvocationTargetException, IllegalAccessException {
+  private void buildMethodAware(RouterBuilder builder) throws InvocationTargetException, IllegalAccessException {
 
-    Optional<Method> oMethod = Arrays.asList(modularized.getClass().getDeclaredMethods())
-      .stream()
+    Optional<Method> oMethod = Arrays.stream(getInstance().getClass().getDeclaredMethods())
       .filter(m -> m.isAnnotationPresent(RouterBuilderAware.class))
       .findFirst();
 
@@ -156,7 +142,7 @@ public class HttpServerModule extends AbstractModule {
       && oMethod.get().getParameters()[0].getType().equals(RouterBuilder.class)) {
       Method method = oMethod.get();
       method.setAccessible(true);
-      method.invoke(modularized, builder);
+      method.invoke(getInstance(), builder);
     }
 
     doHookIfPresent(Routes.class, routes -> {
@@ -169,7 +155,7 @@ public class HttpServerModule extends AbstractModule {
 
   private Stream<Annotation> getHandlerAwareAnnotations(Modularized modularized) {
     Class<?> clazz = modularized.getClass();
-    return Arrays.asList(clazz.getAnnotations()).stream().filter(a -> a.annotationType().isAnnotationPresent(HandlerAware.class));
+    return Arrays.stream(clazz.getAnnotations()).filter(a -> a.annotationType().isAnnotationPresent(HandlerAware.class));
   }
 
   @SneakyThrows
@@ -191,7 +177,7 @@ public class HttpServerModule extends AbstractModule {
     }
   }
 
-  private void buildAuthHandler(Modularized instance, RouterBuilder builder) throws IllegalAccessException, InstantiationException {
-    hookIfPresent(AuthHandler.class, ann -> builder.authHandler(() -> Environment.provide(ann.value())));
+  private void buildAuthHandler(RouterBuilder builder) throws IllegalAccessException, InstantiationException {
+    doHookIfPresent(AuthHandler.class, ann -> builder.authHandler(() -> Environment.provide(ann.value())));
   }
 }

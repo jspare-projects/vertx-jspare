@@ -15,10 +15,6 @@
  */
 package org.jspare.vertx.web.builder;
 
-import java.lang.reflect.Method;
-
-import org.apache.commons.lang.StringUtils;
-
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.AuthHandler;
@@ -28,6 +24,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang.StringUtils;
+
+import java.lang.reflect.Method;
 
 /* (non-Javadoc)
  * @see java.lang.Object#toString()
@@ -74,46 +73,70 @@ import lombok.experimental.Accessors;
 
 /*
  * (non-Javadoc)
- * 
+ *
  * @see java.lang.Object#hashCode()
  */
 @EqualsAndHashCode
 public class HandlerData implements Cloneable {
 
-  /** The clazz. */
+  /**
+   * The clazz.
+   */
   private Class<?> clazz;
 
-  /** The method. */
+  /**
+   * The method.
+   */
   private Method method;
 
-  /** The handler type. */
+  /**
+   * The handler type.
+   */
   private HandlerType handlerType;
 
-  /** The route handler class. */
+  /**
+   * The route handler class.
+   */
   private Class<? extends Handler<RoutingContext>> routeHandlerClass;
 
-  /** The sock JS handler. */
+  /**
+   * The sock JS handler.
+   */
   private SockJSHandler sockJSHandler;
 
-  /** The path. */
+  /**
+   * The path.
+   */
   private String path = StringUtils.EMPTY;
 
-  /** The order. */
+  /**
+   * The order.
+   */
   private int order;
 
-  /** The path regex. */
+  /**
+   * The path regex.
+   */
   private boolean pathRegex;
 
-  /** The http method. */
+  /**
+   * The http method.
+   */
   private String httpMethod;
 
-  /** The consumes. */
+  /**
+   * The consumes.
+   */
   private String consumes;
 
-  /** The produces. */
+  /**
+   * The produces.
+   */
   private String produces;
 
-  /** The auth handler. */
+  /**
+   * The auth handler.
+   */
   private AuthHandler authHandler;
 
   /**
@@ -138,7 +161,7 @@ public class HandlerData implements Cloneable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see java.lang.Object#clone()
    */
   @Override

@@ -33,7 +33,7 @@ import java.util.*;
 /**
  * The Class PersistenceJpaModule.
  * <p>
- * Used for load {@link org.springframework.data.jpa.provider.PersistenceProvider } and endpoints to simple rest api.
+ * Used for setup {@link org.springframework.data.jpa.provider.PersistenceProvider } and endpoints to simple rest api.
  * </p>
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
@@ -46,23 +46,14 @@ public class PersistenceJpaModule extends AbstractModule {
   private Map<String, PersistenceOptions> DATA_SOURCES = new HashMap<>();
   private List<String> ANNOTATED_CLASSES = new ArrayList<>();
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see
-   * org.jspare.vertx.experimental.Module#init(io.vertx.core.Verticle,
-   * java.lang.String[])
-   */
   @Override
-  public Future<Void> init(Modularized instance, JsonObject config) {
+  protected void loadAsync(Future<Void> future) {
 
-    Future<Void> loadFuture = Future.future();
-    final Vertx vertx = instance.getVertx();
-
+    final Vertx vertx = getVertx();
     vertx.executeBlocking(f -> {
       try {
 
-        load(instance, config);
+        setup();
 
         DATA_SOURCES.entrySet().forEach(es -> {
           PersistenceOptions options = es.getValue();
@@ -75,24 +66,24 @@ public class PersistenceJpaModule extends AbstractModule {
         f.fail(t);
       }
 
-    }, loadFuture.completer());
-    return loadFuture;
+    }, future.completer());
   }
 
-  private void load(Modularized instance, JsonObject config) {
+  private void setup() {
 
     doHookIfPresent(AnnotatedClasses.class, ann -> ANNOTATED_CLASSES.addAll(Arrays.asList(ann.value())));
 
     doHookIfPresent(PersistenceUnitOptions.class, (method, ann) ->
-      setPersistenceOption(instance, (Method) method)
+      setPersistenceOption(getInstance(), (Method) method)
     );
 
     if (DATA_SOURCES.isEmpty()) {
 
-      JsonObject json = config.getJsonObject("persistence", new JsonObject());
+      JsonObject json = getConfig().getJsonObject("persistence", new JsonObject());
       PersistenceOptions persistenceOptions = DataObjectConverter.fromJson(json, PersistenceOptions.class);
       DATA_SOURCES.put(PersistenceUnitProvider.DEFAULT_DS, persistenceOptions);
     }
+
   }
 
   @SneakyThrows

@@ -25,6 +25,7 @@ import org.jspare.core.MySupport;
 import org.jspare.vertx.Modularized;
 import org.jspare.vertx.Module;
 import org.jspare.vertx.annotation.Modules;
+import org.jspare.vertx.annotation.PrintConfig;
 import org.jspare.vertx.concurrent.ReduceFuture;
 
 import javax.inject.Inject;
@@ -78,8 +79,8 @@ public class ModuleInitializer extends MySupport {
     final JsonObject config = new JsonObject();
     config.mergeIn(modularized.getConfig());
 
-    if (log.isDebugEnabled()) {
-      log.debug("Config: {}", modularized.getConfig());
+    if (log.isInfoEnabled() && modularized.getClass().isAnnotationPresent(PrintConfig.class)) {
+      log.info("Config: {}", modularized.getConfig());
     }
 
     final List<Supplier<Future>> futures = new ArrayList<>();
@@ -134,9 +135,6 @@ public class ModuleInitializer extends MySupport {
 
           lookupModules(futures, mi);
 
-          if (log.isDebugEnabled()) {
-            log.debug("Load Module: {}", m.value().getName());
-          }
           if (mi != null) {
             futures.add(() -> initModule(modularized, config, mClazz, mi));
           }
@@ -166,11 +164,6 @@ public class ModuleInitializer extends MySupport {
   }
 
   private Future initModule(Modularized modularized, JsonObject config, Class<? extends Module> mClazz, Module mi) {
-    /*if (moduleHasDependencies(mi) && !allDependenciesHasLoaded(mi)) {
-
-      String dependenciesUnresolved = getDependenciesDisjunction(mi).stream().map(c -> c.getSimpleName()).collect(Collectors.joining(","));
-      return Future.failedFuture(String.format("Could not load module %s the following dependencies need to be loaded: %s", mClazz.getSimpleName(), dependenciesUnresolved));
-    }*/
 
     if (log.isDebugEnabled()) {
       log.debug("Init Module: {}", mi.getClass().getName());
