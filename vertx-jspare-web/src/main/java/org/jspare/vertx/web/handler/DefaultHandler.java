@@ -224,7 +224,9 @@ public class DefaultHandler implements Handler<RoutingContext> {
         return null;
       }
 
-      return Json.decodeValue(routingContext.getBody().toString(), parameter.getType());
+      return Json.decodeValue(
+        StringUtils.defaultIfEmpty(routingContext.getBody().toString(), new JsonObject().encode()),
+        parameter.getType());
     } catch (SerializationException e) {
 
       log.debug("Invalid content of body for class [{}] on parameter [{}]", parameter.getClass(),
