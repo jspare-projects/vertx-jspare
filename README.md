@@ -61,9 +61,9 @@ class RestModule : JspareVerticle(){
 
   @Get
   @Handler
-  fun getAccounts() {
-    success(JsonArray().add(
-      JsonObject().put("name", "Paulo")
+  fun getAccounts(ctx : RoutingContext) {
+    ctx?.response().end(JsonArray().add(
+      JsonObject().put("name", "Paulo").encode()
     ))
   } 
 }
@@ -88,9 +88,9 @@ class RestModule extends JspareVerticle{
 
   @Get
   @Handler
-  void getAccounts() {
-    success(new JsonArray().add(
-      new JsonObject().put("name", "Paulo")
+  void getAccounts(RoutingContext ctx) {
+    ctx.response().end(new JsonArray().add(
+      new JsonObject().put("name", "Paulo").encode()
     ));
   } 
 }
