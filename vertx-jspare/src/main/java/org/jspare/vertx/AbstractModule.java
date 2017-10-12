@@ -63,7 +63,7 @@ public abstract class AbstractModule extends MySupport implements Module {
 
       log.error("Failed to load module [{}] - {}", getInstance().getClass().getName(), t.getMessage(), t);
       log.trace(t.getMessage(), t);
-      if(!future.isComplete()){
+      if (!future.isComplete()) {
 
         future.fail(t);
       }
@@ -117,8 +117,10 @@ public abstract class AbstractModule extends MySupport implements Module {
     Class<? extends Annotation> annClass = (Class<? extends Annotation>) ann;
     Target target = annClass.getAnnotation(Target.class);
 
-    if (isCheckType(target, ElementType.TYPE)) executeHookType(annClass, execute);
-    if (isCheckType(target, ElementType.METHOD)) executeHookMethods(annClass, execute);
+    if (isCheckType(target, ElementType.TYPE))
+      executeHookType(annClass, execute);
+    if (isCheckType(target, ElementType.METHOD))
+      executeHookMethods(annClass, execute);
   }
 
   /**
@@ -173,5 +175,31 @@ public abstract class AbstractModule extends MySupport implements Module {
       Object result = instance.getClass().getAnnotation(annClass);
       biConsumer.accept(getClass(), (T) result);
     }
+  }
+
+  public String getConfig(String keyValue) {
+
+    if (isPattern(keyValue)) {
+
+      String value = extractKey(keyValue);
+      String checkDefault = extractDefaultValue(value);
+      return getConfig().getString(value, checkDefault);
+    }
+    return keyValue;
+  }
+
+  private String extractDefaultValue(String value) {
+    if (value.contains(":")) {
+      return value.split(":")[1];
+    }
+    return value;
+  }
+
+  private String extractKey(String keyValue) {
+    return keyValue.substring(2, keyValue.length() - 1);
+  }
+
+  private boolean isPattern(String key) {
+    return key.startsWith("${") && key.endsWith("}");
   }
 }

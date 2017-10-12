@@ -15,6 +15,7 @@
  */
 package org.jspare.vertx.internal;
 
+import io.github.lukehutch.fastclasspathscanner.matchprocessor.ClassAnnotationMatchProcessor;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
@@ -22,12 +23,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.jspare.core.Environment;
 import org.jspare.core.MySupport;
+import org.jspare.core.internal.Bind;
 import org.jspare.vertx.Modularized;
 import org.jspare.vertx.Module;
+import org.jspare.vertx.annotation.ClasspathScan;
 import org.jspare.vertx.annotation.Modules;
 import org.jspare.vertx.annotation.PrintConfig;
 import org.jspare.vertx.concurrent.ReduceFuture;
+import org.jspare.vertx.utils.BindUtils;
+import org.jspare.vertx.utils.ClasspathScannerUtils;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,6 +89,10 @@ public class ModuleInitializer extends MySupport {
       log.info("Config: {}", modularized.getConfig());
     }
 
+    if (moduleHasClasspathScan(modularized)) {
+      lookupToClasspathScanner(modularized);
+    }
+
     final List<Supplier<Future>> futures = new ArrayList<>();
     try {
       lookupModules(futures, modularized);
@@ -102,6 +112,19 @@ public class ModuleInitializer extends MySupport {
       }
     });
     return initFuture;
+  }
+
+  private void lookupToClasspathScanner(Modularized modularized) {
+    ClasspathScan classpathScan = modularized.getClass().getAnnotation(ClasspathScan.class);
+    Arrays.asList(classpathScan.value())
+          .parallelStream()
+          .forEach(this::scanClasspath);
+  }
+
+  private void scanClasspath(String pckg2scan) {
+
+    ClasspathScannerUtils.scanner(pckg2scan)
+                         .matchClassesWithAnnotation(Resource.class, BindUtils::bindFromResource);
   }
 
   private void lookupModules(List<Supplier<Future>> futures, Modularized modularized) throws InitilizationException {
@@ -150,12 +173,8 @@ public class ModuleInitializer extends MySupport {
     return loadedModules.contains(mName);
   }
 
-  private boolean moduleHasDependencies(Module module) {
-    return module.getClass().isAnnotationPresent(Modules.class);
-  }
-
-  private boolean allDependenciesHasLoaded(Module module) {
-    return getDependenciesDisjunction(module).isEmpty();
+  private boolean moduleHasClasspathScan(Modularized modularized) {
+    return modularized.getClass().isAnnotationPresent(ClasspathScan.class);
   }
 
   private Collection<Class<? extends Module>> getDependenciesDisjunction(Module module) {

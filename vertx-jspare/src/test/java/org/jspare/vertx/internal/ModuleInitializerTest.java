@@ -46,6 +46,17 @@ public class ModuleInitializerTest {
     });
   }
 
+  @Test
+  public void testAnnotatedConfigValue(TestContext ctx){
+    ModuleOne m1 = new ModuleOne();
+    m1.setConfig(new JsonObject()
+      .put("key","value")
+    );
+
+    ctx.assertEquals("value", ((AbstractModule) m1).getConfig("${value}"));
+    ctx.assertEquals("default", ((AbstractModule) m1).getConfig("${keyDefault:default}"));
+  }
+
   @Modules({
     @Module(SubModuleOne.class),
     @Module(SubModuleTwo.class)
