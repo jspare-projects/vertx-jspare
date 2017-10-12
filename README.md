@@ -103,6 +103,8 @@ This is a very simple example, use your imagination to create awesome api's and 
 
 You can [find the vertx-jspare documentation here](https://github.com/jspare-projects/vertx-jspare/wiki) which has extended usage instructions and other useful information. Substantial usage information can be found in the API documentation.
 
+We are writting one complete documentation, but this consumes long time, just we ask patience and your help. I'll be a commiter. Please enjoy with us. =)
+
 
 ## Getting help and Reporting Issues
 
