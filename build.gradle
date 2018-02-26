@@ -1,0 +1,95 @@
+buildscript {
+    ext {
+        junitPlatformVersion = '1.0.3'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.junit.platform:junit-platform-gradle-plugin:${junitPlatformVersion}")
+    }
+}
+
+allprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'jacoco'
+    apply plugin: 'maven'
+
+    group = 'org.jspare.vertx'
+    version '4.0.0-SNAPSHOT'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    ext {
+        aspectjVersion = '1.8.6'
+        lombokVersion = '1.16.20'
+        junitJupiterVersion = '5.0.3'
+        vertxVersion = '3.5.1'
+    }
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+
+        compile("org.projectlombok:lombok:$lombokVersion")
+
+        testCompile("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+        testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    }
+
+    // 3rd
+    jacoco {
+        toolVersion = "0.7.9"
+    }
+
+    jacocoTestReport {
+        reports {
+            html.enabled = true
+            html.destination file("${buildDir}/jacoco/html")
+            xml.enabled = true
+            xml.destination file("${buildDir}/jacoco/xml/summary.xml")
+            csv.enabled = false
+        }
+        afterEvaluate {
+            classDirectories = files(classDirectories.files.collect {
+                fileTree(dir: it,
+                        exclude: [
+                                '**/*Generated',
+                                '**/generated/**/*',
+                                'src/main/java/br/com/humanizei/**/*Config',
+                        ])
+            })
+        }
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: "https://api.bintray.com/maven/jspare/maven/vertx-jspare/;publish=1") {
+                    authentication(userName: "$bintrayJspareUser", password: "$bintrayJsparePassword")
+                }
+                snapshotRepository(url: "https://oss.jfrog.org/artifactory/oss-snapshot-local") {
+                  authentication(userName: "$bintrayJspareUser", password: "$bintrayJsparePassword")
+                }
+            }
+        }
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives sourcesJar
+    }
+
+    test.finalizedBy jacocoTestReport
+}

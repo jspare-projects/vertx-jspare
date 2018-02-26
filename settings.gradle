@@ -1,0 +1,6 @@
+rootProject.name = 'vertx-jspare'
+
+// Libraries
+include 'vertx-jspare-core'
+include 'vertx-jspare-web'
+include 'vertx-jspare-junit5'
