@@ -40,6 +40,8 @@ allprojects {
 
         compile("org.projectlombok:lombok:$lombokVersion")
 
+        compile("io.vertx:vertx-core:$vertxVersion")
+
         testCompile("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
         testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     }

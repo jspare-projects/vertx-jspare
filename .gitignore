@@ -18,3 +18,4 @@ hs_err_pid*
 *.factorypath
 target/
 vertx-jspare/dependency-reduced-pom.xml
+.gradle/

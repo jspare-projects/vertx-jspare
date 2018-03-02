@@ -105,6 +105,12 @@ You can [find the vertx-jspare documentation here](https://github.com/jspare-pro
 
 We are writting one complete documentation, but this consumes long time, just we ask patience and your help. I'll be a commiter. Please enjoy with us. =)
 
+## Developer Notes
+
+We're rewriting the vertx-jspare. The focus is create a new lightweight and powerfull framework on top of the vert.x to create cloud services.
+
+Completely focused on create a cloud ecossystem the new version are designed to be fun and lightweight. All designs have been redesigned. See soon!
+
 
 ## Getting help and Reporting Issues
 

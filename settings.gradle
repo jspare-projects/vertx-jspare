@@ -1,6 +1,14 @@
 rootProject.name = 'vertx-jspare'
 
-// Libraries
-include 'vertx-jspare-core'
-include 'vertx-jspare-web'
-include 'vertx-jspare-junit5'
+// Core Libraries
+include 'core:vertx-jspare-core'
+include 'core:vertx-jspare-web'
+include 'core:vertx-jspare-junit5'
+
+// Cloud
+
+//TBD
+
+// Components
+
+//TBD
