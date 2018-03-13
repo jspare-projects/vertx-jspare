@@ -2,6 +2,7 @@
 
 ## Status
 
+[![official JetBrains project](http://jb.gg/badges/official-flat-square.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 [![Build Status](https://travis-ci.org/jspare-projects/vertx-jspare.svg?branch=master)](https://travis-ci.org/jspare-projects/vertx-jspare)
 [![Javadocs](http://www.javadoc.io/badge/org.jspare.vertx/vertx-jspare.svg)](http://www.javadoc.io/doc/org.jspare.vertx/vertx-jspare)
 
@@ -110,7 +111,6 @@ We are writting one complete documentation, but this consumes long time, just we
 We're rewriting the vertx-jspare. The focus is create a new lightweight and powerfull framework on top of the vert.x to create cloud services.
 
 Completely focused on create a cloud ecossystem the new version are designed to be fun and lightweight. All designs have been redesigned. See soon!
-
 
 ## Getting help and Reporting Issues
 
