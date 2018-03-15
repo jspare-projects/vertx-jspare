@@ -13,6 +13,9 @@ buildscript {
 
 allprojects {
 
+    def bintrayJspareUser = hasProperty('bintrayJspareUser') ? bintrayJspareUser : System.getenv('bintrayJspareUser')
+    def bintrayJsparePassword = hasProperty('bintrayJsparePassword') ? bintrayJsparePassword : System.getenv('bintrayJsparePassword')
+
     apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'jacoco'
