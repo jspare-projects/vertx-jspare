@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jspare.vertx</groupId>
   <artifactId>vertx-jspare-parent</artifactId>
-  <version>3.2.0</version>
+  <version>3.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>JSpare Vert.x Parent</name>
@@ -272,8 +272,6 @@
   <modules>
     <module>vertx-jspare</module>
     <module>vertx-jspare-web</module>
-    <module>vertx-jspare-jpa</module>
-    <module>vertx-jspare-ldap</module>
     <module>vertx-jspare-unit</module>
     <module>vertx-jspare-cdi</module>
   </modules>
