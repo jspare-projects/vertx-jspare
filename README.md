@@ -17,7 +17,7 @@ If you stay here, that is because you know about of the incredible thinks that t
 * Simple conventions, for improve your experience.
 * Minimalist api to mock unit tests with vertx-jspare-uni. 
 
-Visit the official web site of (Vert.x Jspare)[http://vertx.jspare.org].
+Visit the official web site of [Vert.x Jspare](http://vertx.jspare.org)
 
 ## Installation and Getting Started
 
