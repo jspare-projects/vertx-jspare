@@ -38,14 +38,11 @@ import lombok.SneakyThrows;
  */
 public class JsonObjectLoader {
 
-  /** The Constant CONVERTER_PATTERN. */
-  private static final String CONVERTER_PATTERN = "%sConverter";
-
   /**
    * Sets the default charset.
    *
    * @param defaultCharset
-   *          the new default charset
+   * the new default charset
    */
   @Setter
 
@@ -61,7 +58,7 @@ public class JsonObjectLoader {
    * Sets the default root path.
    *
    * @param defaultRootPath
-   *          the new default root path
+   * the new default root path
    */
   @Setter
 
@@ -76,8 +73,7 @@ public class JsonObjectLoader {
   /**
    * Load options.
    *
-   * @param filename
-   *          the filename
+   * @param filename the filename
    * @return the json object
    */
   public JsonObject loadOptions(String filename) {
@@ -88,12 +84,9 @@ public class JsonObjectLoader {
   /**
    * Load options.
    *
-   * @param <T>
-   *          the generic type
-   * @param filename
-   *          the filename
-   * @param optionClazz
-   *          the option clazz
+   * @param <T>         the generic type
+   * @param filename    the filename
+   * @param optionClazz the option clazz
    * @return the t
    */
   @SneakyThrows
@@ -105,10 +98,8 @@ public class JsonObjectLoader {
   /**
    * Load options.
    *
-   * @param defaultRootPath
-   *          the default root path
-   * @param filename
-   *          the filename
+   * @param defaultRootPath the default root path
+   * @param filename        the filename
    * @return the json object
    */
   @SneakyThrows(IOException.class)
@@ -123,7 +114,7 @@ public class JsonObjectLoader {
     } else {
 
       json = IOUtils.toString(this.getClass().getResourceAsStream(String.format("/%s", path.toString())),
-          getDefaultCharset());
+        getDefaultCharset());
     }
 
     return new JsonObject(json);
@@ -132,23 +123,15 @@ public class JsonObjectLoader {
   /**
    * Load options.
    *
-   * @param <T>
-   *          the generic type
-   * @param defaultRootPath
-   *          the default root path
-   * @param filename
-   *          the filename
-   * @param optionClazz
-   *          the option clazz
+   * @param <T>             the generic type
+   * @param defaultRootPath the default root path
+   * @param filename        the filename
+   * @param optionClazz     the option clazz
    * @return the t
    */
+  @Deprecated
   @SneakyThrows
   public <T> T loadOptions(String defaultRootPath, String filename, Class<T> optionClazz) {
-
-    String optionClassName = String.format(CONVERTER_PATTERN, optionClazz.getName());
-    Method method = Class.forName(optionClassName).getDeclaredMethod("fromJson", JsonObject.class, optionClazz);
-    T instance = optionClazz.newInstance();
-    method.invoke(null, loadOptions(defaultRootPath, filename), instance);
-    return instance;
+    return loadOptions(defaultRootPath, filename).mapTo(optionClazz);
   }
 }

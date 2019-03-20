@@ -18,8 +18,11 @@ package org.jspare.vertx.utils;
 
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonObject;
+import org.jspare.vertx.unit.ext.junit.VertxJspareUnitRunner;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.jspare.core.Environment.my;
 
@@ -28,6 +31,7 @@ import static org.jspare.core.Environment.my;
  *
  * @author <a href="https://pflima92.github.io/">Paulo Lima</a>
  */
+@RunWith(VertxJspareUnitRunner.class)
 public class JsonObjectLoaderTest {
 
   /**
