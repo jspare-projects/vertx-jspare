@@ -14,7 +14,6 @@ If you stay here, that is because you know about of the incredible thinks that t
 * Lightweight IoC and DI (JSR-330 support).
 * Easy way to create components and resources, uncoupling your architecture.
 * Components based.
-* Spring Data Jpa support (NEW);
 * Simple conventions, for improve your experience.
 * Minimalist api to mock unit tests with vertx-jspare-uni. 
 
@@ -30,7 +29,7 @@ For maven:
 <parent>
   <groupId>org.jspare.vertx</groupId>
   <artifactId>vertx-jspare</artifactId>
-  <version>${vertx-jspare.version}</version>
+  <version>3.3.0</version>
 </parent>
 ```
 
