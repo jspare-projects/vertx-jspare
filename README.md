@@ -40,7 +40,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile "org.jspare.vertx:vertx-jspare:${vertx-jspare.version}"
+    compile "org.jspare.vertx:vertx-jspare:3.3.0"
 }
 ```
 
@@ -60,11 +60,10 @@ class RestModule : JspareVerticle(){
 
   @Get
   @Handler
-  fun getAccounts(ctx : RoutingContext) {
-    ctx?.response().end(JsonArray().add(
-      JsonObject().put("name", "Paulo").encode()
-    ))
-  } 
+  fun getAccounts(ctx : RoutingContext) = ctx?.response().end(
+    JsonArray().add(
+      JsonObject().put("hello", "world").encode()
+    ))   
 }
 
 ```
