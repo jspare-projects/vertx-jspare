@@ -9,9 +9,9 @@
 
   <name>Jspare Vert.x Parent</name>
   <url>http://vertx.jspare.org</url>
-  <description>Improve your Vert.x experience with JSpare Framework</description>
+  <description>Improve your Vert.x experience with Jspare Framework</description>
   <organization>
-    <name>JSpare.org</name>
+    <name>Jspare.org</name>
     <url>http://jspare.org</url>
   </organization>
 
@@ -37,7 +37,7 @@
       <id>pflima92</id>
       <name>Paulo Lima</name>
       <email>pflima92@gmail.com</email>
-      <organization>JSpare Org.</organization>
+      <organization>Jspare Org.</organization>
       <organizationUrl>http://jspare.org</organizationUrl>
       <roles>
         <role>Project lead</role>
@@ -161,7 +161,7 @@
       <version>${logback.version}</version>
     </dependency>
 
-    <!-- JSpare Framework -->
+    <!-- Jspare Framework -->
     <dependency>
       <groupId>org.jspare</groupId>
       <artifactId>jspare-core</artifactId>

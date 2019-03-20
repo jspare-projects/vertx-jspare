@@ -108,7 +108,7 @@ We are writting one complete documentation, but this consumes long time, just we
 
 ## Getting help and Reporting Issues
 
-Having trouble with JSpare Container? We’d like to help!
+Having trouble with Jspare Container? We’d like to help!
 
 * Check the reference documentation at Wiki — they provide solutions to the most common questions.
 * Report bugs and issues at https://github.com/jspare-projects/vertx-jspare/issues
@@ -119,4 +119,4 @@ Be sure to visit our other projects, jspare-container is the basis of all our fr
 
 ## License
 
-All JSpare projects are Open Source software released under the Apache 2.0 license.
+All Jspare projects are Open Source software released under the Apache 2.0 license.
